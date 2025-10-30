@@ -13,7 +13,7 @@ COPY src src
 RUN ./gradlew bootJar -x test --no-daemon
 
 # === Stage 2: Run the application ===
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copy built JAR from build stage
