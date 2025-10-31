@@ -1,0 +1,49 @@
+services:
+  # --- PostgreSQL Database ---
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: teamdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/DeLaSursa/docker/initdb:/docker-entrypoint-initdb.d
+
+  # --- Spring Boot Backend ---
+  backend:
+    build:
+      context: ./backend/DeLaSursa
+    container_name: spring-app
+    depends_on:
+      - postgres
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/teamdb
+      DB_USER: postgres
+      DB_PASS: yourpassword
+    ports:
+      - "8080:8080"
+
+
+  # --- Vite React Frontend ---
+  frontend:
+    build:
+      context: ./frontend/DeLaSursa
+    container_name: vite-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/DeLaSursa:/app
+      - /app/node_modules
+    environment:
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_API_URL=http://backend:8080
+
+# --- Named volumes ---
+volumes:
+  pgdata:
+
