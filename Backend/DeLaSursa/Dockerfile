@@ -2,21 +2,26 @@
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
-# Copy Gradle files and pre-fetch dependencies (for caching)
+# Copy Gradle wrapper and config
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
+
+# Make gradlew executable
+RUN chmod +x gradlew
+
+# Pre-download dependencies
 RUN ./gradlew dependencies --no-daemon || true
 
-# Copy source and build
+# Copy source and build jar
 COPY src src
 RUN ./gradlew bootJar -x test --no-daemon
 
-# === Stage 2: Run the application ===
-FROM eclipse-temurin:21-jre
+# === Stage 2: Run the app ===
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copy built JAR from build stage
+# Copy jar from build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080

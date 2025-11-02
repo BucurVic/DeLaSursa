@@ -1,0 +1,136 @@
+# Documentație Bază de Date: DeLaSursa
+
+Această bază de date a fost proiectată pentru o aplicație de tip marketplace dedicată producătorilor locali,
+care pot vinde produse individuale sau pachete recurente prin abonamente.
+
+
+──────────────────────────────────────────────
+## 1. Tabel: useri
+Conține toți utilizatorii platformei (admini, clienți, producători).
+
+### Coloane:
+- id — Identificator unic pentru fiecare utilizator.
+- username — Numele de utilizator pentru autentificare.
+- email — Adresa de email unică.
+- parola — Parola (stocată hash-uit).
+- rol — Tipul de utilizator ('admin', 'client', 'producator').
+
+──────────────────────────────────────────────
+## 2. Tabel: producatori
+Reține informațiile producătorilor locali.
+
+### Coloane:
+- id — Cheie primară și totodată FK către useri.id.
+- nume — Numele producătorului.
+- prenume — Prenumele producătorului.
+- adresa — Adresa completă.
+- telefon — Număr de contact.
+- regiune — Zona geografică.
+
+──────────────────────────────────────────────
+## 3. Tabel: clienti
+Reține informațiile despre clienți.
+
+### Coloane:
+- id — Cheie primară și FK către useri.id.
+- nume — Numele clientului.
+- prenume — Prenumele clientului.
+- telefon — Număr de contact.
+
+──────────────────────────────────────────────
+## 4. Tabel: produse
+Catalog general de produse disponibile pe platformă.
+
+### Coloane:
+- id — Cheie primară.
+- nume — Denumirea produsului.
+- categorie — Categoria produsului (ex: Lactate, Legume, Fructe).
+
+──────────────────────────────────────────────
+## 5. Tabel: produsProducator
+Asociază un produs unui producător specific, incluzând detalii comerciale.
+
+### Coloane:
+- id — Cheie primară.
+- id_producator — FK către producatori.id.
+- id_produs — FK către produse.id.
+- cantitate — Cantitatea disponibilă.
+- unitate_masura — ex: kg, L, buc.
+- pret — Prețul unitar curent.
+
+──────────────────────────────────────────────
+## 6. Tabel: pachete
+Definite de producători, pot fi vândute direct sau prin abonament.
+
+### Coloane:
+- id — Cheie primară.
+- id_producator — FK către producatori.id.
+- nume — Denumirea pachetului.
+- categorie — Categoria pachetului.
+- cantitate — Cantitatea totală.
+- pret — Prețul pachetului.
+
+──────────────────────────────────────────────
+## 7. Tabel: pachetProdus
+Definirea componentelor fiecărui pachet.
+
+### Coloane:
+- id — Cheie primară.
+- id_pachet — FK către pachete.id.
+- id_produs — FK către produse.id.
+- cantitate — Cantitatea produsului în cadrul pachetului.
+- pret_unitar — Prețul individual în pachet (poate fi diferit de cel standard).
+
+──────────────────────────────────────────────
+## 8. Tabel: comenzi
+Comenzile plasate de clienți (produse și/sau pachete).
+
+### Coloane:
+- id — Cheie primară.
+- id_client — FK către clienti.id.
+- data_efectuarii — Data și ora plasării comenzii.
+
+──────────────────────────────────────────────
+## 9. Tabel: comandaProdus
+Leagă o comandă de produsele cumpărate.
+
+### Coloane:
+- id — Cheie primară.
+- id_comanda — FK către comenzi.id.
+- id_produs — FK către produse.id.
+- cantitate — Cantitatea cumpărată.
+- pret_unitar — Prețul unitar la momentul comenzii.
+
+──────────────────────────────────────────────
+## 10. Tabel: comandaPachet
+Leagă o comandă de pachetele cumpărate.
+
+### Coloane:
+- id — Cheie primară.
+- id_comanda — FK către comenzi.id.
+- id_produs — FK către pachete.id (ar trebui redenumit în id_pachet pentru claritate).
+- cantitate — Cantitatea cumpărată.
+- pret_unitar — Prețul unitar la momentul comenzii.
+
+──────────────────────────────────────────────
+## 11. Tabel: subscriptii
+Gestionează abonamentele recurente la pachete.
+
+### Coloane:
+- id — Cheie primară.
+- id_client — FK către clienti.id.
+- id_pachet — FK către pachete.id.
+- data_inceput — Data activării abonamentului.
+- frecventa — Frecvența livrării (ex: 7 = o dată la 7 zile).
+- status — Starea abonamentului ('activa', 'anulata', 'expirata').
+
+──────────────────────────────────────────────
+## 12. Relații principale:
+- useri ↔ producatori (1:1)
+- useri ↔ clienti (1:1)
+- producatori ↔ produse (M:N prin produsProducator)
+- pachete ↔ produse (M:N prin pachetProdus)
+- clienti ↔ comenzi (1:N)
+- comenzi ↔ produse (M:N prin comandaProdus)
+- comenzi ↔ pachete (M:N prin comandaPachet)
+- clienti ↔ pachete (M:N prin subscriptii)
