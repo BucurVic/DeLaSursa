@@ -1,9 +1,11 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "comanda_pachet", schema = "public")
+@Data
 public class ComandaPachet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,44 +26,5 @@ public class ComandaPachet {
     @Column(name = "pret_unitar")
     private Double pretUnitar;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Comenzi getIdComanda() {
-        return idComanda;
-    }
-
-    public void setIdComanda(Comenzi idComanda) {
-        this.idComanda = idComanda;
-    }
-
-    public Produse getIdProdus() {
-        return idProdus;
-    }
-
-    public void setIdProdus(Produse idProdus) {
-        this.idProdus = idProdus;
-    }
-
-    public Double getCantitate() {
-        return cantitate;
-    }
-
-    public void setCantitate(Double cantitate) {
-        this.cantitate = cantitate;
-    }
-
-    public Double getPretUnitar() {
-        return pretUnitar;
-    }
-
-    public void setPretUnitar(Double pretUnitar) {
-        this.pretUnitar = pretUnitar;
-    }
 
 }

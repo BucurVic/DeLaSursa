@@ -1,12 +1,14 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "pachete", schema = "public")
+@Data
 public class Pachete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,68 +37,5 @@ public class Pachete {
     @OneToMany(mappedBy = "idPachet")
     private Set<Subscriptii> subscriptiis = new LinkedHashSet<>();
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Producatori getIdProducator() {
-        return idProducator;
-    }
-
-    public void setIdProducator(Producatori idProducator) {
-        this.idProducator = idProducator;
-    }
-
-    public String getNume() {
-        return nume;
-    }
-
-    public void setNume(String nume) {
-        this.nume = nume;
-    }
-
-    public String getCategorie() {
-        return categorie;
-    }
-
-    public void setCategorie(String categorie) {
-        this.categorie = categorie;
-    }
-
-    public Integer getCantitate() {
-        return cantitate;
-    }
-
-    public void setCantitate(Integer cantitate) {
-        this.cantitate = cantitate;
-    }
-
-    public Double getPret() {
-        return pret;
-    }
-
-    public void setPret(Double pret) {
-        this.pret = pret;
-    }
-
-    public Set<PachetProdus> getPachetProduses() {
-        return pachetProduses;
-    }
-
-    public void setPachetProduses(Set<PachetProdus> pachetProduses) {
-        this.pachetProduses = pachetProduses;
-    }
-
-    public Set<Subscriptii> getSubscriptiis() {
-        return subscriptiis;
-    }
-
-    public void setSubscriptiis(Set<Subscriptii> subscriptiis) {
-        this.subscriptiis = subscriptiis;
-    }
 
 }

@@ -1,9 +1,11 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "useri", schema = "public")
+@Data
 public class Useri {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
