@@ -1,4 +1,4 @@
 package org.example.delasursa.service;
 
-public interface ProducatoriService {
+public interface AuthService {
 }
