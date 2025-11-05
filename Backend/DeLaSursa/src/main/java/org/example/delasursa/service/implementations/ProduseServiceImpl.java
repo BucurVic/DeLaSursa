@@ -1,14 +1,15 @@
 package org.example.delasursa.service.implementations;
 
+import org.example.delasursa.service.ProduseService;
 import org.springframework.stereotype.Service;
-import org.example.delasursa.repository.ProduseRepository;
+import org.example.delasursa.repository.ProdusRepository;
 
 @Service
-public class ProduseServiceImpl {
+public class ProduseServiceImpl implements ProduseService {
 
-    private final ProduseRepository produseRepository;
+    private final ProdusRepository produsRepository;
 
-    public ProduseServiceImpl(ProduseRepository produseRepository) {
-        this.produseRepository = produseRepository;
+    public ProduseServiceImpl(ProdusRepository produsRepository) {
+        this.produsRepository = produsRepository;
     }
 }

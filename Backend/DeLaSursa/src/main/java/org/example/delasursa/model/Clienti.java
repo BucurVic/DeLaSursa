@@ -20,7 +20,7 @@ public class Clienti {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id", nullable = false)
-    private Useri useri;
+    private User useri;
 
     @Column(name = "nume", length = Integer.MAX_VALUE)
     private String nume;

@@ -1,14 +1,15 @@
 package org.example.delasursa.service.implementations;
 
+import org.example.delasursa.service.UseriService;
 import org.springframework.stereotype.Service;
-import org.example.delasursa.repository.UseriRepository;
+import org.example.delasursa.repository.UserRepository;
 
 @Service
-public class UseriServiceImpl {
+public class UseriServiceImpl implements UseriService {
 
-    private final UseriRepository useriRepository;
+    private final UserRepository userRepository;
 
-    public UseriServiceImpl(UseriRepository useriRepository) {
-        this.useriRepository = useriRepository;
+    public UseriServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 }
