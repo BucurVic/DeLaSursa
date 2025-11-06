@@ -13,8 +13,6 @@ import java.util.Set;
 public class CustomUserDetails implements UserDetails {
     private final Integer userId;
     private final String email;
-    private final String firstName;
-    private final String lastName;
     private final String password;
     private final Set<GrantedAuthority> grantedAuthorities;
 

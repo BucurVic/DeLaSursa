@@ -2,8 +2,7 @@ CREATE TABLE useri (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   username varchar,
   email varchar,
-  parola varchar,
-  rol varchar
+  parola varchar
 );
 
 CREATE TABLE producatori (

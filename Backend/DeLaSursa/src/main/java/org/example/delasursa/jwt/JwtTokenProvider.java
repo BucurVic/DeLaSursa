@@ -39,8 +39,6 @@ public class JwtTokenProvider {
         String lastName = "";
         Integer id = null;
         if(obj instanceof CustomUserDetails) {
-            firstName = ((CustomUserDetails) obj).getFirstName();
-            lastName = ((CustomUserDetails) obj).getLastName();
             id = ((CustomUserDetails) obj).getUserId();
         }
         return Jwts.builder()

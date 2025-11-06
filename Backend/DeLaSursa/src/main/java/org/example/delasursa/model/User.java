@@ -1,13 +1,19 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "useri", schema = "public")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +29,6 @@ public class User {
     @Column(name = "parola", length = Integer.MAX_VALUE)
     private String parola;
 
-    @Column(name = "rol", length = Integer.MAX_VALUE)
-    private String rol;
 
     @OneToOne(mappedBy = "useri")
     private Clienti clienti;
