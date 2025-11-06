@@ -23,13 +23,9 @@ interface DropdownProps {
     required?: boolean;
     fullWidth?: boolean;
     name?: string;
-    // Adaugam className (pentru spatii/pozitionare externa)
-    className?: string;
-    // Adaugam prop pentru a seta latimea responsiva (ex: "w-full md:w-1/2")
     width?: string;
 }
 
-// Folosim React.forwardRef pentru a permite o referinta la elementul DOM
 const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
     ({
          label,
@@ -41,22 +37,16 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
          required = false,
          fullWidth = true,
          name,
-         className = "",
-         width = "w-full", // Setam w-full (mobil) ca valoare implicita
      }, ref) => {
 
-        // Combinam clasa de lățime responsivă cu alte clase de poziționare
-        const responsiveClassName = `${width} ${className}`;
 
         return (
-            // Aplicam ref, fullWidth=true (pentru ca Select sa ocupe tot FormControl-ul),
-            // si clasa responsiva pe containerul exterior
+
             <FormControl
                 ref={ref}
                 fullWidth={fullWidth}
                 error={error}
                 required={required}
-                className={responsiveClassName}
             >
                 <InputLabel>{label}</InputLabel>
 
