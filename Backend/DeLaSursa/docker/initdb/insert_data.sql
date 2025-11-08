@@ -1,31 +1,31 @@
 -- ========================================================
 -- STEP 1: Inserăm useri (1 admin, 10 clienți, 9 producători)
 -- ========================================================
-INSERT INTO useri (username, email, parola, rol) VALUES
-    ('admin', 'admin@example.com', 'adminpass', 'admin'),
+INSERT INTO useri (username, email, parola) VALUES
+    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
 
     -- 10 clienti
-    ('client1', 'client1@example.com', 'pass1', 'client'),
-    ('client2', 'client2@example.com', 'pass2', 'client'),
-    ('client3', 'client3@example.com', 'pass3', 'client'),
-    ('client4', 'client4@example.com', 'pass4', 'client'),
-    ('client5', 'client5@example.com', 'pass5', 'client'),
-    ('client6', 'client6@example.com', 'pass6', 'client'),
-    ('client7', 'client7@example.com', 'pass7', 'client'),
-    ('client8', 'client8@example.com', 'pass8', 'client'),
-    ('client9', 'client9@example.com', 'pass9', 'client'),
-    ('client10', 'client10@example.com', 'pass10', 'client'),
+    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
 
     -- 9 producatori
-    ('producator1', 'prod1@example.com', 'pass11', 'producator'),
-    ('producator2', 'prod2@example.com', 'pass12', 'producator'),
-    ('producator3', 'prod3@example.com', 'pass13', 'producator'),
-    ('producator4', 'prod4@example.com', 'pass14', 'producator'),
-    ('producator5', 'prod5@example.com', 'pass15', 'producator'),
-    ('producator6', 'prod6@example.com', 'pass16', 'producator'),
-    ('producator7', 'prod7@example.com', 'pass17', 'producator'),
-    ('producator8', 'prod8@example.com', 'pass18', 'producator'),
-    ('producator9', 'prod9@example.com', 'pass19', 'producator');
+    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS');
 
 -- ========================================================
 -- STEP 2: Inserăm clienți (id-urile 2–11)

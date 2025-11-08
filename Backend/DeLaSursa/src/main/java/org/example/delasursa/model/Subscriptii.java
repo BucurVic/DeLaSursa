@@ -1,11 +1,13 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "subscriptii", schema = "public")
+@Data
 public class Subscriptii {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,52 +31,5 @@ public class Subscriptii {
     @Column(name = "status", length = Integer.MAX_VALUE)
     private String status;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Clienti getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(Clienti idClient) {
-        this.idClient = idClient;
-    }
-
-    public Pachete getIdPachet() {
-        return idPachet;
-    }
-
-    public void setIdPachet(Pachete idPachet) {
-        this.idPachet = idPachet;
-    }
-
-    public LocalDate getDataInceput() {
-        return dataInceput;
-    }
-
-    public void setDataInceput(LocalDate dataInceput) {
-        this.dataInceput = dataInceput;
-    }
-
-    public Integer getFreceventa() {
-        return freceventa;
-    }
-
-    public void setFreceventa(Integer freceventa) {
-        this.freceventa = freceventa;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
 }
