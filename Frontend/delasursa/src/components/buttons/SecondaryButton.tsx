@@ -1,14 +1,12 @@
-
 import Button from '@mui/material/Button';
-import {useNotify} from "../NotifyProvider.tsx";
+import type {ButtonProps} from "./ButtonProps.tsx";
 
-export default function SecondaryButton({text} : {text: string})  {
-    const notify=useNotify();
+export default function SecondaryButton({text,onClick} : ButtonProps)  {
     return (
         <Button
             variant="outlined"
             color="primary"
-            onClick={() => notify('SecondaryButton clicked!',"success")}
+            onClick={onClick}
         >
             {text}
         </Button>
