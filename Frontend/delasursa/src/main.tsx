@@ -9,17 +9,20 @@ import App from './App'
 import {StyledEngineProvider, CssBaseline, ThemeProvider} from "@mui/material";
 import theme from "./theme/theme";
 import  {StrictMode} from "react";
+import {NotifyProvider} from "./components/NotifyProvider.tsx";
 
 
 document.fonts.load('1rem "Manrope"').then(() => {
     createRoot(document.getElementById("root")!).render(
         <StrictMode>
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <App />
-                </ThemeProvider>
-            </StyledEngineProvider>
+            <NotifyProvider>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <App />
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </NotifyProvider>
         </StrictMode>
     );
 });
