@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import EditButton from "./buttonsProductView/EditButton";
 import DeactivateButton from "./buttonsProductView/DeactivateButton";
 import DeleteButton from "./buttonsProductView/DeleteButton";

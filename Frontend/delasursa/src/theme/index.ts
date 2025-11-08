@@ -1,2 +1,2 @@
 export * from "./textResources";
-export * from "./colors";
+export * from "./colors.ts";
