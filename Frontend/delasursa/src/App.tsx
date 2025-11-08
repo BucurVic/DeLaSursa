@@ -1,13 +1,9 @@
 import "./App.css";
 
-
-//import {Stack} from "@mui/material";
-
-
 function App() {
-  return (
-    <></>
-  );
+    return (
+        <></>
+    );
 }
 
-export default App
+export default App;

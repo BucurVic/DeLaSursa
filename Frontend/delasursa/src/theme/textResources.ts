@@ -1,4 +1,32 @@
 export const textResources = {
+    loginPage: {
+        logoAlt: "Logo DeLaSursă",
+        title: "Autentificare",
+        noAccount: "Nu ai cont?",
+        registerLink: "Înregistrează-te!",
+        emailLabel: "Email",
+        emailPlaceholder: "Introdu email-ul",
+        passwordLabel: "Parolă",
+        passwordPlaceholder: "Introdu parola",
+        rememberMe: "Ține-mă minte!",
+        forgotPassword: "Ai uitat parola?",
+        submitButton: "Autentificare",
+    },
+
+
+    forgotPasswordPage: {
+        logoAlt: "Logo DeLaSursă",
+        title: "Ai uitat parola?",
+        rememberPassword: "Îți amintești parola?",
+        loginLink: "Autentifică-te!",
+        emailLabel: "Email",
+        emailPlaceholder: "Introdu email-ul",
+        submitButton: "Trimite",
+    },
+
+    searchBar: {
+        placeholder: "Caută produse...",
+    },
     uploader: {
         title: 'Apasă pentru a încărca',
         acceptedFiles: 'Fișiere acceptate: ',
@@ -9,6 +37,9 @@ export const textResources = {
     buttons: {
         submit: 'Salvează',
         cancel: 'Anulează',
+        edit: "Editează",
+        deactivate: "Dezactivează",
+        delete: "Șterge",
     },
     form: {
         title: "Adaugă produs",
@@ -81,4 +112,4 @@ export const textResources = {
     copyright: "© 2025 DeLaSursă. Toate drepturile rezervate.",
 
   },
-};
+}as const;

@@ -7,5 +7,7 @@ export const colors = {
     lightGreen3: "#3BC76A",
     brown: "#5D4037",
     white1: "#F2F2F2",
-    white2: "#BEBEBE"
+    white2: "#BEBEBE",
+    red1: "#EF4444",
+    redTransparent: "rgba(239, 68, 68, 0.15)",
 } as const;
