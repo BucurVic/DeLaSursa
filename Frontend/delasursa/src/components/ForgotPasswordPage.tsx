@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
 interface ForgotPasswordPageProps {

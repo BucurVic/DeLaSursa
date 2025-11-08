@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import { FacebookOutlined, Instagram, LinkedIn } from "@mui/icons-material";
 
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
 export default function Footer() {

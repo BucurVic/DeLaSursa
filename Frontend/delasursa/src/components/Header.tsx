@@ -21,7 +21,7 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
 export interface Props {

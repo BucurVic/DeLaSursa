@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client'
 
 import App from './App'
 import {StyledEngineProvider, CssBaseline, ThemeProvider} from "@mui/material";
-import theme from "./theme/theme";
+import theme from "./theme/theme.ts";
 import  {StrictMode} from "react";
 import {NotifyProvider} from "./components/NotifyProvider.tsx";
 
