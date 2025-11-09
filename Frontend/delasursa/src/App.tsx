@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+//import SignUpPage from './components/SignUpPage'; 
+//import ResetPasswordPage from './components/ResetPasswordPage';
+//import ViewToggleButtons from './components/ViewToggleButtons';
+//import DeleteConfirmationModal from './components/DeleteConfirmationModal';
+import EditProductModal from './components/EditProductModal';
+import { Box,Typography } from '@mui/material';
+import './App.css'; 
 
 function App() {
-  const [count, setCount] = useState(0)
+  /*
+  const handleViewChange = (view: 'grid' | 'list') => {
+    console.log(`Vizualizare activă: ${view}`);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      
+      
+      <ViewToggleButtons onViewChange={handleViewChange} />
+      
+    </Box>
+  );
+  */
+
+  /*
+  const handleClose = () => { console.log("Modal închis."); };
+  const handleConfirm = () => { console.log("Ștergere confirmată!"); };
+
+
+  return (
+    
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#0C1A14' }}>
+      
+      <Typography variant="h6" sx={{ color: '#BEBEBE' }}>
+        Pagina principală este goală.
+      </Typography>
+
+      
+      <DeleteConfirmationModal
+        open={true} 
+        onClose={handleClose} 
+        onConfirm={handleConfirm} 
+        productName="Roșii Cherry Bio" 
+      />
+      
+    </Box>
+  );
+  */
+
+  const mockData = { 
+    name: "Roșii Cherry Bio", 
+    category: "Legume", 
+    price: "22 lei", 
+    stock: "45", 
+    unit: "kg" 
+  };
+
+  return (
+    // ...
+    <EditProductModal
+      open={true} // Setat la true pentru a fi vizibil
+      onClose={() => console.log("Închis")}
+      onSave={(data) => console.log("Date salvate:", data)}
+      initialData={mockData}
+    />);
 }
 
-export default App
+export default App;
