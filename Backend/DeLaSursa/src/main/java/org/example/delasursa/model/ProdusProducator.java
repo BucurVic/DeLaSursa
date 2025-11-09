@@ -1,11 +1,9 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "produs_producator", schema = "public")
-@Data
 public class ProdusProducator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +27,52 @@ public class ProdusProducator {
     @Column(name = "pret")
     private Double pret;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Producatori getIdProducator() {
+        return idProducator;
+    }
+
+    public void setIdProducator(Producatori idProducator) {
+        this.idProducator = idProducator;
+    }
+
+    public Produse getIdProdus() {
+        return idProdus;
+    }
+
+    public void setIdProdus(Produse idProdus) {
+        this.idProdus = idProdus;
+    }
+
+    public Double getCantitate() {
+        return cantitate;
+    }
+
+    public void setCantitate(Double cantitate) {
+        this.cantitate = cantitate;
+    }
+
+    public String getUnitateMasura() {
+        return unitateMasura;
+    }
+
+    public void setUnitateMasura(String unitateMasura) {
+        this.unitateMasura = unitateMasura;
+    }
+
+    public Double getPret() {
+        return pret;
+    }
+
+    public void setPret(Double pret) {
+        this.pret = pret;
+    }
 
 }

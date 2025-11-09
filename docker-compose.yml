@@ -16,7 +16,7 @@ services:
   # --- Spring Boot Backend ---
   backend:
     build:
-      context: ./backend/DeLaSursa
+      context: ./Backend/DeLaSursa
     container_name: spring-app
     depends_on:
       - postgres
@@ -31,12 +31,12 @@ services:
   # --- Vite React Frontend ---
   frontend:
     build:
-      context: ./frontend/DeLaSursa
+      context: ./Frontend/delasursa
     container_name: vite-frontend
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend/DeLaSursa:/app
+      - ./Frontend/delasursa:/app
       - /app/node_modules
     environment:
       - HOST=0.0.0.0

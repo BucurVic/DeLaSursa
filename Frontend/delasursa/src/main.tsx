@@ -8,21 +8,21 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import {StyledEngineProvider, CssBaseline, ThemeProvider} from "@mui/material";
 import theme from "./theme/theme.ts";
-import  {StrictMode} from "react";
+import  {StrictMode} from "react";
 import {NotifyProvider} from "./components/NotifyProvider.tsx";
 
 
 document.fonts.load('1rem "Manrope"').then(() => {
-    createRoot(document.getElementById("root")!).render(
-        <StrictMode>
-            <NotifyProvider>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        <App />
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </NotifyProvider>
-        </StrictMode>
-    );
+    createRoot(document.getElementById("root")!).render(
+        <StrictMode>
+            <NotifyProvider>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <App />
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </NotifyProvider>
+        </StrictMode>
+    );
 });
