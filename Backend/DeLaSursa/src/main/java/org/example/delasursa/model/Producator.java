@@ -1,7 +1,7 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,17 +10,21 @@ import java.util.Set;
 
 @Entity
 @Table(name = "producatori", schema = "public")
-@Data
-public class Producatori {
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"produsProducatori", "pachete"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Producator {
     @Id
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id", nullable = false)
-    private User useri;
+    private User user;
 
     @Column(name = "nume", length = Integer.MAX_VALUE)
     private String nume;
@@ -37,10 +41,10 @@ public class Producatori {
     @Column(name = "regiune", length = Integer.MAX_VALUE)
     private String regiune;
 
-    @OneToMany(mappedBy = "idProducator")
-    private Set<Pachete> pachetes = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "producator")
+    private Set<Pachet> pachete = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "idProducator")
-    private Set<ProdusProducator> produsProducators = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "producator")
+    private Set<ProdusProducator> produsProducatori = new LinkedHashSet<>();
 
 }

@@ -1,24 +1,29 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 @Entity
 @Table(name = "produs_producator", schema = "public")
-@Data
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"producator", "produs"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class ProdusProducator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_producator", nullable = false)
-    private Producatori idProducator;
+    private Producator producator;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_produs", nullable = false)
-    private Produse idProdus;
+    private Produs produs;
 
     @Column(name = "cantitate")
     private Double cantitate;

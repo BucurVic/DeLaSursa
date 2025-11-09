@@ -94,7 +94,7 @@ CREATE TABLE pachet_produs (
 CREATE TABLE comanda_pachet (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_comanda integer NOT NULL references comenzi(id),
-  id_produs integer NOT NULL references produse(id),
+  id_pachet integer NOT NULL references pachete(id),
   cantitate float,
   pret_unitar float
 );

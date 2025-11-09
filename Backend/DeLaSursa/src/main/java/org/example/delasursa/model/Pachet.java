@@ -1,23 +1,27 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "pachete", schema = "public")
-@Data
-public class Pachete {
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"pachetProduse", "comandaPachete", "subscriptii"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Pachet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_producator", nullable = false)
-    private Producatori idProducator;
+    private Producator producator;
 
     @Column(name = "nume", length = Integer.MAX_VALUE)
     private String nume;
@@ -31,11 +35,14 @@ public class Pachete {
     @Column(name = "pret")
     private Double pret;
 
-    @OneToMany(mappedBy = "idPachet")
-    private Set<PachetProdus> pachetProduses = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "pachet")
+    private Set<PachetProdus> pachetProduse = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "idPachet")
-    private Set<Subscriptii> subscriptiis = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "pachet")
+    private Set<ComandaPachet> comandaPachete = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "pachet")
+    private Set<Subscriptie> subscriptii = new LinkedHashSet<>();
 
 
 }

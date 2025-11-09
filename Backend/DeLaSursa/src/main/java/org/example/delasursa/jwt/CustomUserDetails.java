@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final Integer userId;
+    private final String username;
     private final String email;
     private final String password;
     private final Set<GrantedAuthority> grantedAuthorities;
@@ -29,7 +30,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

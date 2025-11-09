@@ -1,26 +1,30 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "subscriptii", schema = "public")
-@Data
-public class Subscriptii {
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"client", "pachet"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Subscriptie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_client", nullable = false)
-    private Clienti idClient;
+    private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_pachet", nullable = false)
-    private Pachete idPachet;
+    private Pachet pachet;
 
     @Column(name = "data_inceput")
     private LocalDate dataInceput;

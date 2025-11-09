@@ -176,7 +176,7 @@ INSERT INTO comanda_produs (id_comanda, id_produs, cantitate, pret_unitar) VALUE
 -- ========================================================
 -- STEP 10: Inserăm comanda_pachet
 -- ========================================================
-INSERT INTO comanda_pachet (id_comanda, id_produs, cantitate, pret_unitar) VALUES
+INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar) VALUES
     (1, 1, 1, 25),
     (2, 2, 2, 30),
     (3, 3, 3, 28),
