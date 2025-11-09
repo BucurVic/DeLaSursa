@@ -5,6 +5,15 @@ CREATE TABLE useri (
   parola varchar
 );
 
+CREATE TABLE roles (
+  name varchar PRIMARY KEY
+);
+
+CREATE TABLE users_roles(
+  user_id integer REFERENCES useri(id),
+  role_id varchar REFERENCES roles(name)
+);
+
 CREATE TABLE producatori (
   id integer PRIMARY KEY REFERENCES useri(id) ON DELETE CASCADE,
   nume varchar,

@@ -27,6 +27,33 @@ INSERT INTO useri (username, email, parola) VALUES
     ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
     ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS');
 
+INSERT INTO roles (name) VALUES
+    ('admin'),
+    ('client'),
+    ('producator');
+
+INSERT INTO users_roles(user_id,role_id) VALUES
+    (1,'admin'),
+    (2,'client'),
+    (3,'client'),
+    (4,'client'),
+    (5,'client'),
+    (6,'client'),
+    (7,'client'),
+    (8,'client'),
+    (9,'client'),
+    (10,'client'),
+    (11,'client'),
+    (12,'producator'),
+    (13,'producator'),
+    (14,'producator'),
+    (15,'producator'),
+    (16,'producator'),
+    (17,'producator'),
+    (18,'producator'),
+    (19,'producator'),
+    (20,'producator');
+
 -- ========================================================
 -- STEP 2: Inserăm clienți (id-urile 2–11)
 -- ========================================================
