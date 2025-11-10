@@ -7,6 +7,7 @@ import {
     FormHelperText,
     type SelectChangeEvent,
 } from "@mui/material";
+import {useTheme} from "@mui/material/styles";
 
 interface DropdownOption {
     value: string;
@@ -38,7 +39,7 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
          fullWidth = true,
          name,
      }, ref) => {
-
+        const theme=useTheme();
 
         return (
 
@@ -47,6 +48,7 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
                 fullWidth={fullWidth}
                 error={error}
                 required={required}
+                sx={{backgroundColor:theme.palette.background.default}}
             >
                 <InputLabel>{label}</InputLabel>
 
