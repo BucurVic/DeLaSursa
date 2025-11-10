@@ -2,7 +2,9 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.CreateProdusRequest;
 import org.example.delasursa.common.dto.ProdusDTO;
+import org.example.delasursa.common.dto.UpdateProdusRequest;
 import org.example.delasursa.model.Produs;
 import org.example.delasursa.service.ProdusService;
 import org.springframework.data.domain.Page;
@@ -35,25 +37,25 @@ public class ProduseController {
     }
 
     @GetMapping("/populare")
-    public ResponseEntity<List<ProdusDTO>> getPopularProduse(@PageableDefault(size = 12) Pageable pageable){
+    public ResponseEntity<Page<ProdusDTO>> getPopularProduse(@PageableDefault(size = 12) Pageable pageable){
         log.info("Get all popular produse request received ");
 
         Page<ProdusDTO> page = produsService.getAll(pageable);
 
         log.info("Fetched {} pages with {} popular produse successfully", page.getTotalPages(),page.getSize());
 
-        return ResponseEntity.ok(page.getContent());
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/recomandate")
-    public ResponseEntity<List<ProdusDTO>> getRecomendedProduse(@PageableDefault(size = 8) Pageable pageable){
+    public ResponseEntity<Page<ProdusDTO>> getRecomendedProduse(@PageableDefault(size = 8) Pageable pageable){
         log.info("Get all recomended produse request received ");
 
         Page<ProdusDTO> page = produsService.getAll(pageable);
 
         log.info("Fetched {} pages with {} recomended produse successfully", page.getTotalPages(),page.getSize());
 
-        return ResponseEntity.ok(page.getContent());
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/random")
@@ -67,7 +69,26 @@ public class ProduseController {
         return ResponseEntity.ok(random);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProdusDTO>> getFiltered(
+            @RequestParam(required = false) String categorie,
+            @RequestParam(required = false) String regiune,
+            @RequestParam(required = false) Double pretMin,
+            @RequestParam(required = false) Double pretMax,
+            @RequestParam(required = false, defaultValue = "false") Boolean doarDisponibile,
+            @PageableDefault(size = 10, sort = "pret") Pageable pageable)
+    {
+        log.info("Received filtered produse request | categorie='{}' | regiune='{}' | pretMin={} | pretMax={} | doarDisponibile={} | page={} | size={} | sort={}",
+                categorie, regiune, pretMin, pretMax, doarDisponibile,
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
+        Page<ProdusDTO> page = produsService.getFiltered(categorie, regiune, pretMin, pretMax, doarDisponibile, pageable);
+
+        log.info("Fetched {} filtered produse across {} total pages (page size: {})",
+                page.getNumberOfElements(), page.getTotalPages(), page.getSize());
+
+        return ResponseEntity.ok(page);
+    }
 
 
     @GetMapping("/{id}")
@@ -82,10 +103,10 @@ public class ProduseController {
 
     @PostMapping
     @PreAuthorize("hasRole('PRODUCATOR')")
-    public ResponseEntity<Produs> addProdus(@RequestBody Produs produs){
-        log.info("Add produs request received  {}", produs.getNume());
+    public ResponseEntity<ProdusDTO> addProdus(@RequestBody CreateProdusRequest request){
+        log.info("Add produs request received  {}", request.getNume());
 
-        Produs result = produsService.add(produs);
+        ProdusDTO result = produsService.add(request);
 
         log.info("Product created successfully with id {}", result.getId());
 
@@ -94,10 +115,10 @@ public class ProduseController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('PRODUCATOR')")
-    public ResponseEntity<Produs> updateProdus(@PathVariable Integer id, @RequestBody Produs produs){
+    public ResponseEntity<ProdusDTO> updateProdus(@PathVariable Integer id, @RequestBody UpdateProdusRequest request){
         log.info("Update produs with id {} request received  ", id);
 
-        Produs result = produsService.update(id, produs);
+        ProdusDTO result = produsService.update(id, request);
 
         log.info("Product updated successfully with id {}", id);
 
@@ -107,10 +128,10 @@ public class ProduseController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('PRODUCATOR')")
     public ResponseEntity<Produs> deleteProdus(@PathVariable Integer id){
-        log.info("Delete produs with id {} request received", id);
+        log.info("Delete produs from producator with id {} request received", id);
 
         produsService.delete(id);
-        log.info("Product deleted successfully with id {}", id);
+        log.info("Product deleted from producator successfully with id {}", id);
         return ResponseEntity.noContent().build();
     }
 }

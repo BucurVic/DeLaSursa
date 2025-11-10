@@ -2,6 +2,7 @@ package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import org.example.delasursa.common.exceptions.ResourceNotFoundException;
+import org.example.delasursa.model.ProdusProducator;
 import org.example.delasursa.model.User;
 import org.example.delasursa.repository.ProdusProducatorRepository;
 import org.example.delasursa.repository.UserRepository;
@@ -19,10 +20,15 @@ public class ProductAuthorizationService {
     public void authorizeProdusOwnership(Integer produsId){
         Integer producatorId = getCurrentProducatorId();
 
-        boolean ownsProdus = produsProducatorRepository.existsByProdus_IdAndProducator_Id(produsId, producatorId);
-        if(!ownsProdus){
+        if(!produsProducatorRepository.existsByProdus_IdAndProducator_Id(produsId, producatorId))
             throw new AccessDeniedException("You are not authorized to perform this action");
-        }
+    }
+
+    public ProdusProducator authorizeAndGetProdusOwnership(Integer produsId){
+        Integer producatorId = getCurrentProducatorId();
+
+        return produsProducatorRepository.findByProdus_IdAndProducator_Id(produsId, producatorId)
+                .orElseThrow(() -> new AccessDeniedException("You are not authorized to perform this action"));
     }
 
 
