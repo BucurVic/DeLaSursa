@@ -112,4 +112,30 @@ export const textResources = {
     copyright: "© 2025 DeLaSursă. Toate drepturile rezervate.",
 
   },
+
+  products:{
+      addText:{
+          localProducts:"Produse locale",
+          discoverProducts:"Descoperă produse autentice de la producători verificați",
+      },
+      filters:{
+          category:"Categorie",
+          region:"Regiune",
+          minimumPrice:"Preț minim",
+          maximumPrice:"Preț maxim",
+          rating:"Rating minim",
+          sort:"Sortare",
+      },
+      checks:{
+          available:"Doar disponibile",
+          bio:"Bio/Organic",
+          new:"Produse noi",
+          sale:"Produse la reducere",
+      },
+      noResults :"Nu s-au găsit produse care să corespundă cu filtrul",
+      currency:"RON",
+      rating:"Rating",
+      activeFiltersLabel:"Filtre active:",
+      clearAll:"Resetează filtrele"
+  }
 }as const;
