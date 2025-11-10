@@ -1,23 +1,22 @@
 package org.example.delasursa.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "useri", schema = "public")
-@Data
+@Getter @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@ToString(exclude = {"producator", "role"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     @Column(name = "username", length = Integer.MAX_VALUE)
@@ -30,11 +29,11 @@ public class User {
     private String parola;
 
 
-    @OneToOne(mappedBy = "useri")
-    private Clienti clienti;
+    @OneToOne(mappedBy = "user")
+    private Client client;
 
-    @OneToOne(mappedBy = "useri")
-    private Producatori producatori;
+    @OneToOne(mappedBy = "user")
+    private Producator producator;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -3,13 +3,15 @@ package org.example.delasursa.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "comanda_pachet", schema = "public")
+@Table(name = "subscriptii", schema = "public")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"comanda", "pachet"})
+@ToString(exclude = {"client", "pachet"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ComandaPachet {
+public class Subscriptie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -17,18 +19,21 @@ public class ComandaPachet {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_comanda", nullable = false)
-    private Comanda comanda;
+    @JoinColumn(name = "id_client", nullable = false)
+    private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_pachet", nullable = false)
     private Pachet pachet;
 
-    @Column(name = "cantitate")
-    private Double cantitate;
+    @Column(name = "data_inceput")
+    private LocalDate dataInceput;
 
-    @Column(name = "pret_unitar")
-    private Double pretUnitar;
+    @Column(name = "freceventa")
+    private Integer freceventa;
+
+    @Column(name = "status", length = Integer.MAX_VALUE)
+    private String status;
 
 
 }

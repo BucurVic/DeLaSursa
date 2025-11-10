@@ -52,9 +52,12 @@ public class SecurityConfig {
                 .headers(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/users/**").authenticated()
-                        .requestMatchers(HttpMethod.GET ,"/api/case-files").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/produse/**").authenticated() // logged users
+                        .requestMatchers(HttpMethod.POST, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/produse/**").hasRole("PRODUCATOR")
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())
                 .formLogin(form -> form
