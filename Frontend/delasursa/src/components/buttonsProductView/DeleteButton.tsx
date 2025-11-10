@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { colors } from "../../theme/colors";
+import { colors } from "../../theme/colors.ts";
 import { textResources } from "../../theme/textResources";
 
 interface DeleteButtonProps {

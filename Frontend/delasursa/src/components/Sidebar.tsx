@@ -19,7 +19,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import InsertChartOutlinedOutlinedIcon from '@mui/icons-material/InsertChartOutlinedOutlined';
 
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
 export interface SidebarProps {

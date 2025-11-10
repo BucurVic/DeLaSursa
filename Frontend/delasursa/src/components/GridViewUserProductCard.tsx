@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import { ShoppingCartOutlined } from "@mui/icons-material";
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 
 interface GridViewUserProductCardProps {
     image: string;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
 interface SearchBarProps {
