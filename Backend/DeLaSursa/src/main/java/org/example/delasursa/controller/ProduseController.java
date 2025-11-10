@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.ProdusDTO;
 import org.example.delasursa.model.Produs;
-import org.example.delasursa.service.ProduseService;
+import org.example.delasursa.service.ProdusService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,14 +20,14 @@ import java.util.List;
 @RequestMapping("/api/produse")
 @AllArgsConstructor
 public class ProduseController {
-    private  final ProduseService produseService;
+    private  final ProdusService produsService;
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ProdusDTO>> getAllProduse(){
         log.info("Get all produse request received ");
 
-        List<ProdusDTO> all = produseService.getAll();
+        List<ProdusDTO> all = produsService.getAll();
 
         log.info("Fetched {} produse successfully", all.size());
 
@@ -38,7 +38,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getPopularProduse(@PageableDefault(size = 12) Pageable pageable){
         log.info("Get all popular produse request received ");
 
-        Page<ProdusDTO> page = produseService.getAll(pageable);
+        Page<ProdusDTO> page = produsService.getAll(pageable);
 
         log.info("Fetched {} pages with {} popular produse successfully", page.getTotalPages(),page.getSize());
 
@@ -49,7 +49,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getRecomendedProduse(@PageableDefault(size = 8) Pageable pageable){
         log.info("Get all recomended produse request received ");
 
-        Page<ProdusDTO> page = produseService.getAll(pageable);
+        Page<ProdusDTO> page = produsService.getAll(pageable);
 
         log.info("Fetched {} pages with {} recomended produse successfully", page.getTotalPages(),page.getSize());
 
@@ -60,7 +60,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getRandom(@RequestParam() Integer count){
         log.info("Get random {} produse request received ", count);
 
-        List<ProdusDTO> random = produseService.getRandom(count);
+        List<ProdusDTO> random = produsService.getRandom(count);
 
         log.info("Fetched {} random produse successfully", random.size());
 
@@ -75,7 +75,7 @@ public class ProduseController {
     public ResponseEntity<ProdusDTO> getProdusById(@PathVariable Integer id){
         log.info("Find produs by id {} request received ", id);
 
-        ProdusDTO produs = produseService.getOne(id);
+        ProdusDTO produs = produsService.getOne(id);
         log.info("Fetched produs with id {}", id);
         return ResponseEntity.ok(produs);
     }
@@ -85,7 +85,7 @@ public class ProduseController {
     public ResponseEntity<Produs> addProdus(@RequestBody Produs produs){
         log.info("Add produs request received  {}", produs.getNume());
 
-        Produs result = produseService.add(produs);
+        Produs result = produsService.add(produs);
 
         log.info("Product created successfully with id {}", result.getId());
 
@@ -97,7 +97,7 @@ public class ProduseController {
     public ResponseEntity<Produs> updateProdus(@PathVariable Integer id, @RequestBody Produs produs){
         log.info("Update produs with id {} request received  ", id);
 
-        Produs result = produseService.update(id, produs);
+        Produs result = produsService.update(id, produs);
 
         log.info("Product updated successfully with id {}", id);
 
@@ -109,7 +109,7 @@ public class ProduseController {
     public ResponseEntity<Produs> deleteProdus(@PathVariable Integer id){
         log.info("Delete produs with id {} request received", id);
 
-        produseService.delete(id);
+        produsService.delete(id);
         log.info("Product deleted successfully with id {}", id);
         return ResponseEntity.noContent().build();
     }
