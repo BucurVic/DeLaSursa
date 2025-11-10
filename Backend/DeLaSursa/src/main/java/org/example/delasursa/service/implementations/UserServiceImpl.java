@@ -1,15 +1,14 @@
 package org.example.delasursa.service.implementations;
 
-import org.example.delasursa.service.UseriService;
+import lombok.RequiredArgsConstructor;
+import org.example.delasursa.service.UserService;
 import org.springframework.stereotype.Service;
 import org.example.delasursa.repository.UserRepository;
 
 @Service
-public class UseriServiceImpl implements UseriService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public UseriServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 }

@@ -7,7 +7,7 @@ import org.example.delasursa.common.exceptions.ResourceNotFoundException;
 import org.example.delasursa.common.mappers.ProdusMapper;
 import org.example.delasursa.model.Produs;
 import org.example.delasursa.repository.ProdusProducatorRepository;
-import org.example.delasursa.service.ProduseService;
+import org.example.delasursa.service.ProdusService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProduseServiceImpl implements ProduseService {
+public class ProdusServiceImpl implements ProdusService {
 
     private final ProdusProducatorRepository produsProducatorRepository;
     private final ProdusRepository produsRepository;
