@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { colors } from "../theme/colors.ts";
-import { textResources } from "../theme/textResources";
+import { textResources } from "../theme/textResources.ts";
 
 interface ForgotPasswordPageProps {
     onBack?: () => void;
