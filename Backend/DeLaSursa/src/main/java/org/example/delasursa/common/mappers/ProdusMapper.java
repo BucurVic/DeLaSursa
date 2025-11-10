@@ -19,13 +19,4 @@ public class ProdusMapper {
                 .build();
     }
 
-    public static Produs fromDTO(ProdusDTO dto){
-        if(dto==null) return null;
-
-        Produs produs = new Produs();
-        produs.setId(dto.getId());
-        produs.setNume(dto.getProdusName());
-        produs.setCategorie(dto.getCategorie());
-        return produs;
-    }
 }
