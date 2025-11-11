@@ -27,7 +27,8 @@ export default function HeroSection() {
       sx={{
         backgroundColor: colors.darkGreen1,
         color: colors.white1,
-        py: { xs: 4, md: 8 },
+        width: "100%",
+        padding: "4rem 8rem"
       }}
     >
       <Container maxWidth="lg" >
