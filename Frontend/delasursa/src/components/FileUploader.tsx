@@ -5,6 +5,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { textResources as tr } from '../theme/textResources.ts';
 
 interface FileUploaderBoxProps {
+    id: string;
     fileTypesDisplay?: string;
     accept?: string;
     multiple?: boolean;

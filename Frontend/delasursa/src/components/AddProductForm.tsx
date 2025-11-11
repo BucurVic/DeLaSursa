@@ -6,17 +6,35 @@ import {Button, TextField, Typography} from "@mui/material";
 import Dropdown from "./Dropdown.tsx";
 import FileUploaderBox from "./FileUploader.tsx";
 import {textResources as tr} from "../theme/textResources.ts";
+import {useNotify} from "./NotifyProvider.tsx";
+
+const categoryOptions = [
+    {value: "fructe", label: "Fructe"},
+    {value: "legume", label: "Legume"},
+    {value: "bauturi", label: "Băuturi"},
+];
+
+const unitOptions = [
+    {value: "kg", label: "Kilogram"},
+    {value: "buc", label: "Bucată"},
+    {value: "l", label: "Litru"},
+];
+const initialFormState = {
+    name: "",
+    category: "",
+    unit: "",
+    price: "",
+    stock: "",
+    description: "",
+    images: null as FileList | null,
+};
 
 export default function ProductForm() {
-    const [formData, setFormData] = useState({
-        name: "",
-        category: "",
-        unit: "",
-        price: "",
-        stock: "",
-        region: "",
-        description: "",
-    });
+    const [formData, setFormData] = useState(initialFormState);
+
+
+    const notify = useNotify();
+
 
     const handleChange = (
         event:
@@ -27,31 +45,57 @@ export default function ProductForm() {
     };
 
     const handleFiles = (files: FileList) => {
-        console.log("Selected files:", files);
-    };
+        setFormData(prev => ({
+            ...prev,
+            images: files
+        }));    };
 
-    const categoryOptions = [
-        {value: "fructe", label: "Fructe"},
-        {value: "legume", label: "Legume"},
-        {value: "bauturi", label: "Băuturi"},
-    ];
 
-    const unitOptions = [
-        {value: "kg", label: "Kilogram"},
-        {value: "buc", label: "Bucată"},
-        {value: "l", label: "Litru"},
-    ];
-
-    const regionOptions = [
-        {value: "transilvania", label: "Transilvania"},
-        {value: "moldova", label: "Moldova"},
-        {value: "muntenia", label: "Muntenia"},
-    ];
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form data:", formData);
+
+        try {
+            const form = new FormData();
+            form.append("nume", formData.name);
+            form.append("categorie", formData.category);
+            form.append("unitateMasura", formData.unit);
+            form.append("pret", formData.price);
+            form.append("cantitate", formData.stock);
+            form.append("descriere", formData.description);
+
+            // if (formData.images && formData.images.length > 0) {
+            //     Array.from(formData.images).forEach(file => {
+            //         form.append("imagini", file);
+            //     });
+            // }
+            //
+            // console.log("Trimite formular cu datele:", formData);
+            //
+            // const response = await fetch("http://localhost:8080/api/produse", {
+            //     method: "POST",
+            //     body: form,
+            // });
+            //
+            // if (!response.ok) {
+            //   notify("Eroare la salvarea produsului!", "error");
+            //     return;
+            //
+            // }
+            //
+            // const result = await response.json();
+            // console.log("Produs adăugat:", result);
+            notify("Produs adăugat cu succes!", "success");
+            setFormData(initialFormState);
+
+            const fileInput = document.getElementById("product-files") as HTMLInputElement | null;
+            if (fileInput) fileInput.value = "";
+
+        } catch (err) {
+            console.error(err);
+            notify("A apărut o eroare neprevăzută!", "error");
+        }
     };
+
     return (
         <Box
             component="form"
@@ -131,17 +175,7 @@ export default function ProductForm() {
                         inputProps={{step: "1", min: "0"}}
                     />
                 </Grid>
-                <Grid size={{xs: 12, md: 12}}>
-                    <Dropdown
-                        label={tr.form.region}
-                        value={formData.region}
-                        onChange={handleChange}
-                        options={regionOptions}
-                        name="region"
-                        required
-                        fullWidth
-                    />
-                </Grid>
+
                 <Grid size={{xs: 12, md: 12}}>
                     <TextField
                         fullWidth
@@ -159,6 +193,7 @@ export default function ProductForm() {
                         {tr.form.imagesLabel}
                     </Typography>
                     <FileUploaderBox
+                        id="product-files"
                         fileTypesDisplay="PNG, JPG"
                         accept="image/png, image/jpeg"
                         multiple
@@ -180,6 +215,7 @@ export default function ProductForm() {
                 color={"secondary"}
                 sx={{mt: 3, ml: 3}}
                 type="reset"
+                onClick={() => setFormData(initialFormState)}
             >
                 {tr.form.cancelButton}
             </Button>

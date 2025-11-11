@@ -56,7 +56,7 @@ export default function Sidebar({ collapsed = true, className }: SidebarProps) {
       sx={{
         position: "fixed",
         left: 0,
-        top: { xs: "6rem", sm: "6.5rem", md: "6.5rem" },
+        // top: { xs: "6rem", sm: "6.5rem", md: "6.5rem" },
         height: "calc(100vh - 3.5rem)",
         width: isCollapsed ? widthCollapsed : widthExpanded,
         bgcolor: colors.darkGreen1,

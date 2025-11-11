@@ -24,6 +24,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/teamdb
       DB_USER: postgres
       DB_PASS: yourpassword
+      JWT_SECRET_KEY: superlongsecretforsupersecureapplication32bytes
     ports:
       - "8080:8080"
 

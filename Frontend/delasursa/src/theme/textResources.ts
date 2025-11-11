@@ -81,6 +81,13 @@ export const textResources = {
     logout: "Deconectare",
   },
 
+  hero: {
+    title: "Produse organice proaspete, direct de la sursă",
+    subtitle: "Descoperă cele mai bune produse locale de la producători verificați. Sustennabilitate, calitate și prospețime în fiecare comandă.",
+    ctaPrimary: "Descoperă produse",
+    ctaSecondary: "Devino producător",
+    searchPlaceholder: "Caută produse, categorii sau producători...",
+  },
   // sidebar texts (producator only)
   sidebar: {
     dashboard: "Dashboard",
@@ -137,5 +144,16 @@ export const textResources = {
       rating:"Rating",
       activeFiltersLabel:"Filtre active:",
       clearAll:"Resetează filtrele"
-  }
+  },
+    producerPage: {
+        title: "Produsele mele",
+        subtitle: "Gestionează produsele tale, stocul și promoțiile",
+
+        tabs: {
+            list: "Listă produse",
+            add: "Adaugă produs",
+            inventory: "Stoc / Inventar",
+            promotions: "Promoții & Campanii",
+        },
+    },
 }as const;

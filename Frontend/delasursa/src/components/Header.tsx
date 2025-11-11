@@ -33,12 +33,12 @@ export interface Props {
 }
 
 const Header: React.FC<Props> = ({ variant = "full", className }) => {
-  
+
   // --- CONECTAT LA AUTHCONTEXT (TASK 3) ---
   // Am scos variabilele false și le folosim pe cele reale
   const { isAuthenticated, role, logout } = useAuth();
   const navigate = useNavigate(); // Hook pentru navigare
-  
+
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -133,7 +133,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
           }}
         >
           {/* left side (Logo) */}
-          <Box 
+          <Box
             sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0, cursor: 'pointer' }}
             onClick={() => navigateTo('/')} // Logo-ul duce la Home
           >
@@ -175,9 +175,12 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     minWidth: "auto",
                     opacity: 0.9,
                     typography: btnTypography,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
                   }}
-                  // Aici poți adăuga navigare și pentru item-urile principale
-                  // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
+                // Aici poți adăuga navigare și pentru item-urile principale
+                // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
                 >
                   {item}
                 </Button>
@@ -194,7 +197,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                 {/* --- CAZUL CÂND EȘTI DELOGAT --- */}
                 {!isAuthenticated ? (
                   <>
-                    <Button 
+                    <Button
                       sx={{ color: colors.white2, typography: btnTypography }}
                       onClick={() => navigateTo('/login')} // Navigare Login
                     >
