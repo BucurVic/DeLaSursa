@@ -6,20 +6,23 @@ import './App.css';
 import MainLayout from './components/MainLayout'; // Layout-ul cu Header/Sidebar/Footer
 import ProtectedRoute from './components/ProtectedRoute'; // Paznicul de rută
 import ProductsPage from "./pages/ProductsPage.tsx";
-
+import ProducerProductsPage from "./pages/ProducerPage.tsx";
+import ProductForm from "./components/AddProductForm.tsx";
+import ProducerLayout from "./components/ProducerLayout.tsx";
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
 // Noi am recreat aceste fișiere mai devreme
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ProducerPage from "./pages/ProducerPage";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
-const ProducerDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Producător (Protejat)</div>;
+// const ProducerDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Producător (Protejat)</div>;
 const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
 const HomePage = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Pagina Principală (Publică)</div>;
-
+const ProductList = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Lista de Produse (Protejat)</div>;
 
 function App() {
   return (
@@ -43,17 +46,29 @@ function App() {
 
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
-      <Route
-        element={
-          <ProtectedRoute allowedRoles={["PRODUCER", "ADMIN"]} />
-        }
-      >
-        <Route element={<MainLayout />}>
-          {/* Doar Producerii și Adminii pot vedea asta */}
-          <Route path="/dashboard-producator" element={<ProducerDashboard />} />
-          {/* Aici vei adăuga /produsele-mele, /comenzi, etc. */}
+        <Route
+        //     element={<ProtectedRoute
+        //     allowedRoles={["PRODUCER"]}
+        // />}
+        >
+            <Route element={<ProducerLayout />}>
+
+                {/* redirect automat către lista produselor */}
+                <Route
+                    path="/dashboard-producator"
+                    element={<Navigate to="/dashboard-producator/produse/lista" />}
+                />
+
+                {/* pagina cu tab-uri */}
+                <Route path="/dashboard-producator/produse" element={<ProducerProductsPage />}>
+                    <Route path="lista" element={<ProductList />} />
+                    <Route path="adauga" element={<ProductForm />} />
+                    {/* <Route path="inventar" element={<InventoryPage />} /> */}
+                    {/* <Route path="promotii" element={<PromotionsPage />} /> */}
+                </Route>
+
+            </Route>
         </Route>
-      </Route>
 
       <Route
         element={
