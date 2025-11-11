@@ -20,7 +20,10 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom"; // <-- IMPORTAT PENTRU NAVIGARE
 
+// --- IMPORTURI PENTRU AUTENTIFICARE ---
+import { useAuth } from "../context/AuthContext"; // <-- IMPORT PENTRU STATE GLOBAL
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 
@@ -30,10 +33,11 @@ export interface Props {
 }
 
 const Header: React.FC<Props> = ({ variant = "full", className }) => {
-  // temporar, va fi gestionat in AuthContext, pentru testare:
-  // (isAuthenticated, role) : ("false", orice) | ("true", orice) | ("true", "producer") | ("true", "admin")
-  var isAuthenticated = false;
-  var role = "";
+  
+  // --- CONECTAT LA AUTHCONTEXT (TASK 3) ---
+  // Am scos variabilele false și le folosim pe cele reale
+  const { isAuthenticated, role, logout } = useAuth();
+  const navigate = useNavigate(); // Hook pentru navigare
   
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
@@ -67,10 +71,12 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     textResources.navbar.mySubscriptions,
   ];
 
-  const showPanelButton = role === "producer" || role === "admin";
+  // Acum 'role' vine din contextul global!
+  const showPanelButton = role === "PRODUCER" || role === "ADMIN";
   const panelLabel =
-    role === "producer" ? textResources.navbar.producerPanel : textResources.navbar.adminPanel;
+    role === "PRODUCER" ? textResources.navbar.producerPanel : textResources.navbar.adminPanel;
 
+  // ... (restul variabilelor de stil)
   const logoSizeXs = "2.125rem";
   const logoSizeSm = "2.5rem";
   const toolbarPy: any = variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
@@ -89,6 +95,17 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
 
   const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) => setProfileAnchor(e.currentTarget);
   const handleProfileClose = () => setProfileAnchor(null);
+
+  // --- FUNCȚII DE NAVIGARE ȘI LOGOUT (TASK 3 & 6) ---
+  const handleLogout = () => {
+    handleProfileClose(); // Închide meniul
+    logout(); // Șterge token-ul din context și navighează (conform AuthContext)
+  };
+
+  const navigateTo = (path: string) => {
+    handleDrawerClose();
+    navigate(path);
+  };
 
   return (
     <AppBar
@@ -116,7 +133,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
           }}
         >
           {/* left side (Logo) */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0 }}>
+          <Box 
+            sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0, cursor: 'pointer' }}
+            onClick={() => navigateTo('/')} // Logo-ul duce la Home
+          >
             <Box
               component="span"
               sx={{
@@ -156,6 +176,8 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     opacity: 0.9,
                     typography: btnTypography,
                   }}
+                  // Aici poți adăuga navigare și pentru item-urile principale
+                  // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
                 >
                   {item}
                 </Button>
@@ -165,13 +187,17 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             <Box sx={{ flex: 1 }} />
           )}
 
-          {/* right side */}
+          {/* right side (LOGICĂ ACTUALIZATĂ) */}
           <Box sx={{ display: "flex", gap: smallGap, alignItems: "center" }}>
             {isMdUp ? (
               <>
+                {/* --- CAZUL CÂND EȘTI DELOGAT --- */}
                 {!isAuthenticated ? (
                   <>
-                    <Button sx={{ color: colors.white2, typography: btnTypography }}>
+                    <Button 
+                      sx={{ color: colors.white2, typography: btnTypography }}
+                      onClick={() => navigateTo('/login')} // Navigare Login
+                    >
                       {textResources.navbar.login}
                     </Button>
 
@@ -181,11 +207,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         bgcolor: colors.lightGreen2,
                         color: colors.darkGreen1,
                       }}
+                      onClick={() => navigateTo('/inregistrare')} // Navigare Înregistrare
                     >
                       {textResources.navbar.register}
                     </Button>
                   </>
                 ) : (
+                  // --- CAZUL CÂND EȘTI LOGAT ---
                   <>
                     {showPanelButton && (
                       <Button
@@ -197,6 +225,8 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           ml: "0.5rem",
                           typography: btnTypography,
                         }}
+                        // Navigare către dashboard-ul corect
+                        onClick={() => navigateTo(role === "PRODUCER" ? '/dashboard-producator' : '/admin')}
                       >
                         {panelLabel}
                       </Button>
@@ -258,7 +288,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           pt: 2,
                           mt: 1,
                         }}
-                        onClick={handleProfileClose}
+                        onClick={handleLogout} // <-- APELARE LOGOUT
                       >
                         {textResources.navbar.logout}
                       </MenuItem>
@@ -268,6 +298,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
               </>
             ) : (
               <>
+                {/* --- Meniul Mobil (Drawer) --- */}
                 <IconButton
                   edge="end"
                   color="inherit"
@@ -357,7 +388,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                               <Button
                                 variant="contained"
                                 fullWidth
-                                onClick={handleDrawerClose}
+                                onClick={() => navigateTo(role === "PRODUCER" ? '/dashboard-producator' : '/admin')}
                                 sx={{
                                   textTransform: "none",
                                   bgcolor: colors.lightGreen2,
@@ -383,6 +414,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         }}
                       />
 
+                      {/* --- LOGICA PENTRU MOBIL (ACTUALIZATĂ) --- */}
                       {!isAuthenticated ? (
                         <Box
                           sx={{
@@ -394,7 +426,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           }}
                         >
                           <Button
-                            onClick={handleDrawerClose}
+                            onClick={() => navigateTo('/login')}
                             fullWidth
                             sx={{
                               textTransform: "none",
@@ -408,7 +440,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           </Button>
 
                           <Button
-                            onClick={handleDrawerClose}
+                            onClick={() => navigateTo('/inregistrare')}
                             variant="contained"
                             fullWidth
                             sx={{
@@ -459,9 +491,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           />
 
                           <Button
-                            onClick={() => {
-                              handleDrawerClose();
-                            }}
+                            onClick={handleLogout} // <-- APELARE LOGOUT MOBIL
                             variant="contained"
                             fullWidth
                             sx={{
