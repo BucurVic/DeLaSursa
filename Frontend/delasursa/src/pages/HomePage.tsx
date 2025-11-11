@@ -1,5 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
+import HeroSection from "../sections/homepage/HeroSection.tsx";
 import PopularProductsSection from "../sections/homepage/PopularProductsSection.tsx";
 import { colors } from "../theme/colors.ts";
 
@@ -179,6 +181,9 @@ const HomePage: React.FC = () => {
             }}
         >
 
+            {/* hero section */}
+            <HeroSection />
+        
             {/* popular products section */}
             <PopularProductsSection
                 products={mockProducts}
