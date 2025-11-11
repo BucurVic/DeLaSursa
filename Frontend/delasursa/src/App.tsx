@@ -17,6 +17,7 @@ import InventoryPage from "./pages/InventoryPage.tsx";
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import HomePage from './pages/HomePage';
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -24,6 +25,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
 const HomePage = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Pagina Principală (Publică)</div>;
 const ProductList = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Lista de Produse (Protejat)</div>;
+
 
 function App() {
   return (

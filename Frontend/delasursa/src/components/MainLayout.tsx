@@ -6,7 +6,7 @@ import Header from './Header';
 // import Sidebar from './Sidebar';
 import Footer from './Footer';
 
-const WIDTH_COLLAPSED = "5rem"; // 80px
+const WIDTH_COLLAPSED = "0rem";
 
 const MainLayout: React.FC = () => {
   // const [sidebarCollapsed] = useState(true);

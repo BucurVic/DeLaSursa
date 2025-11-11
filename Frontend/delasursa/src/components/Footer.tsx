@@ -32,7 +32,7 @@ export default function Footer() {
                     container
                     spacing={0}
                     sx={{
-                        gap: { xs: "5rem", sm: "5rem", md: "9rem" },
+                        gap: { xs: "5rem", sm: "5rem", md: "7rem" },
                         alignItems: "flex-start",
                     }}
                 >

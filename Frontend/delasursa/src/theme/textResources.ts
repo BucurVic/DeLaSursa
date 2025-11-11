@@ -81,6 +81,13 @@ export const textResources = {
     logout: "Deconectare",
   },
 
+  hero: {
+    title: "Produse organice proaspete, direct de la sursă",
+    subtitle: "Descoperă cele mai bune produse locale de la producători verificați. Sustennabilitate, calitate și prospețime în fiecare comandă.",
+    ctaPrimary: "Descoperă produse",
+    ctaSecondary: "Devino producător",
+    searchPlaceholder: "Caută produse, categorii sau producători...",
+  },
   // sidebar texts (producator only)
   sidebar: {
     dashboard: "Dashboard",

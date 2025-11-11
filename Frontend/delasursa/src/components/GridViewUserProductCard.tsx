@@ -42,7 +42,7 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
         <Card
             sx={{
                 height: "24rem",
-                width: "13rem",
+                width: "12rem",
                 backgroundColor: colors.darkGreen1,
                 color: colors.white1,
                 borderRadius: "0.8rem",
