@@ -1,5 +1,3 @@
-import Header from "../components/Header.tsx";
-import Footer from "../components/Footer.tsx";
 import Typography from "@mui/material/Typography";
 import { textResources } from "../theme";
 import SearchBarProducts from "../components/SearchBarProducts.tsx";
@@ -288,7 +286,6 @@ export default function ProductsPage() {
 
     return (
         <>
-            <Header/>
             <Typography variant="h2" align="center" pt={5} pb={2}>
                 {textResources.products.addText.localProducts}
             </Typography>
@@ -505,7 +502,6 @@ export default function ProductsPage() {
             {/*    </Grid>*/}
             {/*</Box>*/}
 
-            <Footer/>
         </>
     );
 }
