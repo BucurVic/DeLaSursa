@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import HeroSection from "../sections/homepage/HeroSection.tsx";
 import PopularProductsSection from "../sections/homepage/PopularProductsSection.tsx";
@@ -176,14 +175,13 @@ const HomePage: React.FC = () => {
                 backgroundColor: colors.darkGreen1,
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                padding: "2rem"
+                alignItems: "center"
             }}
         >
 
             {/* hero section */}
             <HeroSection />
-        
+
             {/* popular products section */}
             <PopularProductsSection
                 products={mockProducts}

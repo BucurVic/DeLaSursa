@@ -6,7 +6,6 @@ import './App.css';
 import MainLayout from './components/MainLayout'; // Layout-ul cu Header/Sidebar/Footer
 import ProtectedRoute from './components/ProtectedRoute'; // Paznicul de rută
 import ProductsPage from "./pages/ProductsPage.tsx";
-import HomePage from './pages/HomePage';
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)

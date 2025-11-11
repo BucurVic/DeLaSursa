@@ -46,7 +46,10 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "3rem"
+                gap: "3rem",
+                backgroundColor: colors.darkGreen2,
+                width: "100%",
+                padding: "4rem 8rem"
             }}
         >
             {/* title and subtitle */}
@@ -83,7 +86,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                 sx={{
                     display: "grid",
                     gridTemplateColumns: {
-                        xs: "repeat(1, 1fr)",
+                        xs: "repeat(2, 1fr)",
                         sm: "repeat(2, 1fr)",
                         md: "repeat(3, 1fr)",
                         lg: "repeat(4, 1fr)",
