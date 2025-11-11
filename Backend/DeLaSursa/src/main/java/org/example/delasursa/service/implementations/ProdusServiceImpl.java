@@ -73,18 +73,31 @@ public class ProdusServiceImpl implements ProdusService {
         try{
             User user = userRepository.findByUsername(
                     SecurityContextHolder.getContext().getAuthentication().getName()
-            ).orElseThrow(() -> new ResourceNotFoundException("User not foudn!"));
+            ).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
             Producator producator = user.getProducator();
 
-            Produs produs = new Produs();
-            produs.setNume(request.getNume());
-            produs.setCategorie(request.getCategorie());
-            Produs savedProdus = produsRepository.save(produs);
+            Produs produs = produsRepository.findByNumeAndCategorie(request.getNume(), request.getCategorie()).orElseGet(
+                    () -> {
+                        Produs newProdus = new Produs();
+                        newProdus.setNume(request.getNume());
+                        newProdus.setCategorie(request.getCategorie());
+                        return produsRepository.save(newProdus);
+                    }
+            );
+
+            boolean alreadyLinked = produsProducatorRepository.existsByProdus_IdAndProducator_Id(produs.getId(),produs.getId());
+
+            if (alreadyLinked) {
+                throw new OperationFailedException("Producer already sells this product");
+            }
+
+            String imagine = ImageStoreService.saveImage(request.getImagine(),producator.getId());
 
             ProdusProducator join = ProdusProducator.builder()
-                    .produs(savedProdus)
+                    .produs(produs)
                     .producator(producator)
+                    .imagine(imagine)
                     .pret(request.getPret())
                     .unitateMasura(request.getUnitateMasura())
                     .cantitate(request.getCantitate())
@@ -109,6 +122,15 @@ public class ProdusServiceImpl implements ProdusService {
             produsProducator.setUnitateMasura(request.getUnitateMasura());
             produsProducator.setCantitate(request.getCantiate());
 
+            if(request.getImagine() != null && !request.getImagine().isEmpty()){
+                String newImagine = ImageStoreService.replaceImage(
+                        request.getImagine(),
+                        produsProducator.getImagine(),
+                        produsProducator.getId()
+                );
+                produsProducator.setImagine(newImagine);
+            }
+
             ProdusProducator updated = produsProducatorRepository.save(produsProducator);
 
             return ProdusMapper.toDTO(updated);
@@ -123,6 +145,7 @@ public class ProdusServiceImpl implements ProdusService {
 
         try{
             ProdusProducator produsProducator = productAuthorizationService.authorizeAndGetProdusOwnership(id);
+            ImageStoreService.deleteImage(produsProducator.getImagine());
             produsProducatorRepository.deleteByProdus_IdAndProducator_Id(produsProducator.getProdus().getId(),
                     produsProducator.getProducator().getId());
         } catch (Exception e){

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -101,9 +102,9 @@ public class ProduseController {
         return ResponseEntity.ok(produs);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('PRODUCATOR')")
-    public ResponseEntity<ProdusDTO> addProdus(@RequestBody CreateProdusRequest request){
+    public ResponseEntity<ProdusDTO> addProdus(@ModelAttribute CreateProdusRequest request){
         log.info("Add produs request received  {}", request.getNume());
 
         ProdusDTO result = produsService.add(request);
@@ -113,9 +114,12 @@ public class ProduseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('PRODUCATOR')")
-    public ResponseEntity<ProdusDTO> updateProdus(@PathVariable Integer id, @RequestBody UpdateProdusRequest request){
+    public ResponseEntity<ProdusDTO> updateProdus(
+            @PathVariable Integer id,
+            @ModelAttribute UpdateProdusRequest request
+    ){
         log.info("Update produs with id {} request received  ", id);
 
         ProdusDTO result = produsService.update(id, request);

@@ -2,6 +2,7 @@ package org.example.delasursa.common.exceptions.handler;
 
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.exceptions.ImageStorageException;
 import org.example.delasursa.common.exceptions.OperationFailedException;
 import org.example.delasursa.common.exceptions.ResourceNotFoundException;
 import org.example.delasursa.common.exceptions.UserException;
@@ -76,5 +77,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleOperationFailedException(OperationFailedException e) {
         log.error("Unexpected error occurred", e);
         return ResponseEntity.status(500).body("Operation failed: " + e.getMessage());
+    }
+
+    @ExceptionHandler(ImageStorageException.class)
+    public ResponseEntity<String> handleImageStorageException(ImageStorageException e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(500).body("Image storage error: " + e.getMessage());
     }
 }
