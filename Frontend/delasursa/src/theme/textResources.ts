@@ -144,5 +144,16 @@ export const textResources = {
       rating:"Rating",
       activeFiltersLabel:"Filtre active:",
       clearAll:"Resetează filtrele"
-  }
+  },
+    producerPage: {
+        title: "Produsele mele",
+        subtitle: "Gestionează produsele tale, stocul și promoțiile",
+
+        tabs: {
+            list: "Listă produse",
+            add: "Adaugă produs",
+            inventory: "Stoc / Inventar",
+            promotions: "Promoții & Campanii",
+        },
+    },
 }as const;
