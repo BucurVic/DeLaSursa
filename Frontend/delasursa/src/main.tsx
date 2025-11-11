@@ -12,7 +12,7 @@ import { NotifyProvider } from "./components/NotifyProvider.tsx";
 
 import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
-import './index.css'; 
+import './index.css';
 
 document.fonts.load('1rem "Manrope"').then(() => {
     createRoot(document.getElementById("root")!).render(
@@ -26,7 +26,7 @@ document.fonts.load('1rem "Manrope"').then(() => {
                                 <App />
                             </AuthProvider>
                         </BrowserRouter>
-                        
+
                     </ThemeProvider>
                 </StyledEngineProvider>
             </NotifyProvider>

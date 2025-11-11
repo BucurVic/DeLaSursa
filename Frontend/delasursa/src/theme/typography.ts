@@ -37,7 +37,7 @@ export const typography: ThemeOptions['typography'] = {
     },
     h6: {
         fontFamily: 'Manrope',
-        fontWeight: 600,
+        fontWeight: 400,
         fontSize: '0.875rem', // 14px
         lineHeight: 1.4,
         letterSpacing: '0.02em',

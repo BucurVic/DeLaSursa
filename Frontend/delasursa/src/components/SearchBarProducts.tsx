@@ -3,6 +3,7 @@ import { Box, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
+import {useTheme} from "@mui/material/styles";
 
 interface SearchBarProps {
     placeholder?: string;
@@ -15,30 +16,31 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                                  value,
                                                  onChange,
                                              }) => {
+    const theme=useTheme();
+
     return (
         <Box
             sx={{
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
-                backgroundColor: colors.darkGreen2,
+                backgroundColor: theme.palette.background.default,
                 border: `1px solid ${colors.lightGreen1Transparent}`,
                 borderRadius: "15px",
                 px: 2,
                 py: 1.5,
 
-                width: 450,
-                flex: "0 0 600px",
+                width: '70rem',
                 boxSizing: "border-box",
 
                 transition: "border-color 0.2s ease",
-                "&:hover": { borderColor: colors.lightGreen1 },
-                "&:focus-within": { borderColor: colors.lightGreen1 },
+                "&:hover": { borderColor: theme.palette.primary.light },
+                "&:focus-within": { borderColor: theme.palette.primary.light },
             }}
         >
             <SearchIcon
                 sx={{
-                    color: colors.white2,
+                    color: theme.palette.text.secondary,
                     fontSize: "1.5rem",
                 }}
             />
@@ -48,10 +50,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 placeholder={placeholder}
                 sx={{
                     flex: 1,
-                    color: colors.white1,
+                    color: theme.palette.text.primary,
                     fontFamily: '"Manrope", sans-serif',
                     "& input::placeholder": {
-                        color: colors.white2,
+                        color: theme.palette.text.secondary,
                         opacity: 1,
                     },
                 }}

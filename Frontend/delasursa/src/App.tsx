@@ -1,15 +1,16 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import './App.css'; 
+import './App.css';
 
 // --- Componentele de Layout și Securitate ---
 import MainLayout from './components/MainLayout'; // Layout-ul cu Header/Sidebar/Footer
 import ProtectedRoute from './components/ProtectedRoute'; // Paznicul de rută
+import ProductsPage from "./pages/ProductsPage.tsx";
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
 // Noi am recreat aceste fișiere mai devreme
-import SignUpPage from './pages/SignUpPage'; 
+import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 
@@ -28,12 +29,13 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/inregistrare" element={<SignUpPage />} />
       <Route path="/resetare-parola" element={<ResetPasswordPage />} />
-      
-      
+
+
       {/* --- Rute Publice (Cu Layout) --- */}
       {/* Paginile pe care oricine le vede, dar care au Header/Footer/Sidebar */}
       {/* Folosim MainLayout pentru a înveli pagina Home */}
       <Route element={<MainLayout />}>
+        <Route path="/products" element={<ProductsPage />} />
         <Route path="/" element={<HomePage />} />
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
@@ -41,7 +43,7 @@ function App() {
 
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
-      <Route 
+      <Route
         element={
           <ProtectedRoute allowedRoles={["PRODUCER", "ADMIN"]} />
         }
@@ -53,7 +55,7 @@ function App() {
         </Route>
       </Route>
 
-      <Route 
+      <Route
         element={
           <ProtectedRoute allowedRoles={["ADMIN"]} />
         }
@@ -66,7 +68,7 @@ function App() {
 
       {/* --- Orice alt URL care nu se potrivește --- */}
       <Route path="*" element={<Navigate to="/" />} />
-      
+
     </Routes>
   );
 }
