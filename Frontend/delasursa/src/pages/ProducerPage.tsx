@@ -27,7 +27,6 @@ export default function ProducerPage() {
             <h1 style={{color: "white"}}>Produsele mele</h1>
             <p style={{color: "lightgreen"}}>Gestionează produsele tale, stocul și promoțiile</p>
 
-            {/* ✅ Mobile = Select Dropdown */}
             {isMobile ? (
                 <Select
                     value={routes[value] ?? "lista"}
@@ -47,7 +46,6 @@ export default function ProducerPage() {
                     <MenuItem value="promotii">Promoții & Campanii</MenuItem>
                 </Select>
             ) : (
-                /* ✅ Desktop = Tabs */
                 <Tabs
                     value={value}
                     onChange={handleChange}
