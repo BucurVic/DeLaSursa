@@ -9,13 +9,14 @@ import ProductsPage from "./pages/ProductsPage.tsx";
 import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
 import ProducerLayout from "./components/ProducerLayout.tsx";
+import InventoryPage from "./pages/InventoryPage.tsx";
+
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
 // Noi am recreat aceste fișiere mai devreme
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import ProducerPage from "./pages/ProducerPage";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -63,7 +64,7 @@ function App() {
                 <Route path="/dashboard-producator/produse" element={<ProducerProductsPage />}>
                     <Route path="lista" element={<ProductList />} />
                     <Route path="adauga" element={<ProductForm />} />
-                    {/* <Route path="inventar" element={<InventoryPage />} /> */}
+                     <Route path="inventar" element={<InventoryPage />} />
                     {/* <Route path="promotii" element={<PromotionsPage />} /> */}
                 </Route>
 

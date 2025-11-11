@@ -6,17 +6,13 @@ import { Outlet } from "react-router-dom";
 export default function ProducerLayout() {
     return (
         <Box sx={{ minHeight: "100vh"}}>
-
-            <Header  />
+            <Header />
 
             <Box sx={{ display: "flex" }}>
-
-                {/* Sidebar producător */}
                 <Box sx={{ width: 240, flexShrink: 0 }}>
                     <SidebarProducer />
                 </Box>
 
-                {/* Conținut dashboard */}
                 <Box sx={{ flexGrow: 1, padding: "2rem" }}>
                     <Outlet />
                 </Box>

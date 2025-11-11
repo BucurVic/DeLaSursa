@@ -48,7 +48,9 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
                 fullWidth={fullWidth}
                 error={error}
                 required={required}
-                sx={{backgroundColor:theme.palette.background.default}}
+                sx={{backgroundColor:theme.palette.background.default,
+borderRadius:2,
+            }}
             >
                 <InputLabel>{label}</InputLabel>
 
