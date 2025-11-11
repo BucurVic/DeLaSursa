@@ -13,12 +13,12 @@ import ProductsPage from "./pages/ProductsPage.tsx";
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import HomePage from './pages/HomePage';
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
 const ProducerDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Producător (Protejat)</div>;
 const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
-const HomePage = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Pagina Principală (Publică)</div>;
 
 
 function App() {
