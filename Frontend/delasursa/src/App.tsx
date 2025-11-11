@@ -6,6 +6,7 @@ import './App.css';
 import MainLayout from './components/MainLayout'; // Layout-ul cu Header/Sidebar/Footer
 import ProtectedRoute from './components/ProtectedRoute'; // Paznicul de rută
 import ProductsPage from "./pages/ProductsPage.tsx";
+import HomePage from './pages/HomePage';
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
@@ -18,7 +19,6 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 // Acestea vor fi paginile reale ale aplicației tale
 const ProducerDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Producător (Protejat)</div>;
 const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
-const HomePage = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Pagina Principală (Publică)</div>;
 
 
 function App() {
