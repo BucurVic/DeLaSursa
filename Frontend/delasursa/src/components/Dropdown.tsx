@@ -48,7 +48,14 @@ const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
                 fullWidth={fullWidth}
                 error={error}
                 required={required}
-                sx={{backgroundColor:theme.palette.background.default}}
+                //sx={{backgroundColor:theme.palette.background.default}}
+                sx={{
+                    backgroundColor: theme.palette.background.default,
+                    borderRadius: "15px",
+                    "& .MuiOutlinedInput-root": {
+                        borderRadius: "15px",
+                    },
+                }}
             >
                 <InputLabel>{label}</InputLabel>
 
