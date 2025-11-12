@@ -4,7 +4,8 @@ import Divider from "@mui/material/Divider";
 import { FacebookOutlined, Instagram, LinkedIn } from "@mui/icons-material";
 
 import { colors } from "../theme/colors.ts";
-import { textResources } from "../theme/textResources";
+import { textResources } from "../theme/textResources.ts";
+import logoSrc from '../assets/logo.png'; // Asigură-te că ai salvat logo.png în src/assets/
 
 export default function Footer() {
     const { footer } = textResources;
@@ -19,7 +20,6 @@ export default function Footer() {
                 pt: "4rem",
                 pb: "2rem",
                 borderTop: `1px solid ${colors.lightGreen1Transparent}`,
-            
             }}
         >
             <Container
@@ -30,15 +30,18 @@ export default function Footer() {
             >
                 <Grid
                     container
-                    spacing={0}
+                    // Am eliminat 'spacing' și 'gap' pentru a folosi 'justifyContent'
                     sx={{
-                        gap: { xs: "5rem", sm: "5rem", md: "7rem" },
                         alignItems: "flex-start",
+                        // --- MODIFICAREA CHEIE ---
+                        // Distribuie coloanele pe toată lățimea
+                        justifyContent: "space-between" 
                     }}
                 >
 
-                    {/* Categorii */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    {/* === COLOANA 1: Categorii === */}
+                    {/* Am scos 'sm' și 'md' pentru a lăsa 'justifyContent' să decidă spațierea */}
+                    <Grid > 
                         <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: colors.lightGreen1, mb: "1.25rem" }}>
                             {footer.columns.categoriesTitle}
                         </Typography>
@@ -56,8 +59,8 @@ export default function Footer() {
                         </Stack>
                     </Grid>
 
-                    {/* Companie */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    {/* === COLOANA 2: DeLaSursă === */}
+                    <Grid > 
                         <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: colors.lightGreen1, mb: "1.25rem" }}>
                             {footer.columns.companyTitle}
                         </Typography>
@@ -75,8 +78,8 @@ export default function Footer() {
                         </Stack>
                     </Grid>
 
-                    {/* Suport */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    {/* === COLOANA 3: Suport === */}
+                    <Grid > 
                         <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: colors.lightGreen1, mb: "1.25rem" }}>
                             {footer.columns.supportTitle}
                         </Typography>
@@ -94,12 +97,25 @@ export default function Footer() {
                         </Stack>
                     </Grid>
 
-                    {/* Social / Brand */}
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: colors.lightGreen1, mb: "1.25rem" }}>
-                            {footer.columns.followTitle}
-                        </Typography>
+                    {/* === COLOANA 4: Urmărește-ne! === */}
+                    <Grid > 
+                        {/* Cutie Flex pentru a alinia logo-ul și titlul */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: "1.25rem" }}>
+                            <Box
+                              component="img"
+                              src={logoSrc}
+                              alt="DeLaSursa Logo"
+                              sx={{ 
+                                width: 32, 
+                                height: 32, 
+                              }}
+                            />
+                            <Typography sx={{ fontSize: "1rem", fontWeight: 600, color: colors.lightGreen1 }}>
+                                {footer.columns.followTitle}
+                            </Typography>
+                        </Box>
 
+                        {/* Iconițele Social Media */}
                         <Stack direction="row" sx={{ gap: "0.75rem", mb: "1.25rem", flexWrap: "wrap" }}>
                             {[FacebookOutlined, Instagram, LinkedIn].map((Icon, i) => (
                                 <IconButton
@@ -119,15 +135,14 @@ export default function Footer() {
                             ))}
                         </Stack>
 
+                        {/* Textul slogan */}
                         <Typography sx={{ fontSize: "0.9rem", fontWeight: 400, color: colors.white2, mb: "1rem" }}>
-                            {footer.columns.followShort}
+                            {footer.columns.followShort} 
                         </Typography>
                     </Grid>
-
                 </Grid>
 
                 <Divider sx={{ borderColor: `${colors.lightGreen1Transparent}`, my: "2rem" }} />
-
                 <Typography sx={{ textAlign: "center", fontSize: "0.8rem", color: colors.white2 }}>
                     {footer.copyright}
                 </Typography>

@@ -1,23 +1,20 @@
 import React from 'react';
-
-// Importuri MUI
 import { Box, TextField, Button, Link, IconButton, Typography } from '@mui/material';
-
-// Importuri Iconițe MUI
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import HandshakeIcon from '@mui/icons-material/Handshake'; // Ca placeholder pentru logo
+
+// --- 1. Importăm noul logo ---
+import logoSrc from '../assets/logo.png'; 
 
 // Componenta principală a paginii de resetare
 function ResetPasswordPage() {
 
-  // Stilurile sunt identice cu cele de la SignUp
   const textFieldStyles = {
     '& .MuiInput-root': {
-      backgroundColor: '#13271E', // darkGreen1
+      backgroundColor: '#13271E', 
       color: '#F2F2F2',
       padding: '8px 12px',
       borderRadius: '8px',
-      border: '2px solid rgba(95, 238, 149, 0.3)', // lightGreen1Transparent
+      border: '2px solid rgba(95, 238, 149, 0.3)', 
       marginTop: '8px', 
       transition: 'border-color 0.2s ease-in-out', 
       
@@ -25,10 +22,10 @@ function ResetPasswordPage() {
         display: 'none',
       },
       '&:hover:not(.Mui-focused)': { 
-        borderColor: '#5FEE95 !important', // lightGreen1
+        borderColor: '#5FEE95 !important', 
       },
       '&.Mui-focused': {
-        borderColor: '#5FEE95', // lightGreen1
+        borderColor: '#5FEE95', 
       },
     },
     '& .MuiInputBase-input': {
@@ -58,20 +55,17 @@ function ResetPasswordPage() {
         fontFamily: 'Manrope, sans-serif',
       }}
     >
-      
-      {/* Cardul de resetare -- LĂȚIME ȘI ÎNĂLȚIME MODIFICATĂ */}
       <Box 
         sx={{
-          bgcolor: '#13271E', // darkGreen1
+          bgcolor: '#13271E', 
           p: { xs: 3, md: 4 },
-          // Mărim padding-ul vertical (sus/jos) pentru a face cardul mai înalt
           pt: 6, 
           pb: 6, 
           borderRadius: '12px',
           boxShadow: 24,
-          maxWidth: '420px', // --- SCHIMBAT LA 420px ---
+          maxWidth: '420px', 
           width: '100%',
-          color: '#F2F2F2', // white1
+          color: '#F2F2F2', 
           position: 'relative',
         }}
       >
@@ -82,7 +76,14 @@ function ResetPasswordPage() {
 
         {/* Secțiunea de antet (Logo, Titlu) */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <HandshakeIcon sx={{ fontSize: 50, color: '#5FEE95' }} /> 
+
+          {/* --- 2. Am înlocuit HandshakeIcon cu logo-ul tău --- */}
+          <Box
+            component="img"
+            src={logoSrc}
+            alt="DeLaSursa Logo"
+            sx={{ width: 50, height: 50 }}
+          />
           
           <Typography component="h1" sx={{ fontSize: '2.25rem', fontWeight: 800, mt: 2 }}>
             Resetează parola
@@ -92,7 +93,7 @@ function ResetPasswordPage() {
         {/* Formularul */}
         <Box component="form" noValidate autoComplete="off">
           
-          {/* --- Câmp: Parolă nouă --- */}
+          {/* ... (Câmpurile de text rămân la fel) ... */}
           <Box sx={{ mb: 2 }}>
             <Typography sx={labelStyles}>
               Parolă nouă
@@ -109,8 +110,6 @@ function ResetPasswordPage() {
               sx={textFieldStyles}
             />
           </Box>
-
-          {/* --- Câmp: Confirmare parolă nouă --- */}
           <Box sx={{ mb: 2 }}>
             <Typography sx={labelStyles}>
               Confirmare parolă nouă
@@ -128,7 +127,7 @@ function ResetPasswordPage() {
             />
           </Box>
 
-          {/* Butonul de resetare -- ROTUNJIRE MODIFICATĂ */}
+          {/* ... (Butonul rămâne la fel) ... */}
           <Button
             type="submit"
             fullWidth
@@ -139,8 +138,8 @@ function ResetPasswordPage() {
               fontWeight: 'bold',
               fontSize: '1rem',
               py: '12px',
-              mt: 4, // Am mărit marginea de sus
-              borderRadius: '8px', // <--- ROTUNJIREA AICI
+              mt: 4, 
+              borderRadius: '8px', 
               '&:hover': {
                 backgroundColor: '#4ADE80',
               },
