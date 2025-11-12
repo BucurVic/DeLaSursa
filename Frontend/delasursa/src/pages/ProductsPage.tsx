@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import {colors, textResources} from "../theme";
 import SearchBarProducts from "../components/SearchBarProducts.tsx";
 import Card from "@mui/material/Card";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Box, CardMedia, IconButton, type SelectChangeEvent} from "@mui/material";
 import Dropdown from "../components/Dropdown.tsx";
 import CheckBox from "../components/CheckBox.tsx";
@@ -14,6 +14,8 @@ import ListViewUserProductCard from "../components/ListViewUserProductCard.tsx";
 import GridViewUserProductCard from "../components/GridViewUserProductCard.tsx";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import GridViewIcon from "@mui/icons-material/GridView";
+import type {Produs} from "../types/Produs.ts";
+import {produseApi} from "../api/produseApi.ts";
 
 
 type Product = {
@@ -29,6 +31,23 @@ type Product = {
     onSale: boolean;
     image?: string;
 };
+
+const mapProdusToProduct = (p: Produs): Product => ({
+    id: p.id.toString(),
+    name: p.produsName,
+    category: p.categorie,
+    region: "Cluj",
+    price: p.pret,
+    rating: 5,
+    available: true,
+    bio: false,
+    isNew: Math.random() < 0.5,
+    onSale: Math.random() < 0.3,
+    image: p.imagine
+        ? `http://localhost:8080/${p.imagine}`
+        : "/images/default.jpg",
+});
+
 const demoProducts: Product[] = [
     {
         id: "1",
@@ -222,6 +241,22 @@ export default function ProductsPage() {
     const [newOnly, setNewOnly] = useState(false);
     const [saleOnly, setSaleOnly] = useState(false);
 
+    const [recomendedProducts, setRecomendedProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const fetchRecommended = async () => {
+            try{
+                const res = await produseApi.getRecommended(0,8);
+                const data = Array.isArray(res.data) ? res.data : res.data.content;
+                const mapped = data.map(mapProdusToProduct);
+                setRecomendedProducts(mapped);
+            } catch (err){
+                console.error("Eroare la incarcarea produselor recomandate:",err)
+            }
+
+        }
+        fetchRecommended();
+    }, []);
 
     const [viewType, setViewType] = useState<"grid" | "list">("grid"); // state pentru toggle
 
@@ -672,24 +707,21 @@ export default function ProductsPage() {
                     Selecție personalizată bazată pe preferințele tale
                 </Typography>
                 <Grid container spacing={2} justifyContent="center">
-                    {demoProducts
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 4)
-                        .map((product) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={`rec-${product.id}`}>
-                                <GridViewUserProductCard
-                                    image={product.image ?? "/images/default.jpg"}
-                                    title={product.name}
-                                    category={product.category}
-                                    unit="kg"
-                                    supplier="Fermier local"
-                                    rating={product.rating}
-                                    reviewCount={Math.floor(Math.random() * 100)}
-                                    price={product.price}
-                                    onAddToCart={() => console.log("Recomandat:", product.name)}
-                                />
-                            </Grid>
-                        ))}
+                    {recomendedProducts.map((product) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+                            <GridViewUserProductCard
+                                image={product.image ?? "/images/default.jpg"}
+                                title={product.name}
+                                category={product.category}
+                                unit="kg"
+                                supplier="Fermier local"
+                                rating={product.rating}
+                                reviewCount={Math.floor(Math.random() * 100)}
+                                price={product.price}
+                                onAddToCart={() => console.log("Recomandat:", product.name)}
+                            />
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
 

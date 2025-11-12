@@ -1,4 +1,4 @@
-import api from "./axios";
+import api, {publicApi} from "./axios";
 import type {Produs} from "../types/Produs";
 import type {PaginatedResponse} from "../types/PaginatedResponse";
 
@@ -22,7 +22,7 @@ export const produseApi = {
     getAll: () => api.get<Produs[]>("/produse"),
 
     getPopular: (page = 0, size = 12) =>
-        api.get<PaginatedResponse<Produs>>(`/produse/populare?page=${page}&size=${size}`),
+        publicApi.get<PaginatedResponse<Produs>>(`/produse/populare?page=${page}&size=${size}`),
 
     getRecommended: (page = 0, size = 8) =>
         api.get<PaginatedResponse<Produs>>(`/produse/recomandate?page=${page}&size=${size}`),
