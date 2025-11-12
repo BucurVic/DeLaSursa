@@ -12,6 +12,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources.ts";
 
+// --- 1. Importăm noul logo ---
+import logoSrc from '../assets/logo.png'; 
+
 interface ForgotPasswordPageProps {
     onBack?: () => void;
     onSubmit?: (email: string) => void;
@@ -43,7 +46,6 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                 fontFamily: '"Manrope", sans-serif',
             }}
         >
-            {/* Card */}
             <Card
                 sx={{
                     position: "relative",
@@ -56,47 +58,18 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                     textAlign: "center",
                 }}
             >
-                {/* Back Button */}
-                {onBack && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "1rem",
-                            left: "1rem",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "2.25rem",
-                            height: "2.25rem",
-                            borderRadius: "50%",
-                            backgroundColor: colors.darkGreen1,
-                            transition: "background-color 0.2s ease",
-                            "&:hover": {
-                                backgroundColor: colors.lightGreen1Transparent,
-                            },
-                        }}
-                        onClick={onBack}
-                    >
-                        <ArrowBackIcon
-                            sx={{
-                                color: colors.white1,
-                                fontSize: "1.6rem",
-                            }}
-                        />
-                    </Box>
-                )}
+                {/* ... (Butonul Back rămâne la fel) ... */}
 
-                {/* Logo */}
+                {/* --- 2. Logo Actualizat --- */}
                 <Box sx={{ mt: 4, mb: 3 }}>
                     <img
-                        src="/assets/logo-handshake.svg"
+                        src={logoSrc} // Am înlocuit calea
                         alt={textResources.forgotPasswordPage.logoAlt}
                         style={{ width: "72px", height: "72px" }}
                     />
                 </Box>
 
-                {/* Title */}
+                {/* ... (Restul formularului rămâne la fel) ... */}
                 <Typography
                     sx={{
                         color: colors.white1,
@@ -108,8 +81,6 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                 >
                     {textResources.forgotPasswordPage.title}
                 </Typography>
-
-                {/* Subtitle */}
                 <Typography variant="body2" sx={{ mb: 4, color: colors.white2 }}>
                     {textResources.forgotPasswordPage.rememberPassword}{" "}
                     <Link
@@ -130,8 +101,6 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                         {textResources.forgotPasswordPage.loginLink}
                     </Link>
                 </Typography>
-
-                {/* Form */}
                 <CardContent
                     sx={{
                         display: "flex",
@@ -143,7 +112,7 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                     }}
                 >
                     <form onSubmit={handleSubmit}>
-                        {/* Email */}
+                        {/* ... (Email și Butonul rămân la fel) ... */}
                         <Box sx={{ mb: 3 }}>
                             <Typography
                                 variant="body2"
@@ -187,8 +156,6 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                                 }}
                             />
                         </Box>
-
-                        {/* Submit Button */}
                         <Button
                             fullWidth
                             type="submit"

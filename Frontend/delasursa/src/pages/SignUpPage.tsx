@@ -1,43 +1,31 @@
 import React from 'react';
-
-// Importuri MUI
 import { Box, TextField, Button, Checkbox, FormControlLabel, Link, IconButton, Typography } from '@mui/material';
-
-// Importuri Iconițe MUI
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import HandshakeIcon from '@mui/icons-material/Handshake'; // Ca placeholder pentru logo
 
-// Componenta principală a paginii de înregistrare
+import logoSrc from '../assets/logo.png'; 
+
 function SignUpPage() {
 
-  // --- STILURI MODIFICATE CONFORM ULTIMEI CERINȚE ---
   const textFieldStyles = {
-    // Țintim rădăcina input-ului "standard"
     '& .MuiInput-root': {
-      // 1. FUNDALUL ESTE CULOAREA CARDULUI
-      backgroundColor: '#13271E', // darkGreen1
+      backgroundColor: '#13271E', 
       color: '#F2F2F2',
       padding: '8px 12px',
       borderRadius: '8px',
-      // 2. BORDURA STANDARD ESTE ACUM VERDE TRANSPARENT
-      border: '2px solid rgba(95, 238, 149, 0.3)', // lightGreen1Transparent
+      border: '2px solid rgba(95, 238, 149, 0.3)', 
       marginTop: '8px', 
-      transition: 'border-color 0.2s ease-in-out', // Adăugăm o tranziție
+      transition: 'border-color 0.2s ease-in-out', 
       
-      // Ascundem linia de jos specifică "standard"
       '&::before, &::after': {
         display: 'none',
       },
-
-      // 3. LA HOVER/FOCUS, FOLOSIM VERDELE SOLID
       '&:hover:not(.Mui-focused)': { 
-        borderColor: '#5FEE95 !important', // lightGreen1
+        borderColor: '#5FEE95 !important', 
       },
       '&.Mui-focused': {
-        borderColor: '#5FEE95', // lightGreen1
+        borderColor: '#5FEE95', 
       },
     },
-    // Țintim elementul <input> din interior
     '& .MuiInputBase-input': {
       padding: 0, 
       '&::placeholder': {
@@ -47,7 +35,6 @@ function SignUpPage() {
     }
   };
   
-  // 4. ETICHETA DEASUPRA, LA STÂNGA
   const labelStyles = {
     color: '#BEBEBE',
     mb: 0, 
@@ -66,30 +53,35 @@ function SignUpPage() {
         fontFamily: 'Manrope, sans-serif',
       }}
     >
-      
-      {/* Cardul de înregistrare */}
       <Box 
         sx={{
-          bgcolor: '#13271E', // darkGreen1
+          bgcolor: '#13271E', 
           p: { xs: 3, md: 4 },
           borderRadius: '12px',
           boxShadow: 24,
-          maxWidth: '600px', // Lățimea setată la 600px
+          maxWidth: '600px', 
           width: '100%',
-          color: '#F2F2F2', // white1
+          color: '#F2F2F2', 
           position: 'relative',
         }}
       >
         
-        {/* Butonul de întoarcere (Back) */}
         <IconButton sx={{ color: '#F2F2F2', position: 'absolute', top: 24, left: 24 }}>
           <ArrowBackIcon />
         </IconButton>
 
-        {/* Secțiunea de antet (Logo, Titlu, Subtitlu) */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          {/* Logo */}
-          <HandshakeIcon sx={{ fontSize: 50, color: '#5FEE95' }} /> 
+          
+          <Box
+            component="img"
+            src={logoSrc}
+            alt="DeLaSursa Logo"
+            sx={{ 
+              width: 72,   // --- AM MĂRIT AICI ---
+              height: 72,  // --- AM MĂRIT AICI ---
+              mb: 1 // Adaugă puțin spațiu sub logo, ca să nu stea lipit de titlu
+            }}
+          />
           
           <Typography component="h1" sx={{ fontSize: '2.25rem', fontWeight: 800, mt: 2 }}>
             Înregistrare
@@ -102,19 +94,14 @@ function SignUpPage() {
           </Typography>
         </Box>
 
-        {/* Formularul */}
         <Box component="form" noValidate autoComplete="off">
-          
-          {/* Grid pentru câmpurile de input */}
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, 
-              gap: '16px 24px' // Spațiere între rânduri și coloane
+              gap: '16px 24px' 
             }}
           >
-            
-            {/* --- Câmp: Nume complet --- */}
             <Box>
               <Typography sx={labelStyles}>
                 Nume complet
@@ -130,8 +117,6 @@ function SignUpPage() {
                 sx={textFieldStyles}
               />
             </Box>
-            
-            {/* --- Câmp: Email --- */}
             <Box>
               <Typography sx={labelStyles}>
                 Email
@@ -148,8 +133,6 @@ function SignUpPage() {
                 sx={textFieldStyles}
               />
             </Box>
-
-            {/* --- Câmp: Parolă --- */}
             <Box>
               <Typography sx={labelStyles}>
                 Parolă
@@ -166,8 +149,6 @@ function SignUpPage() {
                 sx={textFieldStyles}
               />
             </Box>
-
-            {/* --- Câmp: Confirmare parolă --- */}
             <Box>
               <Typography sx={labelStyles}>
                 Confirmare parolă
@@ -186,7 +167,6 @@ function SignUpPage() {
             </Box>
           </Box>
 
-          {/* Checkbox: Termeni și condiții */}
           <FormControlLabel
             control={
               <Checkbox 
@@ -209,8 +189,6 @@ function SignUpPage() {
             }
             sx={{ mt: 2, display: 'flex', alignItems: 'center' }}
           />
-
-          {/* Butonul de înregistrare */}
           <Button
             type="submit"
             fullWidth

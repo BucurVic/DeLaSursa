@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/produse/**").hasRole("PRODUCATOR")
                         .requestMatchers(HttpMethod.PUT, "/api/produse/**").hasRole("PRODUCATOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.GET, "/api/verify-email").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())

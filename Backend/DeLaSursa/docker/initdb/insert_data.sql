@@ -1,31 +1,31 @@
 -- ========================================================
 -- STEP 1: Inserăm useri (1 admin, 10 clienți, 9 producători)
 -- ========================================================
-INSERT INTO useri (username, email, parola) VALUES
-    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+INSERT INTO useri (username, email, parola, is_email_verified) VALUES
+    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
 
     -- 10 clienti
-    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
+    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
 
     -- 9 producatori
-    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS'),
-    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS');
+    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true);
 
 INSERT INTO roles (name) VALUES
     ('admin'),

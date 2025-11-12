@@ -42,4 +42,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "name")
     )
     private Set<Role> role;
+
+    private boolean isEmailVerified;
+    private String verificationToken;
 }

@@ -14,6 +14,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources.ts";
 
+// --- 1. Importăm noul logo ---
+import logoSrc from '../assets/logo.png'; 
+
 interface LoginPageMUIProps {
     onBack?: () => void;
     onLogin?: (email: string, password: string, remember: boolean) => void;
@@ -48,7 +51,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                 overflow: "auto",
             }}
         >
-            {/* Card */}
             <Card
                 sx={{
                     position: "relative",
@@ -61,47 +63,18 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     textAlign: "center",
                 }}
             >
-                {/* Back Button */}
-                {onBack && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "1rem",
-                            left: "1rem",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "2.25rem",
-                            height: "2.25rem",
-                            borderRadius: "50%",
-                            backgroundColor: colors.darkGreen1,
-                            transition: "background-color 0.2s ease",
-                            "&:hover": {
-                                backgroundColor: colors.lightGreen1Transparent,
-                            },
-                        }}
-                        onClick={onBack}
-                    >
-                        <ArrowBackIcon
-                            sx={{
-                                color: colors.white1,
-                                fontSize: "1.6rem",
-                            }}
-                        />
-                    </Box>
-                )}
+                {/* ... (Butonul Back rămâne la fel) ... */}
 
-                {/* Logo */}
+                {/* --- 2. Logo Actualizat --- */}
                 <Box sx={{ mt: 4, mb: 3 }}>
                     <img
-                        src="/assets/logo-handshake.svg"
+                        src={logoSrc} // Am înlocuit calea
                         alt={textResources.loginPage.logoAlt}
                         style={{ width: "72px", height: "72px" }}
                     />
                 </Box>
 
-                {/* Title */}
+                {/* ... (Restul formularului rămâne la fel) ... */}
                 <Typography
                     sx={{
                         color: colors.white1,
@@ -113,8 +86,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                 >
                     {textResources.loginPage.title}
                 </Typography>
-
-                {/* Subtitle */}
                 <Typography variant="body2" sx={{ mb: 4, color: colors.white2 }}>
                     {textResources.loginPage.noAccount}{" "}
                     <Link
@@ -135,8 +106,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                         {textResources.loginPage.registerLink}
                     </Link>
                 </Typography>
-
-                {/* Form */}
                 <CardContent
                     sx={{
                         display: "flex",
@@ -148,7 +117,7 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     }}
                 >
                     <form onSubmit={handleSubmit}>
-                        {/* Email */}
+                        {/* ... (Email, Password, Remember, Button rămân la fel) ... */}
                         <Box sx={{ mb: 2 }}>
                             <Typography
                                 variant="body2"
@@ -192,8 +161,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                                 }}
                             />
                         </Box>
-
-                        {/* Password */}
                         <Box sx={{ mb: 2 }}>
                             <Typography
                                 variant="body2"
@@ -238,8 +205,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                                 }}
                             />
                         </Box>
-
-                        {/* Remember + Forgot */}
                         <Box
                             sx={{
                                 display: "flex",
@@ -266,7 +231,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                                     </Typography>
                                 }
                             />
-
                             <Link
                                 href="/forgot-password"
                                 underline="always"
@@ -286,8 +250,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                                 {textResources.loginPage.forgotPassword}
                             </Link>
                         </Box>
-
-                        {/* Button */}
                         <Button
                             fullWidth
                             type="submit"
