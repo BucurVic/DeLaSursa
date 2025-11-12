@@ -1,7 +1,8 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { colors } from "../../theme/colors.ts";
-import {textResources} from "../../theme/textResources.ts";
+import { typography } from "../../theme/typography.ts";
+import { textResources } from "../../theme/textResources.ts";
 
 interface EditButtonProps {
     onClick?: () => void;
@@ -15,15 +16,13 @@ const EditButton: React.FC<EditButtonProps> = ({ onClick, fullWidth = true }) =>
             fullWidth={fullWidth}
             variant="outlined"
             sx={{
+                ...typography.button,
+                justifyContent: "flex-start", // 👈 text aliniat la stânga
                 borderColor: colors.lightGreen1,
                 color: colors.lightGreen1,
-                fontWeight: 700,
-                textTransform: "uppercase",
                 borderRadius: "0.75rem",
-                py: 1,
-                fontFamily: '"Manrope", sans-serif',
-                justifyContent: "flex-start",
-                pl: 2,
+                py: "0.9rem",
+                letterSpacing: "0.02em",
                 "&:hover": {
                     backgroundColor: colors.lightGreen1Transparent,
                     borderColor: colors.lightGreen2,

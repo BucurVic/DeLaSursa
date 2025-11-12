@@ -33,6 +33,4 @@ public class ProdusProducator {
 
     @Column(name = "pret")
     private Double pret;
-
-
 }

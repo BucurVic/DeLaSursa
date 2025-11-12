@@ -41,6 +41,41 @@ export const textResources = {
         deactivate: "Dezactivează",
         delete: "Șterge",
     },
+    deleteModal: {
+        title: "Confirmare ștergere",
+        message: "Ești sigur că vrei să ștergi produsul {productName}? Această acțiune nu poate fi anulată.",
+    },
+
+    editModal: {
+        title: "Editează produs",
+        subtitle: "Modifică informațiile produsului. Unele câmpuri nu pot fi editate.",
+        fields: {
+            price: "Preț",
+            stockNote: "*Stocul se gestionează în secțiunea Inventar",
+        },
+        buttons: {
+            save: "Salvează modificările",
+        },
+    },
+
+    productCard: {
+        inactiveLabel: "Dezactivat",
+        priceSuffix: "lei",
+        status: {
+            active: "Activ",
+        },
+        buttons: {
+            deactivate: "Dezactivează",
+            activate: "Activează",
+        },
+        columns: {
+            product: "Produs",
+            price: "Preț",
+            status: "Status",
+            actions: "Acțiuni",
+        }
+    },
+
     form: {
         title: "Adaugă produs",
         name: "Nume produs",
@@ -59,7 +94,7 @@ export const textResources = {
         imagesLabel: "Imagini produs"
     },
     brand: {
-    name: "DeLaSursă"
+        name: "DeLaSursă"
   },
   navbar: {
     home: "Acasă",
