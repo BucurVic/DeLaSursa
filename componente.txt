@@ -1,0 +1,51 @@
+ONLY RELATIVE DIMENSIONS
+
+PANA VINERI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+-theme:  
+	1. colors(Smara)
+	2. typography(Smara)
+	3. text resources
+
+Auth Pages (9):
+	- button (primary/outline)(Smara)
+	- input form 4x (Vicx2,Cezarx2)
+	- checkbox(Smara)
+	- anchor(Smara)
+	- logo(Smara)
+	- notify message(Smara)
+	
+Add Produse Page(3)(Oana):
+	- dropdown
+	- input form 1x
+	- img form
+	
+Produse List Page(6) (Vicx3,Cezarx3):
+	- button
+	- search bar
+	- product card (producator/grid)
+	- edit product form
+	- confirm delete notification
+	- list/grid toggle
+	
+Stock Produse Page(3) (Daria):
+	- stock card
+	- alerta stock card (epuizat/redus)
+	- stop chip (epuizat/redus)
+
+Produse Client Page(2):
+	- filtru chip(Daria)
+	- producator card (client/grid) (Teo,Mihai)
+
+
+Footer(Teo,Mihai):
+
+
+Header(Teo,Mihai):
+
+
+Sidebar(Teo,Mihai):
+	
+
+	
+	

@@ -1,0 +1,90 @@
+import { Box, Typography } from "@mui/material";
+import StockCard from "../components/StockCard";
+import StockCardAlert from "../components/StockCardAlert";
+import mereImg from "../images/mere.png";
+import rosiiImg from "../images/rosii.png";
+import carotfiImg from "../images/cartofi.png";
+import iaurtImg from "../images/iaurt.png";
+import { useState } from "react";
+export default function InventoryPage() {
+
+    const [products, setProducts] = useState([
+        {
+            id: 1,
+            name: "Roșii Cherry Bio",
+            category: "Legume",
+            quantity: 45,
+            imageUrl: rosiiImg
+        },
+        {
+            id: 2,
+            name: "Mere Ionathan",
+            category: "Fructe",
+            quantity: 120,
+            imageUrl: mereImg
+        },
+        {
+            id: 3,
+            name: "Cartofi Noi Bio",
+            category: "Legume",
+            quantity: 0,
+            imageUrl: carotfiImg
+        },
+        {
+            id: 4,
+            name: "Iaurt Natural",
+            category: "Lactate",
+            quantity: 3,
+            imageUrl: iaurtImg
+        },
+    ]);
+
+    const updateStock = (id: number, newQuantity: number) => {
+        setProducts(prev =>
+            prev.map(p =>
+                p.id === id ? { ...p, quantity: newQuantity } : p
+            )
+        );
+    };
+
+
+    return (
+        <Box sx={{ color: "white", maxWidth: 900, mx: "auto" }}>
+
+            <Typography variant="h4" sx={{ mb: 2 }}>
+                Alerte stoc
+            </Typography>
+
+            {products
+                .filter(p => p.quantity <= 5) // doar produsele cu probleme
+                .map(p => (
+                    <StockCardAlert
+                        key={p.id}
+                        productName={p.name}
+                        quantity={p.quantity}
+                    />
+                ))
+            }
+
+            <Typography variant="h4" sx={{ mt: 4, mb: 2 }}>
+                Inventar complet
+            </Typography>
+
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {products.map(p => (
+                    <StockCard
+                        key={p.id}
+                        id={p.id}
+                        imageUrl={p.imageUrl}
+                        title={p.name}
+                        category={p.category}
+                        quantity={p.quantity}
+                        onQuantityChange={updateStock}
+                    />
+                ))}
+
+            </Box>
+
+        </Box>
+    );
+}

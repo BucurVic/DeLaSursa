@@ -2,6 +2,8 @@ package org.example.delasursa.common.exceptions.handler;
 
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.exceptions.OperationFailedException;
+import org.example.delasursa.common.exceptions.ResourceNotFoundException;
 import org.example.delasursa.common.exceptions.UserException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -62,5 +64,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSignatureException(SignatureException e) {
         log.error("Unexpected error occurred", e);
         return ResponseEntity.status(401).body("Invalid or expired authentication token. Please log in again.");
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(404).body("Resource not found: " + e.getMessage());
+    }
+
+    @ExceptionHandler(OperationFailedException.class)
+    public ResponseEntity<String> handleOperationFailedException(OperationFailedException e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(500).body("Operation failed: " + e.getMessage());
     }
 }

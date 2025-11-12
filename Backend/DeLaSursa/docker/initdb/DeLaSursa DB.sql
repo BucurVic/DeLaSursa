@@ -5,6 +5,15 @@ CREATE TABLE useri (
   parola varchar
 );
 
+CREATE TABLE roles (
+  name varchar PRIMARY KEY
+);
+
+CREATE TABLE users_roles(
+  user_id integer REFERENCES useri(id),
+  role_id varchar REFERENCES roles(name)
+);
+
 CREATE TABLE producatori (
   id integer PRIMARY KEY REFERENCES useri(id) ON DELETE CASCADE,
   nume varchar,
@@ -85,7 +94,7 @@ CREATE TABLE pachet_produs (
 CREATE TABLE comanda_pachet (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_comanda integer NOT NULL references comenzi(id),
-  id_produs integer NOT NULL references produse(id),
+  id_pachet integer NOT NULL references pachete(id),
   cantitate float,
   pret_unitar float
 );
