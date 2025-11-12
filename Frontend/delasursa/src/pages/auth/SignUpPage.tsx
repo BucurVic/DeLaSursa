@@ -122,7 +122,8 @@ function SignUpPage() {
         {/* Butonul de întoarcere (Back) */}
         <IconButton
           sx={{ color: "#F2F2F2", position: "absolute", top: 24, left: 24 }}
-        >
+          onClick={() => navigate('/')} 
+        >
           <ArrowBackIcon />
         </IconButton>
 

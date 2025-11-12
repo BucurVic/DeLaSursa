@@ -55,7 +55,7 @@ function App() {
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
       <Route
           element={<ProtectedRoute
-           allowedRoles={["PRODUCER"]}
+           allowedRoles={["PRODUCATOR"]}
        />}
       >
         <Route element={<ProducerLayout />}>

@@ -11,7 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/DeLaSursa/docker/initdb:/docker-entrypoint-initdb.d
+      - ./Backend/DeLaSursa/docker/initdb:/docker-entrypoint-initdb.d
 
   # --- Spring Boot Backend ---
   backend:
