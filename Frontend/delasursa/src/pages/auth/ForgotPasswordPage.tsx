@@ -12,6 +12,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { colors } from "../../theme/colors.ts";
 import { textResources } from "../../theme/textResources.ts";
 import HandshakeIcon from "@mui/icons-material/Handshake"; // Ca placeholder pentru logo
+import logoSrc from '../../assets/logo.png'; 
+
 
 interface ForgotPasswordPageProps {
   onBack?: () => void;
@@ -115,9 +117,16 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ onBack }) => {
         )}
 
         {/* Logo */}
-        <Box sx={{ mt: 4, mb: 3 }}>
-          <HandshakeIcon sx={{ fontSize: 50, color: "#5FEE95" }} />
-        </Box>
+        <Box
+          component="img"
+          src={logoSrc}
+          alt="Logo"
+          sx={{
+            height: "70px", // Poți ajusta această înălțime
+            width: "auto",   // Lățimea se va scala automat
+            mb: 1.5,         // Adaugă o margine dedesubt, înainte de titlu
+          }}
+        />
 
         {/* Title */}
         <Typography

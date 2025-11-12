@@ -2,7 +2,9 @@ CREATE TABLE useri (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   username varchar,
   email varchar,
-  parola varchar
+  parola varchar,
+  is_email_verified boolean,
+  verification_token varchar
 );
 
 CREATE TABLE roles (

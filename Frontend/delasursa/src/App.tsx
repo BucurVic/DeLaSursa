@@ -54,9 +54,9 @@ function App() {
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
       <Route
-      //     element={<ProtectedRoute
-      //     allowedRoles={["PRODUCER"]}
-      // />}
+          element={<ProtectedRoute
+           allowedRoles={["PRODUCER"]}
+       />}
       >
         <Route element={<ProducerLayout />}>
           {/* redirect automat către lista produselor */}

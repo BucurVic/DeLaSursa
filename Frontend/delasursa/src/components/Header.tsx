@@ -62,12 +62,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     return () => window.removeEventListener("resize", updateGap);
   }, []);
 
-  const navItems = [
-    textResources.navbar.home,
-    textResources.navbar.products,
-    textResources.navbar.producers,
-    textResources.navbar.subscriptions,
-    textResources.navbar.support,
+  // --- MODIFICAREA 1: Lista de navigare actualizată ---
+  const navLinks = [
+    { text: textResources.navbar.home, path: "./pages/HomePage" },
+    { text: textResources.navbar.products, path: "/products" },
+    { text: textResources.navbar.producers, path: "/dashboard-producator/produse/lista" },
+    { text: textResources.navbar.subscriptions, path: "/abonamente" },
+    { text: textResources.navbar.support, path: "/suport" },
   ];
 
   const profileMenuItems = [
@@ -171,7 +172,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             </Typography>
           </Box>
 
-          {/* center nav (desktop) */}
+          {/* --- MODIFICAREA 2: Meniul Desktop actualizat --- */}
           {isMdUp && variant === "full" ? (
             <Box
               sx={{
@@ -182,9 +183,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                 justifyContent: "center",
               }}
             >
-              {navItems.map((item) => (
+              {navLinks.map((link) => (
                 <Button
-                  key={item}
+                  key={link.text}
                   color="inherit"
                   disableRipple
                   sx={{
@@ -195,9 +196,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     opacity: 0.9,
                     typography: btnTypography,
                   }}
-                  // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
+                  onClick={() => navigateTo(link.path)}
                 >
-                  {item}
+                  {link.text}
                 </Button>
               ))}
             </Box>
@@ -205,7 +206,6 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             <Box sx={{ flex: 1 }} />
           )}
 
-          {/* right side (LOGICĂ ACTUALIZATĂ) */}
           <Box sx={{ display: "flex", gap: smallGap, alignItems: "center" }}>
             {isMdUp ? (
               <>
@@ -361,6 +361,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         boxSizing: "border-box",
                       }}
                     >
+                      {/* --- MODIFICAREA 3: Meniul Mobil actualizat --- */}
                       <List
                         sx={{
                           width: "100%",
@@ -370,10 +371,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           alignItems: "center",
                         }}
                       >
-                        {navItems.map((item) => (
-                          <ListItem key={item} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
+                        {navLinks.map((link) => (
+                          <ListItem key={link.text} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
                             <ListItemButton
-                              onClick={handleDrawerClose}
+                              onClick={() => navigateTo(link.path)}
                               sx={{
                                 py: "0.25rem",
                                 width: "100%",
@@ -381,7 +382,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                               }}
                             >
                               <ListItemText
-                                primary={item}
+                                primary={link.text}
                                 primaryTypographyProps={{
                                   sx: {
                                     color: colors.white1,

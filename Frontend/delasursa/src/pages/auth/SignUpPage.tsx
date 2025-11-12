@@ -18,6 +18,8 @@ import HandshakeIcon from "@mui/icons-material/Handshake"; // Ca placeholder pen
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import logoSrc from '../../assets/logo.png'; 
+
 
 // Componenta principală a paginii de înregistrare
 function SignUpPage() {
@@ -127,7 +129,16 @@ function SignUpPage() {
         {/* Secțiunea de antet (Logo, Titlu, Subtitlu) */}
         <Box sx={{ textAlign: "center", mb: 4 }}>
           {/* Logo */}
-          <HandshakeIcon sx={{ fontSize: 50, color: "#5FEE95" }} />
+          <Box
+           component="img"
+           src={logoSrc}
+           alt="Logo"
+           sx={{
+            height: "80px", // Poți ajusta această înălțime
+            width: "auto",   // Lățimea se va scala automat
+            mb: 1.5,         // Adaugă o margine dedesubt, înainte de titlu
+           }}
+        />
 
           <Typography
             component="h1"
