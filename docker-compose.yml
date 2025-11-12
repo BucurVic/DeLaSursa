@@ -39,7 +39,7 @@ services:
       - "5173:5173"
     volumes:
       - ./Frontend/delasursa:/app
-      - /app/node_modules
+      - node_modules_frontend:/app/node_modules
     environment:
       - HOST=0.0.0.0
       - CHOKIDAR_USEPOLLING=true
@@ -48,4 +48,4 @@ services:
 # --- Named volumes ---
 volumes:
   pgdata:
-
+  node_modules_frontend:

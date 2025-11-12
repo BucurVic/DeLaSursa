@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
     console.log("test");
     e.preventDefault();
     if (!login) return;
-    await login({ username: email, password });
+    await login({email, password });
   };
 
   useEffect(() => {

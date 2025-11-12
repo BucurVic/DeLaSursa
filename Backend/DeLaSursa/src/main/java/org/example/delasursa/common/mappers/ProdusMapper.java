@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProdusMapper {
     @Value("${app.base.url}")
-    private static String baseUrl;
+    private  String baseUrl;
 
-    public static ProdusDTO toDTO(ProdusProducator entity){
+    public ProdusDTO toDTO(ProdusProducator entity){
         if(entity==null) return null;
 
         return ProdusDTO.builder()

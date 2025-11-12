@@ -11,37 +11,6 @@ import {produseApi} from "../api/produseApi.ts";
 export default function InventoryPage() {
 
     const [products, setProducts] = useState<Produs[]>([]);
-    //
-    // [
-    //     {
-    //         id: 1,
-    //         name: "Roșii Cherry Bio",
-    //         category: "Legume",
-    //         quantity: 45,
-    //         imageUrl: rosiiImg
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Mere Ionathan",
-    //         category: "Fructe",
-    //         quantity: 120,
-    //         imageUrl: mereImg
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Cartofi Noi Bio",
-    //         category: "Legume",
-    //         quantity: 0,
-    //         imageUrl: carotfiImg
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "Iaurt Natural",
-    //         category: "Lactate",
-    //         quantity: 3,
-    //         imageUrl: iaurtImg
-    //     },
-    // ]
 
     useEffect(() => {
         const fetchProducts = async () => {

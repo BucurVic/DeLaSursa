@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         log.info("Log in request received: {}", loginRequest);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(),
+                loginRequest.getEmail(),
                 loginRequest.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);

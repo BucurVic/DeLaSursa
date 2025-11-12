@@ -8,12 +8,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${app.upload.dir:uploads/}")
+    @Value("${app.upload.dir}")
     private String uploadDir;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
-        String resourceLocation = "file:"+uploadDir;
+        String normalizedUploadDir = uploadDir.endsWith("/") ? uploadDir : uploadDir + "/";
+        String resourceLocation = "file:"+normalizedUploadDir;
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations(resourceLocation)
                 .setCachePeriod(3600)

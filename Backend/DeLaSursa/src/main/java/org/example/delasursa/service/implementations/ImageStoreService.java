@@ -1,6 +1,7 @@
 package org.example.delasursa.service.implementations;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.exceptions.ImageStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ImageStoreService {
 
     @Value("${app.upload.dir:uploads/}")
-    private static String baseUploadDir;
+    private String baseUploadDir;
 
-    public static String saveImage(MultipartFile file, Integer producatorId) {
+    public  String saveImage(MultipartFile file, Integer producatorId) {
         if (file == null || file.isEmpty()) {
             throw new ImageStorageException("Imaginea este goală sau lipsă pentru producătorul cu ID: " + producatorId);
         }
@@ -34,11 +36,13 @@ public class ImageStoreService {
         try {
             if (!Files.exists(uploadDir)) {
                 Files.createDirectories(uploadDir);
+                log.info("✅ Created new upload directory: {}", uploadDir.toAbsolutePath());
             }
 
             Path destination = uploadDir.resolve(uniqueName);
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
+            log.info("💾 Saved image for producătorul {} at: {}", producatorId, destination.toAbsolutePath());
             return uploadDir.resolve(uniqueName).toString().replace("\\", "/");
 
         } catch (IOException e) {
@@ -46,7 +50,7 @@ public class ImageStoreService {
         }
     }
 
-    public static void deleteImage(String imagePath) {
+    public  void deleteImage(String imagePath) {
         if (imagePath == null || imagePath.isBlank()) {
             throw new ImageStorageException("Calea imaginii este goală sau invalidă.");
         }
@@ -61,7 +65,7 @@ public class ImageStoreService {
         }
     }
 
-    public static String replaceImage(MultipartFile newFile, String oldImagePath, Integer producatorId) {
+    public  String replaceImage(MultipartFile newFile, String oldImagePath, Integer producatorId) {
         if (newFile == null || newFile.isEmpty()) {
             throw new ImageStorageException("Fișierul de imagine nou este gol.");
         }

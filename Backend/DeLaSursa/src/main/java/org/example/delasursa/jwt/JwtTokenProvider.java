@@ -26,7 +26,8 @@ public class JwtTokenProvider {
     private final long expirationMs = 3600000;
 
     public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
+        CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
+        String email = userPrincipal.getEmail();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + expirationMs);
         Set<String> authorities = authentication.getAuthorities().stream()
@@ -42,7 +43,7 @@ public class JwtTokenProvider {
             id = ((CustomUserDetails) obj).getUserId();
         }
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .claim("id", id != null ? id.toString() : "" )
                 .claim("authorities", authorities)
                 .claim("firstName", firstName)

@@ -101,17 +101,17 @@ INSERT INTO produse (nume, categorie) VALUES
 -- ========================================================
 -- STEP 5: Inserăm produs_producator
 -- ========================================================
-INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masura, pret) VALUES
-    (12, 1, 100, 'kg', 2.5),
-    (12, 2, 80, 'kg', 3.0),
-    (13, 3, 50, 'kg', 4.0),
-    (14, 4, 60, 'kg', 4.5),
-    (15, 5, 40, 'kg', 6.0),
-    (16, 6, 30, 'l', 5.0),
-    (17, 7, 100, 'buc', 1.0),
-    (18, 8, 80, 'l', 10.0),
-    (19, 9, 70, 'kg', 8.0),
-    (20, 10, 90, 'kg', 5.5);
+INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masura, pret,imagine) VALUES
+    (12, 1, 100, 'kg', 2.5,'/uploads/12/mere.jpg'),
+    (12, 2, 80, 'kg', 3.0,'/uploads/12/pere.jpg'),
+    (13, 3, 50, 'kg', 4.0,'/uploads/13/rosii.jpg'),
+    (14, 4, 60, 'kg', 4.5,'/uploads/14/castraveti.jpg'),
+    (15, 5, 40, 'kg', 6.0,'/uploads/15/branza_cu_lapte_de_vaca.jpg'),
+    (16, 6, 30, 'l', 5.0,'/uploads/16/lapte.jpg'),
+    (17, 7, 100, 'buc', 1.0,'/uploads/17/paine.jpg'),
+    (18, 8, 80, 'l', 10.0,'/uploads/18/ulei.jpg'),
+    (19, 9, 70, 'kg', 8.0,'/uploads/19/cafea.jpg'),
+    (20, 10, 90, 'kg', 5.5,'/uploads/20/zahar.jpg');
 
 -- ========================================================
 -- STEP 6: Inserăm pachete

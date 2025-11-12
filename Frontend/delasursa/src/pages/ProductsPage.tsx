@@ -29,6 +29,8 @@ type Product = {
     bio: boolean;
     isNew: boolean;
     onSale: boolean;
+    measureUnit: string;
+    owner: string;
     image?: string;
 };
 
@@ -43,143 +45,12 @@ const mapProdusToProduct = (p: Produs): Product => ({
     bio: false,
     isNew: Math.random() < 0.5,
     onSale: Math.random() < 0.3,
-    image: p.imagine
-        ? `http://localhost:8080/${p.imagine}`
+    image: p.produsImagine
+        ? p.produsImagine
         : "/images/default.jpg",
+    measureUnit: p.unitate_masura,
+    owner: p.producatorName
 });
-
-const demoProducts: Product[] = [
-    {
-        id: "1",
-        name: "Mazăre proaspătă",
-        category: "Legume",
-        region: "Bihor",
-        price: 120,
-        rating: 4,
-        available: true,
-        bio: false,
-        isNew: true,
-        onSale: false,
-        image: "/images/pea.jpg",
-    },
-    {
-        id: "2",
-        name: "Mere Ionatan",
-        category: "Fructe",
-        region: "Cluj",
-        price: 80,
-        rating: 5,
-        available: true,
-        bio: true,
-        isNew: false,
-        onSale: true,
-        image: "/images/mere_ionatan.jpg",
-    },
-    {
-        id: "3",
-        name: "Brânză de oi",
-        category: "Lactate",
-        region: "Sălaj",
-        price: 130,
-        rating: 3,
-        available: false,
-        bio: true,
-        isNew: false,
-        onSale: false,
-        image: "/images/cheese.jpg",
-    },
-    {
-        id: "4",
-        name: "Carne de vită",
-        category: "Carne",
-        region: "Cluj",
-        price: 200,
-        rating: 5,
-        available: true,
-        bio: false,
-        isNew: true,
-        onSale: true,
-        image: "/images/meat.jpg",
-    },
-    {
-        id: "5",
-        name: "Castraveți murați",
-        category: "Legume",
-        region: "Sălaj",
-        price: 60,
-        rating: 4,
-        available: true,
-        bio: false,
-        isNew: false,
-        onSale: true,
-        image: "/images/muraturi.jpg",
-    },
-    {
-        id: "6",
-        name: "Lapte proaspăt",
-        category: "Lactate",
-        region: "Bihor",
-        price: 50,
-        rating: 5,
-        available: true,
-        bio: true,
-        isNew: true,
-        onSale: false,
-        image: "/images/milk.jpg",
-    },
-    {
-        id: "7",
-        name: "Ouă de țară",
-        category: "Lactate",
-        region: "Cluj",
-        price: 40,
-        rating: 4,
-        available: true,
-        bio: true,
-        isNew: false,
-        onSale: false,
-        image: "/images/eggs.jpg",
-    },
-    {
-        id: "8",
-        name: "Roșii cherry",
-        category: "Legume",
-        region: "Bihor",
-        price: 90,
-        rating: 5,
-        available: true,
-        bio: true,
-        isNew: true,
-        onSale: false,
-        image: "/images/tomatoes.jpg",
-    },
-    {
-        id: "9",
-        name: "Cireșe dulci",
-        category: "Fructe",
-        region: "Sălaj",
-        price: 150,
-        rating: 5,
-        available: true,
-        bio: false,
-        isNew: true,
-        onSale: false,
-        image: "/images/cherries.jpg",
-    },
-    {
-        id: "10",
-        name: "Cașcaval afumat",
-        category: "Lactate",
-        region: "Cluj",
-        price: 110,
-        rating: 4,
-        available: true,
-        bio: false,
-        isNew: false,
-        onSale: true,
-        image: "/images/cheese2.jpg",
-    },
-];
 
 
 const categoriesOptions = [
@@ -247,7 +118,7 @@ export default function ProductsPage() {
     useEffect(() => {
         const fetchRecommended = async () => {
             try{
-                const res = await produseApi.getRecommended(0,8);
+                const res = await produseApi.getRecommended(0,5);
                 const data = Array.isArray(res.data) ? res.data : res.data.content;
                 const mapped = data.map(mapProdusToProduct);
                 setRecomendedProducts(mapped);
@@ -697,8 +568,8 @@ export default function ProductsPage() {
                                     image={product.image ?? "/images/default.jpg"}
                                     title={product.name}
                                     category={product.category}
-                                    unit="kg"
-                                    supplier="Fermier local"
+                                    unit={product.measureUnit}
+                                    supplier={product.owner}
                                     rating={product.rating}
                                     reviewCount={Math.floor(Math.random() * 50) + 5}
                                     price={product.price}
@@ -721,9 +592,9 @@ export default function ProductsPage() {
                                     image={product.image ?? "/images/default.jpg"}
                                     title={product.name}
                                     category={product.category}
-                                    unit="kg"
+                                    unit={product.measureUnit}
                                     supplierRegion={product.region}
-                                    supplier="Fermier local"
+                                    supplier={product.owner}
                                     rating={product.rating}
                                     reviewCount={Math.floor(Math.random() * 50) + 5}
                                     price={product.price}
@@ -750,8 +621,8 @@ export default function ProductsPage() {
                                 image={product.image ?? "/images/default.jpg"}
                                 title={product.name}
                                 category={product.category}
-                                unit="kg"
-                                supplier="Fermier local"
+                                unit={product.measureUnit}
+                                supplier={product.owner}
                                 rating={product.rating}
                                 reviewCount={Math.floor(Math.random() * 100)}
                                 price={product.price}

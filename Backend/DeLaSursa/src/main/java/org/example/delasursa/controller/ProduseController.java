@@ -43,7 +43,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getAllProducator(){
         log.info("Get all produse for producator request received ");
 
-        List<ProdusDTO> all = produsService.getAll();
+        List<ProdusDTO> all = produsService.getAllProducator();
 
         log.info("Fetched {} produse for producator successfully", all.size());
 

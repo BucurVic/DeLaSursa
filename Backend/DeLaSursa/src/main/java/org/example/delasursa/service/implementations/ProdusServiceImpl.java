@@ -33,13 +33,15 @@ public class ProdusServiceImpl implements ProdusService {
     private final ProdusRepository produsRepository;
     private final ProductAuthorizationService productAuthorizationService;
     private final UserRepository userRepository;
+    private final ImageStoreService imageStoreService;
+    private final ProdusMapper produsMapper;
 
 
     @Override
     public List<ProdusDTO> getAll() {
         return produsProducatorRepository.findAll()
                 .stream()
-                .map(ProdusMapper::toDTO)
+                .map(produsMapper::toDTO)
                 .toList();
     }
 
@@ -48,7 +50,7 @@ public class ProdusServiceImpl implements ProdusService {
     public Page<ProdusDTO> getAll(Pageable pageable){
         return produsProducatorRepository
                 .findAll(pageable)
-                .map(ProdusMapper::toDTO);
+                .map(produsMapper::toDTO);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class ProdusServiceImpl implements ProdusService {
 
         return produsProducatorRepository.findByProducator_Id(producator.getId())
                 .stream()
-                .map(ProdusMapper::toDTO)
+                .map(produsMapper::toDTO)
                 .toList();
     }
 
@@ -70,7 +72,7 @@ public class ProdusServiceImpl implements ProdusService {
     public List<ProdusDTO> getRandom(Integer count) {
         return produsProducatorRepository.findRandom(count)
                 .stream()
-                .map(ProdusMapper::toDTO)
+                .map(produsMapper::toDTO)
                 .toList();
     }
 
@@ -78,7 +80,7 @@ public class ProdusServiceImpl implements ProdusService {
     @Transactional(readOnly = true)
     public ProdusDTO getOne(Integer id) {
         return produsProducatorRepository.findById(id)
-                .map(ProdusMapper::toDTO)
+                .map(produsMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Produsul cu ID " + id + " nu a fost gasit!"));
     }
 
@@ -107,7 +109,7 @@ public class ProdusServiceImpl implements ProdusService {
                 throw new OperationFailedException("Producer already sells this product");
             }
 
-            String imagine = ImageStoreService.saveImage(request.getImagine(),producator.getId());
+            String imagine = imageStoreService.saveImage(request.getImagine(),producator.getId());
 
             ProdusProducator join = ProdusProducator.builder()
                     .produs(produs)
@@ -120,7 +122,7 @@ public class ProdusServiceImpl implements ProdusService {
 
             produsProducatorRepository.save(join);
 
-            return  ProdusMapper.toDTO(join);
+            return  produsMapper.toDTO(join);
         } catch (Exception e){
             throw new OperationFailedException("Eroare la adaugarea produsului. " + e.getMessage());
         }
@@ -138,7 +140,7 @@ public class ProdusServiceImpl implements ProdusService {
             produsProducator.setCantitate(request.getCantiate());
 
             if(request.getImagine() != null && !request.getImagine().isEmpty()){
-                String newImagine = ImageStoreService.replaceImage(
+                String newImagine = imageStoreService.replaceImage(
                         request.getImagine(),
                         produsProducator.getImagine(),
                         produsProducator.getId()
@@ -148,7 +150,7 @@ public class ProdusServiceImpl implements ProdusService {
 
             ProdusProducator updated = produsProducatorRepository.save(produsProducator);
 
-            return ProdusMapper.toDTO(updated);
+            return produsMapper.toDTO(updated);
         } catch (Exception e){
             throw new OperationFailedException("Eroare la actualizarea produsului. " + e.getMessage());
         }
@@ -160,7 +162,7 @@ public class ProdusServiceImpl implements ProdusService {
 
         try{
             ProdusProducator produsProducator = productAuthorizationService.authorizeAndGetProdusOwnership(id);
-            ImageStoreService.deleteImage(produsProducator.getImagine());
+            imageStoreService.deleteImage(produsProducator.getImagine());
             produsProducatorRepository.deleteByProdus_IdAndProducator_Id(produsProducator.getProdus().getId(),
                     produsProducator.getProducator().getId());
         } catch (Exception e){
@@ -179,6 +181,6 @@ public class ProdusServiceImpl implements ProdusService {
         );
 
         Page<ProdusProducator> page = produsProducatorRepository.findAll(spec, pageable);
-        return page.map(ProdusMapper::toDTO);
+        return page.map(produsMapper::toDTO);
     }
 }
