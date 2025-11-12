@@ -21,6 +21,8 @@ export interface UpdateProdusData {
 export const produseApi = {
     getAll: () => api.get<Produs[]>("/produse"),
 
+    getAllProducator: () => api.get<Produs[]>("/prduse/producator"),
+
     getPopular: (page = 0, size = 12) =>
         publicApi.get<PaginatedResponse<Produs>>(`/produse/populare?page=${page}&size=${size}`),
 
@@ -31,7 +33,7 @@ export const produseApi = {
         api.get<Produs[]>(`/produse/random?count=${count}`),
 
     getFiltered: (params: Record<string, string | number | boolean | undefined>) =>
-        api.get<Produs[]>("/produse/filter", { params }),
+        api.get<PaginatedResponse<Produs>>("/produse/filter", { params }),
 
     getById: (id: number) => api.get<Produs>(`/produse/${id}`),
 

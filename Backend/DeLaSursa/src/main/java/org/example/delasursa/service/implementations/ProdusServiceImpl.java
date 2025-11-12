@@ -52,6 +52,21 @@ public class ProdusServiceImpl implements ProdusService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ProdusDTO> getAllProducator() {
+        User user = userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        ).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+
+        Producator producator = user.getProducator();
+
+        return produsProducatorRepository.findByProducator_Id(producator.getId())
+                .stream()
+                .map(ProdusMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     public List<ProdusDTO> getRandom(Integer count) {
         return produsProducatorRepository.findRandom(count)
                 .stream()

@@ -6,6 +6,7 @@ import org.example.delasursa.common.dto.CreateProdusRequest;
 import org.example.delasursa.common.dto.ProdusDTO;
 import org.example.delasursa.common.dto.UpdateProdusRequest;
 import org.example.delasursa.model.Produs;
+import org.example.delasursa.model.ProdusProducator;
 import org.example.delasursa.service.ProdusService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,18 @@ public class ProduseController {
         List<ProdusDTO> all = produsService.getAll();
 
         log.info("Fetched {} produse successfully", all.size());
+
+        return ResponseEntity.ok(all);
+    }
+
+    @GetMapping("/producator")
+    @PreAuthorize("hasRole('PRODUCATOR')")
+    public ResponseEntity<List<ProdusDTO>> getAllProducator(){
+        log.info("Get all produse for producator request received ");
+
+        List<ProdusDTO> all = produsService.getAll();
+
+        log.info("Fetched {} produse for producator successfully", all.size());
 
         return ResponseEntity.ok(all);
     }

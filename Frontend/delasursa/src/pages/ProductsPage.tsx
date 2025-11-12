@@ -242,6 +242,7 @@ export default function ProductsPage() {
     const [saleOnly, setSaleOnly] = useState(false);
 
     const [recomendedProducts, setRecomendedProducts] = useState<Product[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         const fetchRecommended = async () => {
@@ -257,6 +258,42 @@ export default function ProductsPage() {
         }
         fetchRecommended();
     }, []);
+
+    useEffect(() => {
+        const fetchFilteredProducts = async () => {
+            try {
+                const params = {
+                    categorie: selectedCategory || undefined,
+                    regiune: selectedRegion || undefined,
+                    pretMin: selectedMinPrice ? Number(selectedMinPrice) : undefined,
+                    pretMax: selectedMaxPrice ? Number(selectedMaxPrice) : undefined,
+                    doarDisponibile: availableOnly || undefined,
+                    page: 0,
+                    size: 20,
+                    sort: "pret,asc",
+                };
+
+                const res = await produseApi.getFiltered(params);
+                const backendData = Array.isArray(res.data)
+                    ? res.data
+                    : res.data.content;
+                const mapped = backendData.map(mapProdusToProduct);
+                setFilteredProducts(mapped);
+            } catch (err) {
+                console.error("Eroare la filtrarea produselor:", err);
+                setFilteredProducts([]);
+            }
+        };
+
+        fetchFilteredProducts();
+    }, [
+        selectedCategory,
+        selectedRegion,
+        selectedMinPrice,
+        selectedMaxPrice,
+        availableOnly,
+    ]);
+
 
     const [viewType, setViewType] = useState<"grid" | "list">("grid"); // state pentru toggle
 
@@ -335,76 +372,76 @@ export default function ProductsPage() {
             setSaleOnly(checked);
     };
 
-    const filteredProducts = useMemo(() => {
-        let result = demoProducts.slice();
-
-        if (search.trim() !== "") {
-            const q = search.toLowerCase();
-            result = result.filter((p) => p.name.toLowerCase().includes(q));
-        }
-
-        if (selectedCategory) {
-            result = result.filter((p) => p.category === selectedCategory);
-        }
-
-        if (selectedRegion) {
-            result = result.filter((p) => p.region === selectedRegion);
-        }
-
-        const min = selectedMinPrice ? Number(selectedMinPrice) : NaN;
-        const max = selectedMaxPrice ? Number(selectedMaxPrice) : NaN;
-        if (!Number.isNaN(min)) result = result.filter((p) => p.price >= min);
-        if (!Number.isNaN(max)) result = result.filter((p) => p.price <= max);
-
-        if (selectedRating) {
-            const rating = Number(selectedRating);
-            if (!Number.isNaN(rating)) {
-                result = result.filter((p) => Math.floor(p.rating) >= rating);
-            }
-        }
-
-        if (availableOnly) result = result.filter((p) => p.available);
-        if (bioOnly) result = result.filter((p) => p.bio);
-        if (newOnly) result = result.filter((p) => p.isNew);
-        if (saleOnly) result = result.filter((p) => p.onSale);
-
-        switch (selectedSort) {
-            case "price-asc":
-                result.sort((a, b) => a.price - b.price);
-                break;
-            case "price-desc":
-                result.sort((a, b) => b.price - a.price);
-                break;
-            case "rating-desc":
-                result.sort((a, b) => b.rating - a.rating);
-                break;
-            case "rating-asc":
-                result.sort((a, b) => a.rating - b.rating);
-                break;
-            case "name-asc":
-                result.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case "name-desc":
-                result.sort((a, b) => b.name.localeCompare(a.name));
-                break;
-            default:
-                break;
-        }
-
-        return result;
-    }, [
-        search,
-        selectedCategory,
-        selectedRegion,
-        selectedMinPrice,
-        selectedMaxPrice,
-        selectedRating,
-        selectedSort,
-        availableOnly,
-        bioOnly,
-        newOnly,
-        saleOnly,
-    ]);
+    // const filteredProducts = useMemo(() => {
+    //     let result = demoProducts.slice();
+    //
+    //     if (search.trim() !== "") {
+    //         const q = search.toLowerCase();
+    //         result = result.filter((p) => p.name.toLowerCase().includes(q));
+    //     }
+    //
+    //     if (selectedCategory) {
+    //         result = result.filter((p) => p.category === selectedCategory);
+    //     }
+    //
+    //     if (selectedRegion) {
+    //         result = result.filter((p) => p.region === selectedRegion);
+    //     }
+    //
+    //     const min = selectedMinPrice ? Number(selectedMinPrice) : NaN;
+    //     const max = selectedMaxPrice ? Number(selectedMaxPrice) : NaN;
+    //     if (!Number.isNaN(min)) result = result.filter((p) => p.price >= min);
+    //     if (!Number.isNaN(max)) result = result.filter((p) => p.price <= max);
+    //
+    //     if (selectedRating) {
+    //         const rating = Number(selectedRating);
+    //         if (!Number.isNaN(rating)) {
+    //             result = result.filter((p) => Math.floor(p.rating) >= rating);
+    //         }
+    //     }
+    //
+    //     if (availableOnly) result = result.filter((p) => p.available);
+    //     if (bioOnly) result = result.filter((p) => p.bio);
+    //     if (newOnly) result = result.filter((p) => p.isNew);
+    //     if (saleOnly) result = result.filter((p) => p.onSale);
+    //
+    //     switch (selectedSort) {
+    //         case "price-asc":
+    //             result.sort((a, b) => a.price - b.price);
+    //             break;
+    //         case "price-desc":
+    //             result.sort((a, b) => b.price - a.price);
+    //             break;
+    //         case "rating-desc":
+    //             result.sort((a, b) => b.rating - a.rating);
+    //             break;
+    //         case "rating-asc":
+    //             result.sort((a, b) => a.rating - b.rating);
+    //             break;
+    //         case "name-asc":
+    //             result.sort((a, b) => a.name.localeCompare(b.name));
+    //             break;
+    //         case "name-desc":
+    //             result.sort((a, b) => b.name.localeCompare(a.name));
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //
+    //     return result;
+    // }, [
+    //     search,
+    //     selectedCategory,
+    //     selectedRegion,
+    //     selectedMinPrice,
+    //     selectedMaxPrice,
+    //     selectedRating,
+    //     selectedSort,
+    //     availableOnly,
+    //     bioOnly,
+    //     newOnly,
+    //     saleOnly,
+    // ]);
 
     return (
         <>

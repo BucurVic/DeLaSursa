@@ -5,6 +5,6 @@ export interface Produs {
     categorie: string;
     pret: number;
     unitate_masura: string;
-    cantitate?: number;
+    cantitate: number;
     imagine?: string;
 }
