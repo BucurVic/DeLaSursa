@@ -18,6 +18,8 @@ import { AuthContext } from "../../context/AuthContext.tsx";
 import { useNavigate } from "react-router-dom";
 import HandshakeIcon from "@mui/icons-material/Handshake"; // Ca placeholder pentru logo
 import LoadingSpinner from "../../components/LoadingSpinner.tsx";
+import logoSrc from '../../assets/logo.png'; 
+
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -102,7 +104,16 @@ const LoginPage: React.FC = () => {
           </Box>
         )} */}
         {/* Logo */}
-        <HandshakeIcon sx={{ fontSize: 50, color: "#5FEE95" }} />
+        <Box
+          component="img"
+          src={logoSrc}
+          alt="Logo"
+          sx={{
+            height: "70px", // Poți ajusta această înălțime
+            width: "auto",   // Lățimea se va scala automat
+            mb: 1.5,         // Adaugă o margine dedesubt, înainte de titlu
+          }}
+        />
         {/* Title */}
         <Typography
           sx={{
