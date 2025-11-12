@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
-import { textResources } from "../theme";
-import SearchBarProducts from "../components/SearchBarProducts.tsx";
+import {textResources as tr, textResources} from "../theme";
+import SearchBar from "../components/SearchBar.tsx";
 import Card from "@mui/material/Card";
 import {useMemo, useState} from "react";
 import {Box, CardMedia, type SelectChangeEvent} from "@mui/material";
@@ -311,7 +311,7 @@ export default function ProductsPage() {
                         width:"100%",
                     }}
                 >
-                    <SearchBarProducts value={search} onChange={setSearch} />
+                    <SearchBar placeholder={tr.searchBar.placeholder} value={search} onChange={setSearch} />
                 </Box>
                 <Box
                     sx={{

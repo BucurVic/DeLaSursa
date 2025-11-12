@@ -14,16 +14,16 @@ import InventoryPage from "./pages/InventoryPage.tsx";
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
 // Noi am recreat aceste fișiere mai devreme
-import SignUpPage from './pages/SignUpPage';
-import LoginPage from './pages/LoginPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
+import SignUpPage from './pages/auth/SignUpPage.tsx';
+import LoginPage from './pages/auth/LoginPage.tsx';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import HomePage from './pages/HomePage';
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
+import ProductListPage from "./pages/ProductListPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
 const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
-const ProductList = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Lista de Produse (Protejat)</div>;
-
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/inregistrare" element={<SignUpPage />} />
       <Route path="/resetare-parola" element={<ResetPasswordPage />} />
-
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       {/* --- Rute Publice (Cu Layout) --- */}
       {/* Paginile pe care oricine le vede, dar care au Header/Footer/Sidebar */}
@@ -62,7 +62,7 @@ function App() {
 
                 {/* pagina cu tab-uri */}
                 <Route path="/dashboard-producator/produse" element={<ProducerProductsPage />}>
-                    <Route path="lista" element={<ProductList />} />
+                    <Route path="lista" element={<ProductListPage />} />
                     <Route path="adauga" element={<ProductForm />} />
                      <Route path="inventar" element={<InventoryPage />} />
                     {/* <Route path="promotii" element={<PromotionsPage />} /> */}

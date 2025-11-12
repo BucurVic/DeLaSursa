@@ -1,268 +1,285 @@
-import React from 'react';
+import React from "react";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
-  TextField,
-  Box,
-  IconButton
-} from '@mui/material';
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Typography,
+    TextField,
+    Box,
+    IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { colors } from "../theme/colors";
+import { typography } from "../theme/typography";
+import { textResources as tr } from "../theme/textResources";
 
-// --- LINIA CORECTATĂ ---
-import CloseIcon from '@mui/icons-material/Close'; // Am scos ":" de după @mui
-
-// Tipul de date pentru produsul pe care îl edităm (simplificat)
 interface ProductData {
-  name: string;
-  category: string;
-  price: string;
-  stock: string;
-  unit: string;
+    name: string;
+    category: string;
+    price: string;
+    stock: string;
+    unit: string;
 }
 
 interface EditProductModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSave: (data: ProductData) => void;
-  initialData: ProductData;
+    open: boolean;
+    onClose: () => void;
+    onSave: (data: ProductData) => void;
+    initialData: ProductData;
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({
-  open,
-  onClose,
-  onSave,
-  initialData,
-}) => {
-  const [formData, setFormData] = React.useState(initialData);
+                                                               open,
+                                                               onClose,
+                                                               onSave,
+                                                               initialData,
+                                                           }) => {
+    const [formData, setFormData] = React.useState(initialData);
 
-  const COLORS = {
-    modalBg: '#0C1A14', 
-    fieldBg: '#13271E',
-    idleBorder: 'rgba(95, 238, 149, 0.3)', 
-    lightGreen1: '#5FEE95', // Verde deschis
-    lightGreen3: '#3BC76A',
-    white1: '#F2F2F2',
-    white2: '#BEBEBE',
-    textDark: '#0C1A14', 
-  };
-
-  const textFieldStyles = (disabled: boolean = false) => ({
-    '& .MuiInput-root': {
-      backgroundColor: COLORS.fieldBg,
-      color: COLORS.white1,
-      padding: '8px 12px', 
-      borderRadius: '8px',
-      border: `2px solid ${COLORS.idleBorder}`,
-      marginTop: '8px', 
-      transition: 'border-color 0.2s ease-in-out', 
-      opacity: disabled ? 0.7 : 1,
-      
-      '&::before, &::after': {
-        display: 'none',
-      },
-
-      '&:hover:not(.Mui-focused)': { 
-        borderColor: disabled ? COLORS.idleBorder : `${COLORS.lightGreen1} !important`,
-      },
-      '&.Mui-focused': {
-        borderColor: COLORS.lightGreen1,
-      },
-    },
-    '& .MuiInputBase-input': {
-      padding: 0, 
-      fontWeight: 'bold', 
-      color: COLORS.white1,
-      '&.Mui-disabled': { 
-        color: COLORS.white2,
-        opacity: 0.6,
-        fontWeight: 'normal',
-        '-webkit-text-fill-color': COLORS.white2, 
-      },
-    }
-  });
-  
-  const labelStyles = {
-    color: COLORS.white2,
-    mb: 0, 
-    fontSize: '0.875rem',
-    textAlign: 'left', 
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-    onClose();
-  };
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="sm" 
-      fullWidth
-      PaperProps={{
-        sx: {
-          bgcolor: COLORS.modalBg, 
-          color: COLORS.white1,
-          borderRadius: '8px',
-          boxShadow: 24,
-          p: 1, 
+    const textFieldStyles = (disabled: boolean = false) => ({
+        "& .MuiInput-root": {
+            backgroundColor: colors.darkGreen2,
+            color: colors.white1,
+            borderRadius: "1rem",
+            border: `1px solid ${colors.lightGreen1Transparent}`,
+            marginTop: "0.5rem",
+            padding: "0.75rem 0.75rem",
+            opacity: disabled ? 0.7 : 1,
+            transition: "border-color 0.2s ease-in-out",
+            "&::before, &::after": { display: "none" },
+            "&:hover:not(.Mui-focused)": {
+                borderColor: disabled
+                    ? colors.lightGreen1Transparent
+                    : `${colors.lightGreen1}`,
+            },
+            "&.Mui-focused": {
+                borderColor: colors.lightGreen1,
+            },
         },
-      }}
-    >
-      <DialogTitle sx={{ p: 2, pb: 1, borderBottom: `1px solid ${COLORS.fieldBg}` }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* Titlul "Editează produs" este verde deschis */}
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem', color: COLORS.lightGreen1 }}>
-            Editează produs
-          </Typography>
-          <IconButton onClick={onClose} sx={{ color: COLORS.white1 }}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <Typography variant="body2" sx={{ color: COLORS.white2, opacity: 0.7, mb: 1 }}>
-          Modifică informațiile câmpului. Unele câmpuri nu pot fi editate.
-        </Typography>
-      </DialogTitle>
+        "& .MuiInputBase-input": {
+            ...typography.body1,
+            color: colors.white1,
+            "&.Mui-disabled": {
+                color: colors.white2,
+                opacity: 0.6,
+                "-webkit-text-fill-color": colors.white2,
+            },
+        },
+    });
 
-      <Box component="form" onSubmit={handleSubmit}>
-        <DialogContent sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2, pt: 2, px: 3 }}>
-          
-          {/* Câmp 1: Nume Produs */}
-          <Box>
-            <Typography sx={labelStyles}>Nume produs</Typography>
-            <TextField
-                fullWidth
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                variant="standard"
-                margin="none"
-                InputProps={{ disableUnderline: true }}
-                sx={textFieldStyles(false)} 
-            />
-          </Box>
-          
-          {/* Câmp 2: Categorie (View-only) */}
-          <Box>
-            <Typography sx={labelStyles}>Categorie (View-only)</Typography>
-            <TextField
-                fullWidth
-                name="category"
-                value={formData.category}
-                disabled 
-                variant="standard"
-                margin="none"
-                InputProps={{ disableUnderline: true }}
-                sx={textFieldStyles(true)} 
-            />
-          </Box>
+    const labelStyles = {
+        color: colors.white2,
+        mb: "0.25rem",
+        fontSize: "0.875rem",
+        textAlign: "left",
+    };
 
-          {/* Câmpuri 3 & 4: Preț & Stoc (Afișare 2 coloane) */}
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            {/* Preț */}
-            <Box>
-              <Typography sx={labelStyles}>Preț</Typography>
-              <TextField
-                  fullWidth
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  placeholder="0 lei"
-                  variant="standard"
-                  margin="none"
-                  InputProps={{ disableUnderline: true }}
-                  sx={textFieldStyles(false)}
-              />
-            </Box>
-            {/* Stoc (View-only) */}
-            <Box>
-              <Typography sx={labelStyles}>Stoc (View-only)</Typography>
-              <TextField
-                  fullWidth
-                  name="stock"
-                  value={formData.stock}
-                  disabled
-                  variant="standard"
-                  margin="none"
-                  InputProps={{ disableUnderline: true }}
-                  sx={textFieldStyles(true)}
-              />
-               <Typography variant="caption" sx={{ color: COLORS.lightGreen1, mt: 0.5, fontSize: '0.75rem' }}>
-                 *Stocul se gestionează în secțiunea Inventar
-              </Typography>
-            </Box>
-          </Box>
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
-          {/* Câmp 5: Unitate de Măsură (View-only) */}
-          <Box>
-            <Typography sx={labelStyles}>Unitate de Măsură (View-only)</Typography>
-            <TextField
-                fullWidth
-                name="unit"
-                value={formData.unit}
-                disabled
-                variant="standard"
-                margin="none"
-                InputProps={{ disableUnderline: true }}
-                sx={textFieldStyles(true)}
-            />
-          </Box>
-          
-        </DialogContent>
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSave(formData);
+        onClose();
+    };
 
-        <DialogActions sx={{ p: 3, gap: 2, justifyContent: 'flex-end' }}>
-          
-          {/* Butonul ANULEAZĂ cu bordură și text verde deschis */}
-          <Button
-            onClick={onClose}
-            sx={{
-              color: COLORS.lightGreen1, // Text verde deschis
-              bgcolor: 'transparent',
-              border: `1px solid ${COLORS.lightGreen1}`, // Bordură verde deschis
-              py: '8px',
-              px: '20px',
-              borderRadius: '4px',
-              textTransform: 'uppercase',
-              '&:hover': {
-                bgcolor: 'rgba(95, 238, 149, 0.1)', // Verde transparent la hover
-                border: `1px solid ${COLORS.lightGreen1}`,
-              },
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{
+                sx: {
+                    bgcolor: colors.darkGreen1,
+                    color: colors.white1,
+                    borderRadius: "1rem",
+                    border: `1px solid ${colors.lightGreen1Transparent}`,
+                    boxShadow: "1rem 1rem 1rem rgba(0,0,0,0.4)",
+                    p: "0.5rem",
+                },
             }}
-          >
-            Anulează
-          </Button>
+        >
+            {/* 🔹 Titlu și descriere */}
+            <DialogTitle
+                sx={{
+                    p: "1rem",
+                    borderBottom: `2px solid ${colors.darkGreen2}`,
+                }}
+            >
+                <Box
+                    sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                >
+                    <Typography
+                        sx={{
+                            ...typography.h4,
+                            color: colors.lightGreen1,
+                        }}
+                    >
+                        {tr.editModal.title}
+                    </Typography>
+                    <IconButton onClick={onClose} sx={{ color: colors.white1 }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+                <Typography
+                    variant="body2"
+                    sx={{ color: colors.white2, opacity: 0.7, mt: "0.25rem" }}
+                >
+                    {tr.editModal.subtitle}
+                </Typography>
+            </DialogTitle>
 
-          {/* Butonul SALVEAZĂ MODIFICĂRILE */}
-          <Button
-            type="submit"
-            sx={{
-              color: COLORS.textDark, 
-              bgcolor: COLORS.lightGreen1, 
-              py: '8px',
-              px: '20px',
-              borderRadius: '4px',
-              textTransform: 'uppercase',
-              fontWeight: 'bold',
-              '&:hover': {
-                bgcolor: COLORS.lightGreen3, 
-              },
-            }}
-          >
-            Salvează modificările
-          </Button>
-        </DialogActions>
-      </Box>
-    </Dialog>
-  );
+            {/* 🔸 Formular */}
+            <Box component="form" onSubmit={handleSubmit}>
+                <DialogContent
+                    sx={{
+                        display: "grid",
+                        gap: "1rem",
+                        pt: "1.5rem",
+                    }}
+                >
+                    {/* Nume produs */}
+                    <Box>
+                        <Typography sx={labelStyles}>{tr.form.name}</Typography>
+                        <TextField
+                            fullWidth
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            variant="standard"
+                            margin="none"
+                            InputProps={{ disableUnderline: true }}
+                            sx={textFieldStyles(false)}
+                        />
+                    </Box>
+
+                    {/* Categorie */}
+                    <Box>
+                        <Typography sx={labelStyles}>{tr.form.category}</Typography>
+                        <TextField
+                            fullWidth
+                            name="category"
+                            value={formData.category}
+                            disabled
+                            variant="standard"
+                            margin="none"
+                            InputProps={{ disableUnderline: true }}
+                            sx={textFieldStyles(true)}
+                        />
+                    </Box>
+
+                    {/* Preț & Stoc */}
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: "1rem",
+                        }}
+                    >
+                        <Box>
+                            <Typography sx={labelStyles}>{tr.editModal.fields.price}</Typography>
+                            <TextField
+                                fullWidth
+                                name="price"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                                variant="standard"
+                                margin="none"
+                                InputProps={{ disableUnderline: true }}
+                                sx={textFieldStyles(false)}
+                            />
+                        </Box>
+
+                        <Box>
+                            <Typography sx={labelStyles}>{tr.form.stock}</Typography>
+                            <TextField
+                                fullWidth
+                                name="stock"
+                                value={formData.stock}
+                                disabled
+                                variant="standard"
+                                margin="none"
+                                InputProps={{ disableUnderline: true }}
+                                sx={textFieldStyles(true)}
+                            />
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: colors.lightGreen1,
+                                    fontSize: "0.75rem",
+                                }}
+                            >
+                                {tr.editModal.fields.stockNote}
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {/* Unitate de măsură */}
+                    <Box>
+                        <Typography sx={labelStyles}>{tr.form.unit}</Typography>
+                        <TextField
+                            fullWidth
+                            name="unit"
+                            value={
+                                formData.unit
+                                    .trim()
+                                    .replace(/^[\d\s.,]+/, "")
+                                    .replace(/\d+$/, "")
+                                    .trim() || "-"
+                            }
+                            disabled
+                            variant="standard"
+                            margin="none"
+                            InputProps={{ disableUnderline: true }}
+                            sx={textFieldStyles(true)}
+                        />
+                    </Box>
+                </DialogContent>
+
+                {/* 🔘 Acțiuni */}
+                <DialogActions sx={{ p: "1.5rem", gap: "1rem", justifyContent: "flex-end" }}>
+                    <Button
+                        onClick={onClose}
+                        sx={{
+                            ...typography.button,
+                            color: colors.lightGreen1,
+                            border: `1px solid ${colors.lightGreen1}`,
+                            borderRadius: "0.5rem",
+                            py: "0.6rem",
+                            px: "1.5rem",
+                            "&:hover": {
+                                backgroundColor: colors.lightGreen1Transparent,
+                            },
+                        }}
+                    >
+                        {tr.buttons.cancel}
+                    </Button>
+
+                    <Button
+                        type="submit"
+                        sx={{
+                            ...typography.button,
+                            backgroundColor: colors.lightGreen1,
+                            color: colors.darkGreen1,
+                            borderRadius: "0.5rem",
+                            py: "0.6rem",
+                            px: "1.5rem",
+                            "&:hover": {
+                                backgroundColor: colors.lightGreen2,
+                            },
+                        }}
+                    >
+                        {tr.editModal.buttons.save}
+                    </Button>
+                </DialogActions>
+            </Box>
+        </Dialog>
+    );
 };
 
 export default EditProductModal;

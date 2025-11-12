@@ -11,22 +11,19 @@ import {
     Typography
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { colors } from "../theme/colors.ts";
-import { textResources } from "../theme/textResources.ts";
+import { colors } from "../../theme/colors.ts";
+import { textResources } from "../../theme/textResources.ts";
+import { useNavigate } from "react-router-dom";
 
-interface LoginPageMUIProps {
-    onBack?: () => void;
-    onLogin?: (email: string, password: string, remember: boolean) => void;
-}
-
-const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
+const LoginPage: React.FC = () => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [remember, setRemember] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (onLogin) onLogin(email, password, remember);
+        console.log("Autentificare:", { email, password, remember });
     };
 
     return (
@@ -48,7 +45,6 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                 overflow: "auto",
             }}
         >
-            {/* Card */}
             <Card
                 sx={{
                     position: "relative",
@@ -61,36 +57,34 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     textAlign: "center",
                 }}
             >
-                {/* Back Button */}
-                {onBack && (
-                    <Box
+                {/* 🔙 Buton înapoi — mereu vizibil */}
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "1rem",
+                        left: "1rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "2.25rem",
+                        height: "2.25rem",
+                        borderRadius: "50%",
+                        backgroundColor: colors.darkGreen1,
+                        transition: "background-color 0.2s ease",
+                        "&:hover": {
+                            backgroundColor: colors.lightGreen1Transparent,
+                        },
+                    }}
+                    onClick={() => navigate("/")}
+                >
+                    <ArrowBackIcon
                         sx={{
-                            position: "absolute",
-                            top: "1rem",
-                            left: "1rem",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "2.25rem",
-                            height: "2.25rem",
-                            borderRadius: "50%",
-                            backgroundColor: colors.darkGreen1,
-                            transition: "background-color 0.2s ease",
-                            "&:hover": {
-                                backgroundColor: colors.lightGreen1Transparent,
-                            },
+                            color: colors.white1,
+                            fontSize: "1.6rem",
                         }}
-                        onClick={onBack}
-                    >
-                        <ArrowBackIcon
-                            sx={{
-                                color: colors.white1,
-                                fontSize: "1.6rem",
-                            }}
-                        />
-                    </Box>
-                )}
+                    />
+                </Box>
 
                 {/* Logo */}
                 <Box sx={{ mt: 4, mb: 3 }}>
@@ -101,7 +95,7 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     />
                 </Box>
 
-                {/* Title */}
+                {/* Titlu */}
                 <Typography
                     sx={{
                         color: colors.white1,
@@ -114,11 +108,11 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     {textResources.loginPage.title}
                 </Typography>
 
-                {/* Subtitle */}
+                {/* Subtitlu */}
                 <Typography variant="body2" sx={{ mb: 4, color: colors.white2 }}>
                     {textResources.loginPage.noAccount}{" "}
                     <Link
-                        href="/register"
+                        href="/inregistrare"
                         underline="always"
                         sx={{
                             color: colors.lightGreen2,
@@ -136,7 +130,7 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                     </Link>
                 </Typography>
 
-                {/* Form */}
+                {/* Formular */}
                 <CardContent
                     sx={{
                         display: "flex",
@@ -193,7 +187,7 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                             />
                         </Box>
 
-                        {/* Password */}
+                        {/* Parolă */}
                         <Box sx={{ mb: 2 }}>
                             <Typography
                                 variant="body2"
@@ -287,7 +281,7 @@ const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
                             </Link>
                         </Box>
 
-                        {/* Button */}
+                        {/* Buton Login */}
                         <Button
                             fullWidth
                             type="submit"

@@ -1,122 +1,122 @@
-import React from 'react';
+import React from "react";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-  Box,
-} from '@mui/material';
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Typography,
+} from "@mui/material";
+import { colors } from "../theme/colors.ts";
+import { typography } from "../theme/typography.ts";
+import { textResources as tr } from "../theme/textResources.ts";
 
-// Definirea tipurilor pentru a face componenta reutilizabilă
 interface DeleteConfirmationModalProps {
-  open: boolean;
-  onClose: () => void; // Funcție apelată la Anulare
-  onConfirm: () => void; // Funcție apelată la Ștergere
-  productName: string;
+    open: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    productName: string;
 }
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
-  open,
-  onClose,
-  onConfirm,
-  productName,
-}) => {
-  // Culorile proiectului tău
-  const COLORS = {
-    darkGreen1: '#13271E',
-    lightGreen3: '#3BC76A',
-    lightGreen1: '#5FEE95',
-    background: '#0C1A14',
-    white1: '#F2F2F2',
-  };
+                                                                             open,
+                                                                             onClose,
+                                                                             onConfirm,
+                                                                             productName,
+                                                                         }) => {
+    const handleConfirm = () => {
+        onConfirm();
+        onClose();
+    };
 
-  const handleConfirm = () => {
-    onConfirm();
-    onClose(); // Închide modalul după confirmare
-  };
+    const message = tr.deleteModal.message.replace("{productName}", productName);
 
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-description"
-      
-      // Stilul cutiei principale (pentru a imita stilul din poză)
-      PaperProps={{
-        sx: {
-          bgcolor: COLORS.darkGreen1, // Fundal card
-          color: COLORS.white1,       // Text
-          borderRadius: '8px',
-          boxShadow: 24,
-          p: 1, // Padding intern
-          maxWidth: '450px',
-        },
-      }}
-    >
-      <DialogTitle id="confirm-dialog-title">
-        {/* Titlul "Confirmare ștergere" */}
-        <Typography component="div" sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-          Confirmare ștergere
-        </Typography>
-      </DialogTitle>
-
-      <DialogContent sx={{ border: 'none', pt: 0, pb: 2 }}>
-        {/* Textul de avertizare */}
-        <DialogContentText id="confirm-dialog-description" sx={{ color: COLORS.white1, opacity: 0.8 }}>
-          Ești sigur că vrei să ștergi produsul **{productName}**? Această acțiune nu poate fi anulată.
-        </DialogContentText>
-      </DialogContent>
-
-      <DialogActions sx={{ pr: 3, pb: 3, gap: 1 }}>
-        
-        {/* Butonul ANULEAZĂ */}
-        <Button
-          onClick={onClose}
-          sx={{
-            color: COLORS.white1,
-            bgcolor: COLORS.darkGreen1, // Fundal transparent/dark
-            border: `1px solid ${COLORS.white1}`,
-            py: '10px',
-            px: '20px',
-            borderRadius: '6px',
-            textTransform: 'uppercase',
-            '&:hover': {
-              bgcolor: 'rgba(242, 242, 242, 0.1)', // Umbră ușoară la hover
-              border: `1px solid ${COLORS.white1}`,
-            },
-          }}
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            aria-labelledby="delete-confirm-title"
+            aria-describedby="delete-confirm-description"
+            PaperProps={{
+                sx: {
+                    backgroundColor: colors.darkGreen2,
+                    color: colors.white1,
+                    borderRadius: "0.75rem",
+                    boxShadow: "0 0 25px rgba(0,0,0,0.35)",
+                    p: "0.5rem",
+                    maxWidth: "28rem",
+                    width: "90%",
+                },
+            }}
         >
-          Anulează
-        </Button>
+            <DialogTitle id="delete-confirm-title" sx={{ pb: 1.5 }}>
+                <Typography
+                    sx={{
+                        ...typography.h4,
+                        color: colors.lightGreen1,
+                        fontWeight: 700,
+                    }}
+                >
+                    {tr.deleteModal.title}
+                </Typography>
+            </DialogTitle>
 
-        {/* Butonul ȘTERGE (verde) */}
-        <Button
-          onClick={handleConfirm}
-          sx={{
-            color: COLORS.background, // Text negru (din background)
-            bgcolor: COLORS.lightGreen1, // lightGreen1 (verde deschis)
-            py: '10px',
-            px: '20px',
-            borderRadius: '6px',
-            textTransform: 'uppercase',
-            fontWeight: 'bold',
-            boxShadow: 'none',
-            '&:hover': {
-              bgcolor: COLORS.lightGreen3, // lightGreen3 (verde puțin mai închis la hover)
-              boxShadow: 'none',
-            },
-          }}
-          autoFocus // Păstrează focusul pe acest buton
-        >
-          Șterge
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+            <DialogContent sx={{ pt: 0, pb: "1.5rem" }}>
+                <DialogContentText
+                    id="delete-confirm-description"
+                    sx={{
+                        ...typography.body1,
+                        color: colors.white1,
+                        opacity: 0.85,
+                        lineHeight: 1.6,
+                    }}
+                >
+                    {message}
+                </DialogContentText>
+            </DialogContent>
+
+            <DialogActions sx={{ pb: "1.5rem", pr: "1.5rem", gap: "1rem" }}>
+                <Button
+                    onClick={onClose}
+                    sx={{
+                        ...typography.button,
+                        color: colors.lightGreen1,
+                        border: `1px solid ${colors.lightGreen1}`,
+                        backgroundColor: "transparent",
+                        borderRadius: "0.5rem",
+                        px: "1.5rem",
+                        py: "0.6rem",
+                        "&:hover": {
+                            backgroundColor: colors.lightGreen1Transparent,
+                            borderColor: colors.lightGreen2,
+                        },
+                    }}
+                >
+                    {tr.buttons.cancel}
+                </Button>
+
+                <Button
+                    onClick={handleConfirm}
+                    sx={{
+                        ...typography.button,
+                        color: colors.red1,
+                        border: `1px solid ${colors.red1}`,
+                        borderRadius: "0.5rem",
+                        px: "1.5rem",
+                        py: "0.6rem",
+                        fontWeight: 700,
+                        "&:hover": {
+                            backgroundColor: colors.redTransparent,
+                        },
+                    }}
+                    autoFocus
+                >
+                    {tr.buttons.delete}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default DeleteConfirmationModal;

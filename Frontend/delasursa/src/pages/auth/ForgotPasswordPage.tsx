@@ -9,23 +9,17 @@ import {
     Typography
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { colors } from "../theme/colors.ts";
-import { textResources } from "../theme/textResources.ts";
+import { colors } from "../../theme/colors.ts";
+import { textResources } from "../../theme/textResources.ts";
+import { useNavigate } from "react-router-dom";
 
-interface ForgotPasswordPageProps {
-    onBack?: () => void;
-    onSubmit?: (email: string) => void;
-}
-
-const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
-                                                                   onBack,
-                                                                   onSubmit,
-                                                               }) => {
+const ForgotPasswordPage: React.FC = () => {
     const [email, setEmail] = React.useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (onSubmit) onSubmit(email);
+        console.log("Email trimis:", email);
     };
 
     return (
@@ -56,36 +50,34 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
                     textAlign: "center",
                 }}
             >
-                {/* Back Button */}
-                {onBack && (
-                    <Box
+                {/* Back Button — mereu vizibil */}
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "1rem",
+                        left: "1rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "2.25rem",
+                        height: "2.25rem",
+                        borderRadius: "50%",
+                        backgroundColor: colors.darkGreen1,
+                        transition: "background-color 0.2s ease",
+                        "&:hover": {
+                            backgroundColor: colors.lightGreen1Transparent,
+                        },
+                    }}
+                    onClick={() => navigate("/login")} // <-- merge la login
+                >
+                    <ArrowBackIcon
                         sx={{
-                            position: "absolute",
-                            top: "1rem",
-                            left: "1rem",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "2.25rem",
-                            height: "2.25rem",
-                            borderRadius: "50%",
-                            backgroundColor: colors.darkGreen1,
-                            transition: "background-color 0.2s ease",
-                            "&:hover": {
-                                backgroundColor: colors.lightGreen1Transparent,
-                            },
+                            color: colors.white1,
+                            fontSize: "1.6rem",
                         }}
-                        onClick={onBack}
-                    >
-                        <ArrowBackIcon
-                            sx={{
-                                color: colors.white1,
-                                fontSize: "1.6rem",
-                            }}
-                        />
-                    </Box>
-                )}
+                    />
+                </Box>
 
                 {/* Logo */}
                 <Box sx={{ mt: 4, mb: 3 }}>
