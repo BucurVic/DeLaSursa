@@ -1,15 +1,20 @@
 import Typography from "@mui/material/Typography";
-import { textResources } from "../theme";
+import {colors, textResources} from "../theme";
 import SearchBarProducts from "../components/SearchBarProducts.tsx";
 import Card from "@mui/material/Card";
 import {useMemo, useState} from "react";
-import {Box, CardMedia, type SelectChangeEvent} from "@mui/material";
+import {Box, CardMedia, IconButton, type SelectChangeEvent} from "@mui/material";
 import Dropdown from "../components/Dropdown.tsx";
 import CheckBox from "../components/CheckBox.tsx";
 import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import FilterChip from "../components/FilterChip.tsx";
+import ListViewUserProductCard from "../components/ListViewUserProductCard.tsx";
+import GridViewUserProductCard from "../components/GridViewUserProductCard.tsx";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import GridViewIcon from "@mui/icons-material/GridView";
+
 
 type Product = {
     id: string;
@@ -49,7 +54,7 @@ const demoProducts: Product[] = [
         bio: true,
         isNew: false,
         onSale: true,
-        image: "/images/apple.jpg",
+        image: "/images/mere_ionatan.jpg",
     },
     {
         id: "3",
@@ -77,7 +82,86 @@ const demoProducts: Product[] = [
         onSale: true,
         image: "/images/meat.jpg",
     },
+    {
+        id: "5",
+        name: "Castraveți murați",
+        category: "Legume",
+        region: "Sălaj",
+        price: 60,
+        rating: 4,
+        available: true,
+        bio: false,
+        isNew: false,
+        onSale: true,
+        image: "/images/muraturi.jpg",
+    },
+    {
+        id: "6",
+        name: "Lapte proaspăt",
+        category: "Lactate",
+        region: "Bihor",
+        price: 50,
+        rating: 5,
+        available: true,
+        bio: true,
+        isNew: true,
+        onSale: false,
+        image: "/images/milk.jpg",
+    },
+    {
+        id: "7",
+        name: "Ouă de țară",
+        category: "Lactate",
+        region: "Cluj",
+        price: 40,
+        rating: 4,
+        available: true,
+        bio: true,
+        isNew: false,
+        onSale: false,
+        image: "/images/eggs.jpg",
+    },
+    {
+        id: "8",
+        name: "Roșii cherry",
+        category: "Legume",
+        region: "Bihor",
+        price: 90,
+        rating: 5,
+        available: true,
+        bio: true,
+        isNew: true,
+        onSale: false,
+        image: "/images/tomatoes.jpg",
+    },
+    {
+        id: "9",
+        name: "Cireșe dulci",
+        category: "Fructe",
+        region: "Sălaj",
+        price: 150,
+        rating: 5,
+        available: true,
+        bio: false,
+        isNew: true,
+        onSale: false,
+        image: "/images/cherries.jpg",
+    },
+    {
+        id: "10",
+        name: "Cașcaval afumat",
+        category: "Lactate",
+        region: "Cluj",
+        price: 110,
+        rating: 4,
+        available: true,
+        bio: false,
+        isNew: false,
+        onSale: true,
+        image: "/images/cheese2.jpg",
+    },
 ];
+
 
 const categoriesOptions = [
     { value: "", label: "-" },
@@ -137,6 +221,9 @@ export default function ProductsPage() {
     const [bioOnly, setBioOnly] = useState(false);
     const [newOnly, setNewOnly] = useState(false);
     const [saleOnly, setSaleOnly] = useState(false);
+
+
+    const [viewType, setViewType] = useState<"grid" | "list">("grid"); // state pentru toggle
 
     const handleDropdownChange = (label: string,event: SelectChangeEvent<string>) => {
         const value = event.target.value;
@@ -318,7 +405,11 @@ export default function ProductsPage() {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        gap:2
+                        gap:2,
+                        width: "100%",
+                        maxWidth: "1120px",
+                        mx: "auto",
+                        flexWrap: { xs: "wrap", md: "nowrap" },
                     }}
                 >
                     <Dropdown
@@ -328,6 +419,8 @@ export default function ProductsPage() {
                         onChange={(value) =>
                             handleDropdownChange(textResources.products.filters.category, value)
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
+
                     />
                     <Dropdown
                         label={textResources.products.filters.region}
@@ -336,6 +429,7 @@ export default function ProductsPage() {
                         onChange={(value) =>
                             handleDropdownChange(textResources.products.filters.region, value)
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                     <Dropdown
                         label={textResources.products.filters.minimumPrice}
@@ -347,6 +441,7 @@ export default function ProductsPage() {
                                 value
                             )
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                     <Dropdown
                         label={textResources.products.filters.maximumPrice}
@@ -358,6 +453,7 @@ export default function ProductsPage() {
                                 value
                             )
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                     <Dropdown
                         label={textResources.products.filters.rating}
@@ -366,6 +462,7 @@ export default function ProductsPage() {
                         onChange={(value) =>
                             handleDropdownChange(textResources.products.filters.rating, value)
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                     <Dropdown
                         label={textResources.products.filters.sort}
@@ -374,6 +471,7 @@ export default function ProductsPage() {
                         onChange={(value) =>
                             handleDropdownChange(textResources.products.filters.sort, value)
                         }
+                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                 </Box>
                 <Box
@@ -411,7 +509,27 @@ export default function ProductsPage() {
                 </Box>
             </Card>
 
-            {activeFilters.length > 0 && (
+
+
+
+
+
+            <Box
+                sx={{
+                    mt: 2,
+                    px: 2,
+                    maxWidth: "1160px",
+                    mx: "auto",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 1,
+                }}
+            >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+
+                {activeFilters.length > 0 && (
                 <Box sx={{ mt: 2, px: 2, display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
                     <Typography variant="h6" sx={{ mr: 1 }}>
                         {textResources.products.activeFiltersLabel}
@@ -438,69 +556,143 @@ export default function ProductsPage() {
                         {textResources.products.clearAll}
                     </Button>
                 </Box>
-            )}
 
-            {/*folosita numai pt debug*/}
-            {/*<Box sx={{ mt: 4, px: 2 }}>*/}
-            {/*    <Grid container spacing={2}>*/}
-            {/*        {filteredProducts.length === 0 ? (*/}
-            {/*            <Grid item xs={12}>*/}
-            {/*                <Typography align="center">*/}
-            {/*                    {textResources.products.noResults}*/}
-            {/*                </Typography>*/}
-            {/*            </Grid>*/}
-            {/*        ) : (*/}
-            {/*            filteredProducts.map((product) => (*/}
-            {/*                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>*/}
-            {/*                    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>*/}
-            {/*                        {product.image && (*/}
-            {/*                            <CardMedia*/}
-            {/*                                component="img"*/}
-            {/*                                height="140"*/}
-            {/*                                image={product.image}*/}
-            {/*                                alt={product.name}*/}
-            {/*                            />*/}
-            {/*                        )}*/}
-            {/*                        <CardContent sx={{ flexGrow: 1 }}>*/}
-            {/*                            <Typography variant="h6">{product.name}</Typography>*/}
-            {/*                            <Typography variant="body2" color="text.secondary">*/}
-            {/*                                {product.category} — {product.region}*/}
-            {/*                            </Typography>*/}
-            {/*                            <Typography variant="subtitle1" sx={{ mt: 1 }}>*/}
-            {/*                                {product.price} {textResources.products.currency}*/}
-            {/*                            </Typography>*/}
-            {/*                            <Typography variant="body2" color="text.secondary">*/}
-            {/*                                {textResources.products.rating}: {product.rating}*/}
-            {/*                            </Typography>*/}
-            {/*                            <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>*/}
-            {/*                                {product.available ? (*/}
-            {/*                                    <Button size="small" variant="outlined">*/}
-            {/*                                        {textResources.products.checks.available}*/}
-            {/*                                    </Button>*/}
-            {/*                                ) : null}*/}
-            {/*                                {product.bio ? (*/}
-            {/*                                    <Button size="small" variant="outlined">*/}
-            {/*                                        {textResources.products.checks.bio}*/}
-            {/*                                    </Button>*/}
-            {/*                                ) : null}*/}
-            {/*                                {product.isNew ? (*/}
-            {/*                                    <Button size="small" variant="outlined">*/}
-            {/*                                        {textResources.products.checks.new }*/}
-            {/*                                    </Button>*/}
-            {/*                                ) : null}*/}
-            {/*                                {product.onSale ? (*/}
-            {/*                                    <Button size="small" color="error" variant="contained">*/}
-            {/*                                        {textResources.products.checks.sale}*/}
-            {/*                                    </Button>*/}
-            {/*                                ) : null}*/}
-            {/*                            </Box>*/}
-            {/*                        </CardContent>*/}
-            {/*                    </Card>*/}
-            {/*                </Grid>*/}
-            {/*            ))*/}
-            {/*        )}*/}
-            {/*    </Grid>*/}
-            {/*</Box>*/}
+
+
+            )}
+                </Box>
+
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <IconButton
+                        onClick={() => setViewType("grid")}
+                        sx={{
+                            bgcolor: viewType === "grid" ? colors.lightGreen2 : "transparent",
+                            color: viewType === "grid" ? colors.darkGreen1 : colors.white2,
+                            borderRadius: "0.5rem",
+                            transition: "background-color 200ms, color 200ms",
+                            "&:hover": { bgcolor: colors.lightGreen2, color: colors.darkGreen1 },
+                            width: 40,
+                            height: 40,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <GridViewIcon />
+                    </IconButton>
+
+                    <IconButton
+                        onClick={() => setViewType("list")}
+                        sx={{
+                            bgcolor: viewType === "list" ? colors.lightGreen2 : "transparent",
+                            color: viewType === "list" ? colors.darkGreen1 : colors.white2,
+                            borderRadius: "0.5rem",
+                            transition: "background-color 200ms, color 200ms",
+                            "&:hover": { bgcolor: colors.lightGreen2, color: colors.darkGreen1 },
+                            width: 40,
+                            height: 40,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <ViewListIcon />
+                    </IconButton>
+                </Box>
+            </Box>
+
+                <Box  sx={{
+                mt: 4,
+                px: 2,
+                maxWidth: "1160px",
+                mx: "auto",
+            }}
+            >
+                {filteredProducts.length === 0 ? (
+                    <Typography align="center">{textResources.products.noResults}</Typography>
+                ) : viewType === "grid" ? (
+                    <Grid container spacing={2}>
+                        {filteredProducts.map((product) => (
+                            <Grid
+                                item
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                lg={3}
+                                key={product.id}
+                            >
+                                <GridViewUserProductCard
+                                    image={product.image ?? "/images/default.jpg"}
+                                    title={product.name}
+                                    category={product.category}
+                                    unit="kg"
+                                    supplier="Fermier local"
+                                    rating={product.rating}
+                                    reviewCount={Math.floor(Math.random() * 50) + 5}
+                                    price={product.price}
+                                    onAddToCart={() => console.log("Adăugat în coș:", product.name)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                ) : (
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                        }}
+                    >
+                        {filteredProducts.map((product) => (
+                            <Box key={product.id} sx={{ minWidth: 300, flexShrink: 0 }}>
+                                <ListViewUserProductCard
+                                    image={product.image ?? "/images/default.jpg"}
+                                    title={product.name}
+                                    category={product.category}
+                                    unit="kg"
+                                    supplierRegion={product.region}
+                                    supplier="Fermier local"
+                                    rating={product.rating}
+                                    reviewCount={Math.floor(Math.random() * 50) + 5}
+                                    price={product.price}
+                                    onAddToCart={() => console.log("Adăugat în coș:", product.name)}
+                                />
+                            </Box>
+                        ))}
+                    </Box>
+                )}
+            </Box>
+
+
+            <Box sx={{ mt: 8, px: 2, maxWidth: "1160px", mx: "auto" }}>
+                <Typography variant="h3" align="center" sx={{ mb: 2 }}>
+                    PRODUSE RECOMANDATE PENTRU TINE
+                </Typography>
+                <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+                    Selecție personalizată bazată pe preferințele tale
+                </Typography>
+                <Grid container spacing={2} justifyContent="center">
+                    {demoProducts
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 4)
+                        .map((product) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={`rec-${product.id}`}>
+                                <GridViewUserProductCard
+                                    image={product.image ?? "/images/default.jpg"}
+                                    title={product.name}
+                                    category={product.category}
+                                    unit="kg"
+                                    supplier="Fermier local"
+                                    rating={product.rating}
+                                    reviewCount={Math.floor(Math.random() * 100)}
+                                    price={product.price}
+                                    onAddToCart={() => console.log("Recomandat:", product.name)}
+                                />
+                            </Grid>
+                        ))}
+                </Grid>
+            </Box>
+
 
         </>
     );
