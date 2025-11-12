@@ -1,130 +1,247 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom'; 
+import React, { useCallback, useEffect, useState } from "react";
+import type { LoginRequest, RegisterRequest } from "../common/types";
+import getValidTokenFromStorage from "../common/utils";
+import {
+  login as loginApi,
+  register as registerApi,
+} from "../common/api/AuthApi";
+import { jwtDecode } from "jwt-decode";
 
-interface AuthState {
-  token: string | null;
-  username: string | null;
-  role: string | null; 
+type LoginFn = (request: LoginRequest) => void;
+type LogoutFn = () => void;
+type RegisterFn = (request: RegisterRequest) => void;
+
+export interface AuthState {
+  authenticationError: Error | null;
   isAuthenticated: boolean;
+  isAuthenticating: boolean;
+  isRegistering: boolean;
+  login?: LoginFn;
+  register?: RegisterFn;
+  logout?: LogoutFn;
+  username?: string;
+  email?: string;
+  password?: string;
+  pendingAuthentication?: boolean;
+  pendingRegistration?: boolean;
+  token: string | null;
+  role: string | null;
 }
 
-interface AuthContextType extends AuthState {
-  login: (loginRequest: any) => Promise<void>; 
-  logout: () => void;
-}
+const initialState: AuthState = {
+  isAuthenticated: getValidTokenFromStorage() ? true : false,
+  isAuthenticating: false,
+  authenticationError: null,
+  pendingAuthentication: false,
+  pendingRegistration: false,
+  isRegistering: false,
+  token: getValidTokenFromStorage(),
+  role: null,
+};
 
 interface DecodedJwt {
-  sub: string; 
+  sub: string;
   id: string;
-  authorities: string[]; 
+  authorities: string[];
   iat: number;
   exp: number;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = React.createContext<AuthState>(initialState);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [auth, setAuth] = useState<AuthState>({
-    token: null,
-    username: null,
-    role: null,
-    isAuthenticated: false,
-  });
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
 
-  const navigate = useNavigate();
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [state, setState] = useState<AuthState>(initialState);
 
+  const {
+    isAuthenticated,
+    isAuthenticating,
+    authenticationError,
+    pendingAuthentication,
+    pendingRegistration,
+    isRegistering,
+    token,
+    role,
+  } = state;
+  const login = useCallback<LoginFn>(loginCallback, []);
+  const register = useCallback<RegisterFn>(registerCallback, []);
+  useEffect(authenticationEffect, [pendingAuthentication]);
+  useEffect(registrationEffect, [pendingRegistration]);
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("jwt");
     if (token) {
       try {
         const decodedToken = jwtDecode<DecodedJwt>(token);
-        
+
         if (decodedToken.exp * 1000 < Date.now()) {
-          localStorage.removeItem('token');
-          setAuth({ token: null, username: null, role: null, isAuthenticated: false });
+          localStorage.removeItem("jwt");
+          setState({
+            ...state,
+            token: null,
+            username: undefined,
+            role: null,
+            isAuthenticated: false,
+          });
         } else {
-          setAuth({
+          setState({
+            ...state,
             token: token,
             username: decodedToken.sub,
-            role: decodedToken.authorities[0], 
+            role: decodedToken.authorities[0],
             isAuthenticated: true,
           });
         }
       } catch (error) {
         console.error("Token invalid:", error);
-        localStorage.removeItem('token');
-        setAuth({ token: null, username: null, role: null, isAuthenticated: false });
+        localStorage.removeItem("jwt");
+        setState({
+          ...state,
+          token: null,
+          username: undefined,
+          role: null,
+          isAuthenticated: false,
+        });
       }
     }
-  }, []); 
-
-  // --- Funcția de LOGIN ---
-  const login = async (loginRequest: any) => { 
-    try {
-      const response = await fetch('/api/auth/login', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginRequest),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login eșuat. Verifică username/parolă.');
-      }
-
-      const loginResponse = await response.json(); 
-      const token = loginResponse.token;
-
-      localStorage.setItem('token', token);
-      const decodedToken = jwtDecode<DecodedJwt>(token);
-
-      setAuth({
-        token: token,
-        username: decodedToken.sub,
-        role: decodedToken.authorities[0],
-        isAuthenticated: true,
-      });
-
-      // --- TASK 5: Logica navigare dupa autentificare ---
-      const userRole = decodedToken.authorities[0];
-      if (userRole === "PRODUCER") {
-        navigate('/dashboard-producator');
-      } else if (userRole === "ADMIN") {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
-
-    } catch (error) {
-      console.error(error);
-    }
+  }, []);
+  const value = {
+    isAuthenticated,
+    login,
+    logout,
+    register,
+    isAuthenticating,
+    authenticationError,
+    isRegistering,
+    token,
+    role,
   };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 
-  // --- Funcția de LOGOUT --- (TASK 6)
-  const logout = () => {
-    localStorage.removeItem('token'); 
-    setAuth({
-      token: null,
-      username: null,
-      role: null,
-      isAuthenticated: false,
+  function loginCallback(request: LoginRequest): void {
+    const { username, password } = request;
+    setState({
+      ...state,
+      pendingAuthentication: true,
+      username,
+      password,
     });
-    navigate('/');
-  };
-
-  return (
-    <AuthContext.Provider value={{ ...auth, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth trebuie folosit în interiorul unui AuthProvider');
   }
-  return context;
+
+  function registerCallback(request: RegisterRequest): void {
+    const { email, username, password } = request;
+    setState({
+      ...state,
+      pendingRegistration: true,
+      username,
+      email,
+      password,
+    });
+  }
+
+  function logout() {
+    localStorage.removeItem("jwt");
+    setState((prev) => ({
+      ...prev,
+      isAuthenticated: false,
+      token: "",
+    }));
+  }
+
+  function registrationEffect() {
+    let canceled = false;
+    register();
+    return () => {
+      canceled = true;
+    };
+
+    async function register() {
+      if (!pendingRegistration) return;
+
+      try {
+        setState((prev) => ({
+          ...prev,
+          isRegistering: true,
+        }));
+        const { username, email, password } = state;
+        if (!username || !email || !password)
+          throw Error(
+            "Can not send register request without username/email/password"
+          );
+        console.log("testet");
+        const { token } = await registerApi({ username, email, password });
+        if (canceled) {
+          return;
+        }
+        console.log("JWT U II: ", token);
+        localStorage.setItem("jwt", token);
+        setState((prev) => ({
+          ...prev,
+          token,
+          pendingAuthentication: false,
+          isAuthenticated: true,
+          isAuthenticating: false,
+          pendingRegistration: false,
+          isRegistering: false,
+        }));
+      } catch (error) {
+        if (canceled) {
+          return;
+        }
+        setState((prev) => ({
+          ...prev,
+          authenticationError: error as Error,
+          pendingRegistration: false,
+          isRegistering: false,
+        }));
+      }
+    }
+  }
+
+  function authenticationEffect() {
+    let canceled = false;
+    authenticate();
+    return () => {
+      canceled = true;
+    };
+
+    async function authenticate() {
+      if (!pendingAuthentication) {
+        return;
+      }
+      try {
+        setState((prev) => ({
+          ...prev,
+          isAuthenticating: true,
+        }));
+        const { username, password } = state;
+        if (!username || !password)
+          throw Error("Can not send login request without username/password");
+        const { token } = await loginApi({ username, password });
+        if (canceled) {
+          return;
+        }
+        localStorage.setItem("jwt", token);
+        setState((prev) => ({
+          ...prev,
+          token,
+          pendingAuthentication: false,
+          isAuthenticated: true,
+          isAuthenticating: false,
+        }));
+      } catch (error) {
+        if (canceled) {
+          return;
+        }
+        setState((prev) => ({
+          ...prev,
+          authenticationError: error as Error,
+          pendingAuthentication: false,
+          isAuthenticating: false,
+        }));
+      }
+    }
+  }
 };

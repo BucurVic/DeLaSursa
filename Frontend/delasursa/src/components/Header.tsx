@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
@@ -23,9 +23,9 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom"; // <-- IMPORTAT PENTRU NAVIGARE
 
 // --- IMPORTURI PENTRU AUTENTIFICARE ---
-import { useAuth } from "../context/AuthContext"; // <-- IMPORT PENTRU STATE GLOBAL
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
+import { AuthContext } from "../context/AuthContext.tsx";
 
 export interface Props {
   variant?: "full" | "compact";
@@ -33,21 +33,25 @@ export interface Props {
 }
 
 const Header: React.FC<Props> = ({ variant = "full", className }) => {
-
   // --- CONECTAT LA AUTHCONTEXT (TASK 3) ---
   // Am scos variabilele false și le folosim pe cele reale
-  const { isAuthenticated, role, logout } = useAuth();
+  const { isAuthenticated, role, logout } = useContext(AuthContext);
   const navigate = useNavigate(); // Hook pentru navigare
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(null);
+  const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(
+    null
+  );
   const [scrollbarGap, setScrollbarGap] = React.useState<number>(0);
 
   React.useEffect(() => {
     const updateGap = () => {
-      const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+      const gap = Math.max(
+        0,
+        window.innerWidth - document.documentElement.clientWidth
+      );
       setScrollbarGap(gap);
     };
     updateGap();
@@ -74,12 +78,15 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
   // Acum 'role' vine din contextul global!
   const showPanelButton = role === "PRODUCER" || role === "ADMIN";
   const panelLabel =
-    role === "PRODUCER" ? textResources.navbar.producerPanel : textResources.navbar.adminPanel;
+    role === "PRODUCER"
+      ? textResources.navbar.producerPanel
+      : textResources.navbar.adminPanel;
 
   // ... (restul variabilelor de stil)
   const logoSizeXs = "2.125rem";
   const logoSizeSm = "2.5rem";
-  const toolbarPy: any = variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
+  const toolbarPy: any =
+    variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
   const navGap = { md: "1rem", lg: "1.5rem" };
   const smallGap = "0.5rem";
   const drawerTop = { xs: "3.5rem", md: "4rem" };
@@ -87,18 +94,23 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
   const btnTypography: any = "body2";
 
   const handleDrawerOpen = () => {
-    const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    const gap = Math.max(
+      0,
+      window.innerWidth - document.documentElement.clientWidth
+    );
     setScrollbarGap(gap);
     setDrawerOpen(true);
   };
   const handleDrawerClose = () => setDrawerOpen(false);
 
-  const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) => setProfileAnchor(e.currentTarget);
+  const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) =>
+    setProfileAnchor(e.currentTarget);
   const handleProfileClose = () => setProfileAnchor(null);
 
   // --- FUNCȚII DE NAVIGARE ȘI LOGOUT (TASK 3 & 6) ---
   const handleLogout = () => {
     handleProfileClose(); // Închide meniul
+    if (!logout) return;
     logout(); // Șterge token-ul din context și navighează (conform AuthContext)
   };
 
@@ -134,8 +146,14 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
         >
           {/* left side (Logo) */}
           <Box
-            sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0, cursor: 'pointer' }}
-            onClick={() => navigateTo('/')} // Logo-ul duce la Home
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: smallGap,
+              minWidth: 0,
+              cursor: "pointer",
+            }}
+            onClick={() => navigateTo("/")} // Logo-ul duce la Home
           >
             <Box
               component="span"
@@ -147,7 +165,12 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
               }}
               aria-hidden
             />
-            <Typography variant="h6" component="span" noWrap sx={{ color: colors.white1 }}>
+            <Typography
+              variant="h6"
+              component="span"
+              noWrap
+              sx={{ color: colors.white1 }}
+            >
               {textResources.brand.name}
             </Typography>
           </Box>
@@ -179,8 +202,8 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     whiteSpace: "nowrap",
                     textOverflow: "ellipsis",
                   }}
-                // Aici poți adăuga navigare și pentru item-urile principale
-                // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
+                  // Aici poți adăuga navigare și pentru item-urile principale
+                  // onClick={() => navigateTo(item === textResources.navbar.home ? '/' : `/${item.toLowerCase()}`)}
                 >
                   {item}
                 </Button>
@@ -199,7 +222,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                   <>
                     <Button
                       sx={{ color: colors.white2, typography: btnTypography }}
-                      onClick={() => navigateTo('/login')} // Navigare Login
+                      onClick={() => navigateTo("/login")} // Navigare Login
                     >
                       {textResources.navbar.login}
                     </Button>
@@ -210,7 +233,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         bgcolor: colors.lightGreen2,
                         color: colors.darkGreen1,
                       }}
-                      onClick={() => navigateTo('/inregistrare')} // Navigare Înregistrare
+                      onClick={() => navigateTo("/inregistrare")} // Navigare Înregistrare
                     >
                       {textResources.navbar.register}
                     </Button>
@@ -229,7 +252,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           typography: btnTypography,
                         }}
                         // Navigare către dashboard-ul corect
-                        onClick={() => navigateTo(role === "PRODUCER" ? '/dashboard-producator' : '/admin')}
+                        onClick={() =>
+                          navigateTo(
+                            role === "PRODUCER"
+                              ? "/dashboard-producator"
+                              : "/admin"
+                          )
+                        }
                       >
                         {panelLabel}
                       </Button>
@@ -361,7 +390,11 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         }}
                       >
                         {navItems.map((item) => (
-                          <ListItem key={item} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
+                          <ListItem
+                            key={item}
+                            disablePadding
+                            sx={{ width: "100%", boxSizing: "border-box" }}
+                          >
                             <ListItemButton
                               onClick={handleDrawerClose}
                               sx={{
@@ -386,12 +419,21 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         ))}
 
                         {showPanelButton && (
-                          <ListItem disablePadding sx={{ width: "100%", pt: 1 }}>
+                          <ListItem
+                            disablePadding
+                            sx={{ width: "100%", pt: 1 }}
+                          >
                             <Box sx={{ width: "100%", px: 0 }}>
                               <Button
                                 variant="contained"
                                 fullWidth
-                                onClick={() => navigateTo(role === "PRODUCER" ? '/dashboard-producator' : '/admin')}
+                                onClick={() =>
+                                  navigateTo(
+                                    role === "PRODUCER"
+                                      ? "/dashboard-producator"
+                                      : "/admin"
+                                  )
+                                }
                                 sx={{
                                   textTransform: "none",
                                   bgcolor: colors.lightGreen2,
@@ -429,7 +471,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           }}
                         >
                           <Button
-                            onClick={() => navigateTo('/login')}
+                            onClick={() => navigateTo("/login")}
                             fullWidth
                             sx={{
                               textTransform: "none",
@@ -443,7 +485,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           </Button>
 
                           <Button
-                            onClick={() => navigateTo('/inregistrare')}
+                            onClick={() => navigateTo("/inregistrare")}
                             variant="contained"
                             fullWidth
                             sx={{

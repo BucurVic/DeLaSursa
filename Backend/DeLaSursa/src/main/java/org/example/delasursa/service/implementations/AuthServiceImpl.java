@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -48,20 +49,27 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private void checkUserExists(String email) throws UserAlreadyExistsException {
+    private void checkUserExists(String email, String username) throws UserAlreadyExistsException {
         if(userRepository.findByEmail(email).isPresent()
         ){
-            log.warn("User with email {}  already exists in DB", email);
+            log.warn("User with email {}   already exists in DB", email);
             throw new UserAlreadyExistsException("User with email "+
-                    email + " already exists in DB", HttpStatus.CONFLICT);        }
+                    email + " already exists in DB", HttpStatus.CONFLICT);
+        }
+        if(userRepository.findByUsername(username).isPresent()) {
+            log.warn("User with username {}   already exists in DB", username);
+            throw new UserAlreadyExistsException("User with username "+
+                    username + " already exists in DB", HttpStatus.CONFLICT);
+        }
     }
 
     @Override
+    @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
         log.info("Signup request received: {}", signupRequest);
 
-        checkUserExists(signupRequest.getEmail());
+        checkUserExists(signupRequest.getEmail(), signupRequest.getUsername());
 
         User user = User.builder()
                 .email(signupRequest.getEmail())
@@ -85,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("User {} saved successfully", user.getEmail());
 
         mailService.sendMailToConfirm(signupRequest.getEmail(), verificationToken);
-        LoginRequest loginRequest = new LoginRequest(signupRequest.getUsername(), signupRequest.getPassword());
+        LoginRequest loginRequest = new LoginRequest(signupRequest.getEmail(), signupRequest.getPassword());
         LoginResponse loginResponse = login(loginRequest);
         SignupResponse signupResponse = new SignupResponse(loginResponse.getToken());
         return signupResponse;
