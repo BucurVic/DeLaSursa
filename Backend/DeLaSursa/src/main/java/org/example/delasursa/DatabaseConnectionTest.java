@@ -1,10 +1,13 @@
 package org.example.delasursa;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class DatabaseConnectionTest implements CommandLineRunner {
 
     private final JdbcTemplate jdbcTemplate;

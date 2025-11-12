@@ -52,9 +52,13 @@ public class SecurityConfig {
                 .headers(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/users/**").authenticated()
-                        .requestMatchers(HttpMethod.GET ,"/api/case-files").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/produse/**").authenticated() // logged users
+                        .requestMatchers(HttpMethod.POST, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/produse/**").hasRole("PRODUCATOR")
+                        .requestMatchers(HttpMethod.GET, "/api/verify-email").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())
                 .formLogin(form -> form
@@ -71,7 +75,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
