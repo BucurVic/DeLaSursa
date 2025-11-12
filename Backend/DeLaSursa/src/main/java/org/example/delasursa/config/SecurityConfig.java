@@ -53,6 +53,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/produse/populare").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/produse/**").authenticated() // logged users
                         .requestMatchers(HttpMethod.POST, "/api/produse/**").hasRole("PRODUCATOR")
                         .requestMatchers(HttpMethod.PUT, "/api/produse/**").hasRole("PRODUCATOR")
