@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="producer dashboard skeleton">
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/ProductCardListView.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/pages/ProductListPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/ProdusProducator.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/ProdusProducator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/DeleteConfirmationModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/DeleteConfirmationModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/EditProductModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/EditProductModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/ProductCardGridView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/ProductCardGridView.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/SearchBarProducts.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/DeactivateButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/DeactivateButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/DeleteButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/DeleteButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/EditButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/buttonsProductView/EditButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ForgotPasswordPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/ForgotPasswordPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/LoginPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProductsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProductsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ResetPasswordPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/ResetPasswordPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/SignUpPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/SignUpPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/theme/typography.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/theme/typography.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
