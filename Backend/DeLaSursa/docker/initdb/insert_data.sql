@@ -1,31 +1,58 @@
 -- ========================================================
 -- STEP 1: Inserăm useri (1 admin, 10 clienți, 9 producători)
 -- ========================================================
-INSERT INTO useri (username, email, parola, rol) VALUES
-    ('admin', 'admin@example.com', 'adminpass', 'admin'),
+INSERT INTO useri (username, email, parola, is_email_verified) VALUES
+    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
 
     -- 10 clienti
-    ('client1', 'client1@example.com', 'pass1', 'client'),
-    ('client2', 'client2@example.com', 'pass2', 'client'),
-    ('client3', 'client3@example.com', 'pass3', 'client'),
-    ('client4', 'client4@example.com', 'pass4', 'client'),
-    ('client5', 'client5@example.com', 'pass5', 'client'),
-    ('client6', 'client6@example.com', 'pass6', 'client'),
-    ('client7', 'client7@example.com', 'pass7', 'client'),
-    ('client8', 'client8@example.com', 'pass8', 'client'),
-    ('client9', 'client9@example.com', 'pass9', 'client'),
-    ('client10', 'client10@example.com', 'pass10', 'client'),
+    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
 
     -- 9 producatori
-    ('producator1', 'prod1@example.com', 'pass11', 'producator'),
-    ('producator2', 'prod2@example.com', 'pass12', 'producator'),
-    ('producator3', 'prod3@example.com', 'pass13', 'producator'),
-    ('producator4', 'prod4@example.com', 'pass14', 'producator'),
-    ('producator5', 'prod5@example.com', 'pass15', 'producator'),
-    ('producator6', 'prod6@example.com', 'pass16', 'producator'),
-    ('producator7', 'prod7@example.com', 'pass17', 'producator'),
-    ('producator8', 'prod8@example.com', 'pass18', 'producator'),
-    ('producator9', 'prod9@example.com', 'pass19', 'producator');
+    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true);
+
+INSERT INTO roles (name) VALUES
+    ('admin'),
+    ('client'),
+    ('producator');
+
+INSERT INTO users_roles(user_id,role_id) VALUES
+    (1,'admin'),
+    (2,'client'),
+    (3,'client'),
+    (4,'client'),
+    (5,'client'),
+    (6,'client'),
+    (7,'client'),
+    (8,'client'),
+    (9,'client'),
+    (10,'client'),
+    (11,'client'),
+    (12,'producator'),
+    (13,'producator'),
+    (14,'producator'),
+    (15,'producator'),
+    (16,'producator'),
+    (17,'producator'),
+    (18,'producator'),
+    (19,'producator'),
+    (20,'producator');
 
 -- ========================================================
 -- STEP 2: Inserăm clienți (id-urile 2–11)
@@ -74,17 +101,17 @@ INSERT INTO produse (nume, categorie) VALUES
 -- ========================================================
 -- STEP 5: Inserăm produs_producator
 -- ========================================================
-INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masura, pret) VALUES
-    (12, 1, 100, 'kg', 2.5),
-    (12, 2, 80, 'kg', 3.0),
-    (13, 3, 50, 'kg', 4.0),
-    (14, 4, 60, 'kg', 4.5),
-    (15, 5, 40, 'kg', 6.0),
-    (16, 6, 30, 'l', 5.0),
-    (17, 7, 100, 'buc', 1.0),
-    (18, 8, 80, 'l', 10.0),
-    (19, 9, 70, 'kg', 8.0),
-    (20, 10, 90, 'kg', 5.5);
+INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masura, pret,imagine) VALUES
+    (12, 1, 100, 'kg', 2.5,'/uploads/12/mere.jpg'),
+    (12, 2, 80, 'kg', 3.0,'/uploads/12/pere.jpg'),
+    (13, 3, 50, 'kg', 4.0,'/uploads/13/rosii.jpg'),
+    (14, 4, 60, 'kg', 4.5,'/uploads/14/castraveti.jpg'),
+    (15, 5, 40, 'kg', 6.0,'/uploads/15/branza_cu_lapte_de_vaca.jpg'),
+    (16, 6, 30, 'l', 5.0,'/uploads/16/lapte.jpg'),
+    (17, 7, 100, 'buc', 1.0,'/uploads/17/paine.jpg'),
+    (18, 8, 80, 'l', 10.0,'/uploads/18/ulei.jpg'),
+    (19, 9, 70, 'kg', 8.0,'/uploads/19/cafea.jpg'),
+    (20, 10, 90, 'kg', 5.5,'/uploads/20/zahar.jpg');
 
 -- ========================================================
 -- STEP 6: Inserăm pachete
@@ -149,7 +176,7 @@ INSERT INTO comanda_produs (id_comanda, id_produs, cantitate, pret_unitar) VALUE
 -- ========================================================
 -- STEP 10: Inserăm comanda_pachet
 -- ========================================================
-INSERT INTO comanda_pachet (id_comanda, id_produs, cantitate, pret_unitar) VALUES
+INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar) VALUES
     (1, 1, 1, 25),
     (2, 2, 2, 30),
     (3, 3, 3, 28),

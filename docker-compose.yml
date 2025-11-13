@@ -11,19 +11,21 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./backend/DeLaSursa/docker/initdb:/docker-entrypoint-initdb.d
+      - ./Backend/DeLaSursa/docker/initdb:/docker-entrypoint-initdb.d
 
   # --- Spring Boot Backend ---
   backend:
     build:
-      context: ./backend/DeLaSursa
+      context: ./Backend/DeLaSursa
     container_name: spring-app
     depends_on:
       - postgres
+    env_file: .env  
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/teamdb
       DB_USER: postgres
       DB_PASS: yourpassword
+      JWT_SECRET_KEY: superlongsecretforsupersecureapplication32bytes
     ports:
       - "8080:8080"
 
@@ -31,13 +33,13 @@ services:
   # --- Vite React Frontend ---
   frontend:
     build:
-      context: ./frontend/DeLaSursa
+      context: ./Frontend/delasursa
     container_name: vite-frontend
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend/DeLaSursa:/app
-      - /app/node_modules
+      - ./Frontend/delasursa:/app
+      - node_modules_frontend:/app/node_modules
     environment:
       - HOST=0.0.0.0
       - CHOKIDAR_USEPOLLING=true
@@ -46,4 +48,4 @@ services:
 # --- Named volumes ---
 volumes:
   pgdata:
-
+  node_modules_frontend:

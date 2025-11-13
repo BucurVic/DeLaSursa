@@ -1,3 +1,5 @@
+import type { PaletteOptions } from '@mui/material/styles';
+
 export const colors = {
     darkGreen1: "#0C1A14",
     darkGreen2: "#13271E",
@@ -11,3 +13,26 @@ export const colors = {
     red1: "#EF4444",
     redTransparent: "rgba(239, 68, 68, 0.15)",
 } as const;
+
+export const muiPalette: PaletteOptions = {
+    primary: {
+        main: colors.lightGreen2,
+        light: colors.lightGreen1,
+        dark: colors.lightGreen3,
+        contrastText: colors.white1,
+    },
+    secondary: {
+        main: colors.brown,
+        contrastText: colors.white1,
+    },
+    background: {
+        default: colors.darkGreen1,
+        paper: colors.darkGreen2,
+    },
+    text: {
+        primary: colors.white1,
+        secondary: colors.white2,
+    },
+    divider: colors.white2,
+};
+

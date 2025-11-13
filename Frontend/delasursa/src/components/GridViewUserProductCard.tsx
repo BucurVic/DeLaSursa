@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import { ShoppingCartOutlined } from "@mui/icons-material";
-import { colors } from "../theme/colors";
+import { colors } from "../theme/colors.ts";
 
 interface GridViewUserProductCardProps {
     image: string;
@@ -42,7 +42,7 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
         <Card
             sx={{
                 height: "24rem",
-                width: "13rem",
+                width: "12rem",
                 backgroundColor: colors.darkGreen1,
                 color: colors.white1,
                 borderRadius: "0.8rem",

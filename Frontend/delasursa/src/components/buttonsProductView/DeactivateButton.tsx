@@ -1,35 +1,44 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { colors } from "../../theme/colors";
-import {textResources} from "../../theme/textResources.ts";
+import { colors } from "../../theme/colors.ts";
+import { typography } from "../../theme/typography.ts";
+import { textResources } from "../../theme/textResources.ts";
 
 interface DeactivateButtonProps {
     onClick?: () => void;
     fullWidth?: boolean;
+    children?: React.ReactNode;
 }
 
-const DeactivateButton: React.FC<DeactivateButtonProps> = ({ onClick, fullWidth = true }) => {
+const DeactivateButton: React.FC<DeactivateButtonProps> = ({
+                                                               onClick,
+                                                               fullWidth = true,
+                                                               children,
+                                                           }) => {
     return (
         <Button
             onClick={onClick}
             fullWidth={fullWidth}
             variant="outlined"
             sx={{
+                ...typography.button,
+                // justifyContent: "flex-start",
+                // pl: "1rem",
                 borderColor: colors.lightGreen1,
                 color: colors.lightGreen1,
-                fontWeight: 700,
-                textTransform: "uppercase",
                 borderRadius: "0.75rem",
-                py: 1,
-                justifyContent: "flex-start",
-                fontFamily: '"Manrope", sans-serif',
+                py: "0.9rem",
+                letterSpacing: "0.02em",
+                width: "8rem !important",
+                minWidth: "8rem !important",
+                maxWidth: "8rem !important",
                 "&:hover": {
                     backgroundColor: colors.lightGreen1Transparent,
                     borderColor: colors.lightGreen2,
                 },
             }}
         >
-            {textResources.buttons.deactivate}
+            {children || textResources.buttons.deactivate}
         </Button>
     );
 };

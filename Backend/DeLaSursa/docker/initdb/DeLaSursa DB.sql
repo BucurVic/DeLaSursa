@@ -3,7 +3,17 @@ CREATE TABLE useri (
   username varchar,
   email varchar,
   parola varchar,
-  rol varchar
+  is_email_verified boolean,
+  verification_token varchar
+);
+
+CREATE TABLE roles (
+  name varchar PRIMARY KEY
+);
+
+CREATE TABLE users_roles(
+  user_id integer REFERENCES useri(id),
+  role_id varchar REFERENCES roles(name)
 );
 
 CREATE TABLE producatori (
@@ -70,7 +80,8 @@ CREATE TABLE produs_producator (
   id_produs integer NOT NULL REFERENCES produse(id),
   cantitate float,
   unitate_masura varchar,
-  pret float
+  pret float,
+  imagine varchar
 );
 
 
@@ -86,7 +97,7 @@ CREATE TABLE pachet_produs (
 CREATE TABLE comanda_pachet (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_comanda integer NOT NULL references comenzi(id),
-  id_produs integer NOT NULL references produse(id),
+  id_pachet integer NOT NULL references pachete(id),
   cantitate float,
   pret_unitar float
 );

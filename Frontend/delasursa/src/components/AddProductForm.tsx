@@ -6,17 +6,36 @@ import {Button, TextField, Typography} from "@mui/material";
 import Dropdown from "./Dropdown.tsx";
 import FileUploaderBox from "./FileUploader.tsx";
 import {textResources as tr} from "../theme/textResources.ts";
+import {useNotify} from "./NotifyProvider.tsx";
+import {type CreateProdusData, produseApi} from "../api/produseApi.ts";
+
+const categoryOptions = [
+    {value: "fructe", label: "Fructe"},
+    {value: "legume", label: "Legume"},
+    {value: "bauturi", label: "Băuturi"},
+];
+
+const unitOptions = [
+    {value: "kg", label: "Kilogram"},
+    {value: "buc", label: "Bucată"},
+    {value: "l", label: "Litru"},
+];
+const initialFormState = {
+    name: "",
+    category: "",
+    unit: "",
+    price: "",
+    stock: "",
+    description: "",
+    images: null as FileList | null,
+};
 
 export default function ProductForm() {
-    const [formData, setFormData] = useState({
-        name: "",
-        category: "",
-        unit: "",
-        price: "",
-        stock: "",
-        region: "",
-        description: "",
-    });
+    const [formData, setFormData] = useState(initialFormState);
+
+
+    const notify = useNotify();
+
 
     const handleChange = (
         event:
@@ -27,31 +46,39 @@ export default function ProductForm() {
     };
 
     const handleFiles = (files: FileList) => {
-        console.log("Selected files:", files);
-    };
+        setFormData(prev => ({
+            ...prev,
+            images: files
+        }));    };
 
-    const categoryOptions = [
-        {value: "fructe", label: "Fructe"},
-        {value: "legume", label: "Legume"},
-        {value: "bauturi", label: "Băuturi"},
-    ];
 
-    const unitOptions = [
-        {value: "kg", label: "Kilogram"},
-        {value: "buc", label: "Bucată"},
-        {value: "l", label: "Litru"},
-    ];
-
-    const regionOptions = [
-        {value: "transilvania", label: "Transilvania"},
-        {value: "moldova", label: "Moldova"},
-        {value: "muntenia", label: "Muntenia"},
-    ];
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form data:", formData);
+
+        try {
+            const newProdus: CreateProdusData = {
+                nume: formData.name,
+                categorie: formData.category,
+                pret: Number(formData.price),
+                unitateMasura: formData.unit,
+                cantitate: Number(formData.stock),
+                imagine: formData.images ? formData.images[0] : null,
+            };
+
+            await produseApi.add(newProdus);
+
+            notify("Produs adăugat cu succes!", "success");
+            setFormData(initialFormState);
+
+            const fileInput = document.getElementById("product-files") as HTMLInputElement | null;
+            if (fileInput) fileInput.value = "";
+
+        } catch (err) {
+            console.error(err);
+            notify("A apărut o eroare neprevăzută!", "error");
+        }
     };
+
     return (
         <Box
             component="form"
@@ -131,17 +158,7 @@ export default function ProductForm() {
                         inputProps={{step: "1", min: "0"}}
                     />
                 </Grid>
-                <Grid size={{xs: 12, md: 12}}>
-                    <Dropdown
-                        label={tr.form.region}
-                        value={formData.region}
-                        onChange={handleChange}
-                        options={regionOptions}
-                        name="region"
-                        required
-                        fullWidth
-                    />
-                </Grid>
+
                 <Grid size={{xs: 12, md: 12}}>
                     <TextField
                         fullWidth
@@ -159,6 +176,7 @@ export default function ProductForm() {
                         {tr.form.imagesLabel}
                     </Typography>
                     <FileUploaderBox
+                        id="product-files"
                         fileTypesDisplay="PNG, JPG"
                         accept="image/png, image/jpeg"
                         multiple
@@ -180,6 +198,7 @@ export default function ProductForm() {
                 color={"secondary"}
                 sx={{mt: 3, ml: 3}}
                 type="reset"
+                onClick={() => setFormData(initialFormState)}
             >
                 {tr.form.cancelButton}
             </Button>

@@ -1,0 +1,37 @@
+package org.example.delasursa.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "comenzi", schema = "public")
+@Getter
+@Setter
+@ToString(exclude = {"comandaPachete", "comandaProduse"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor @AllArgsConstructor
+public class Comanda {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    @EqualsAndHashCode.Include
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_client", nullable = false)
+    private Client client;
+
+    @Column(name = "data_efectuarii")
+    private LocalDate dataEfectuarii;
+
+    @OneToMany(mappedBy = "comanda")
+    private Set<ComandaPachet> comandaPachete = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "comanda")
+    private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
+
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import {useTheme} from "@mui/material/styles";
 
 interface FilterChipProps {
     label: string;
@@ -8,6 +9,7 @@ interface FilterChipProps {
 }
 
 const FilterChip: React.FC<FilterChipProps> = ({ label, onRemove }) => {
+    const theme=useTheme();
     return (
         <Box
             sx={{
@@ -15,7 +17,7 @@ const FilterChip: React.FC<FilterChipProps> = ({ label, onRemove }) => {
                 alignItems: 'center',
                 border: '1px solid #ccc',
                 borderRadius: '16px',
-                backgroundColor: 'transparent',
+                backgroundColor: theme.palette.background.paper,
                 px: 1,
                 py: 0.5,
                 mr: 1
@@ -28,7 +30,7 @@ const FilterChip: React.FC<FilterChipProps> = ({ label, onRemove }) => {
             >
                 <CloseIcon fontSize="small" />
             </IconButton>
-            <Typography variant="body2">{label}</Typography>
+            <Typography variant="h6">{label}</Typography>
         </Box>
     );
 };

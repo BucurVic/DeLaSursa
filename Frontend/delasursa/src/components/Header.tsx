@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react"; // Am păstrat 'useContext'
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
@@ -20,9 +20,15 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom"; 
 
-import { colors } from "../theme/colors";
+// --- IMPORTURILE CORECTE COMBINATE ---
+import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
+// Am păstrat importul 'AuthContext' (din HEAD)
+import { AuthContext } from "../context/AuthContext.tsx"; 
+// Am păstrat importul 'logoSrc' (din 'cezar')
+import logoSrc from '../assets/logo.png'; 
 
 export interface Props {
   variant?: "full" | "compact";
@@ -30,20 +36,25 @@ export interface Props {
 }
 
 const Header: React.FC<Props> = ({ variant = "full", className }) => {
-  // temporar, va fi gestionat in AuthContext, pentru testare:
-  // (isAuthenticated, role) : ("false", orice) | ("true", orice) | ("true", "producer") | ("true", "admin")
-  var isAuthenticated = false;
-  var role = "";
+  
+  // --- AM PĂSTRAT VERSIUNEA 'HEAD' (useContext) ---
+  const { isAuthenticated, role, logout } = useContext(AuthContext);
+  const navigate = useNavigate(); // Hook pentru navigare
   
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(null);
+  const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(
+    null
+  );
   const [scrollbarGap, setScrollbarGap] = React.useState<number>(0);
 
   React.useEffect(() => {
     const updateGap = () => {
-      const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+      const gap = Math.max(
+        0,
+        window.innerWidth - document.documentElement.clientWidth
+      );
       setScrollbarGap(gap);
     };
     updateGap();
@@ -51,12 +62,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     return () => window.removeEventListener("resize", updateGap);
   }, []);
 
-  const navItems = [
-    textResources.navbar.home,
-    textResources.navbar.products,
-    textResources.navbar.producers,
-    textResources.navbar.subscriptions,
-    textResources.navbar.support,
+  // --- MODIFICAREA 1: Lista de navigare actualizată ---
+  const navLinks = [
+    { text: textResources.navbar.home, path: "./pages/HomePage" },
+    { text: textResources.navbar.products, path: "/products" },
+    { text: textResources.navbar.producers, path: "/dashboard-producator/produse/lista" },
+    { text: textResources.navbar.subscriptions, path: "/abonamente" },
+    { text: textResources.navbar.support, path: "/suport" },
   ];
 
   const profileMenuItems = [
@@ -67,13 +79,16 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     textResources.navbar.mySubscriptions,
   ];
 
-  const showPanelButton = role === "producer" || role === "admin";
+  const showPanelButton = role === "PRODUCER" || role === "ADMIN";
   const panelLabel =
-    role === "producer" ? textResources.navbar.producerPanel : textResources.navbar.adminPanel;
+    role === "PRODUCER"
+      ? textResources.navbar.producerPanel
+      : textResources.navbar.adminPanel;
 
   const logoSizeXs = "2.125rem";
   const logoSizeSm = "2.5rem";
-  const toolbarPy: any = variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
+  const toolbarPy: any =
+    variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
   const navGap = { md: "1rem", lg: "1.5rem" };
   const smallGap = "0.5rem";
   const drawerTop = { xs: "3.5rem", md: "4rem" };
@@ -81,14 +96,30 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
   const btnTypography: any = "body2";
 
   const handleDrawerOpen = () => {
-    const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    const gap = Math.max(
+      0,
+      window.innerWidth - document.documentElement.clientWidth
+    );
     setScrollbarGap(gap);
     setDrawerOpen(true);
   };
   const handleDrawerClose = () => setDrawerOpen(false);
 
-  const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) => setProfileAnchor(e.currentTarget);
+  const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) =>
+    setProfileAnchor(e.currentTarget);
   const handleProfileClose = () => setProfileAnchor(null);
+
+  // --- AM PĂSTRAT VERSIUNEA 'HEAD' (cu verificare de siguranță) ---
+  const handleLogout = () => {
+    handleProfileClose(); 
+    if (!logout) return; // Verificare adăugată de colegul tău
+    logout(); 
+  };
+
+  const navigateTo = (path: string) => {
+    handleDrawerClose();
+    navigate(path);
+  };
 
   return (
     <AppBar
@@ -115,24 +146,33 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             px: 0,
           }}
         >
-          {/* left side (Logo) */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0 }}>
+          {/* left side (Logo) - AM COMBINAT LOGICA DE NAVIGARE ('HEAD') CU LOGO-UL ('cezar') */}
+          <Box 
+            sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0, cursor: 'pointer' }}
+            onClick={() => navigateTo('/')} 
+          >
             <Box
-              component="span"
+              component="img"
+              src={logoSrc}
+              alt="DeLaSursa Logo"
               sx={{
-                display: "inline-flex",
                 width: { xs: logoSizeXs, sm: logoSizeSm },
                 height: { xs: logoSizeXs, sm: logoSizeSm },
                 flexShrink: 0,
+                mr: 1, 
               }}
-              aria-hidden
             />
-            <Typography variant="h6" component="span" noWrap sx={{ color: colors.white1 }}>
+            <Typography
+              variant="h6"
+              component="span"
+              noWrap
+              sx={{ color: colors.white1 }}
+            >
               {textResources.brand.name}
             </Typography>
           </Box>
 
-          {/* center nav (desktop) */}
+          {/* --- MODIFICAREA 2: Meniul Desktop actualizat --- */}
           {isMdUp && variant === "full" ? (
             <Box
               sx={{
@@ -143,9 +183,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                 justifyContent: "center",
               }}
             >
-              {navItems.map((item) => (
+              {navLinks.map((link) => (
                 <Button
-                  key={item}
+                  key={link.text}
                   color="inherit"
                   disableRipple
                   sx={{
@@ -156,8 +196,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     opacity: 0.9,
                     typography: btnTypography,
                   }}
+                  onClick={() => navigateTo(link.path)}
                 >
-                  {item}
+                  {link.text}
                 </Button>
               ))}
             </Box>
@@ -165,22 +206,24 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             <Box sx={{ flex: 1 }} />
           )}
 
-          {/* right side */}
           <Box sx={{ display: "flex", gap: smallGap, alignItems: "center" }}>
             {isMdUp ? (
               <>
                 {!isAuthenticated ? (
                   <>
-                    <Button sx={{ color: colors.white2, typography: btnTypography }}>
+                    <Button 
+                      sx={{ color: colors.white2, typography: btnTypography }}
+                      onClick={() => navigateTo('/login')} 
+                    >
                       {textResources.navbar.login}
                     </Button>
-
                     <Button
                       variant="contained"
                       sx={{
                         bgcolor: colors.lightGreen2,
                         color: colors.darkGreen1,
                       }}
+                      onClick={() => navigateTo('/inregistrare')} 
                     >
                       {textResources.navbar.register}
                     </Button>
@@ -197,11 +240,17 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           ml: "0.5rem",
                           typography: btnTypography,
                         }}
+                        onClick={() =>
+                          navigateTo(
+                            role === "PRODUCER"
+                              ? "/dashboard-producator"
+                              : "/admin"
+                          )
+                        }
                       >
                         {panelLabel}
                       </Button>
                     )}
-
                     <IconButton
                       color="inherit"
                       aria-label="profile"
@@ -210,7 +259,6 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     >
                       <PersonOutline fontSize="small" />
                     </IconButton>
-
                     <IconButton
                       color="inherit"
                       aria-label="favorites"
@@ -219,7 +267,6 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     >
                       <FavoriteBorderIcon fontSize="small" />
                     </IconButton>
-
                     <IconButton
                       color="inherit"
                       aria-label="cart"
@@ -228,8 +275,6 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                     >
                       <ShoppingCartOutlinedIcon fontSize="small" />
                     </IconButton>
-
-                    {/* Profile dropdown */}
                     <Menu
                       anchorEl={profileAnchor}
                       open={Boolean(profileAnchor)}
@@ -258,7 +303,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           pt: 2,
                           mt: 1,
                         }}
-                        onClick={handleProfileClose}
+                        onClick={handleLogout} 
                       >
                         {textResources.navbar.logout}
                       </MenuItem>
@@ -277,7 +322,6 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                 >
                   <MenuIcon fontSize="small" />
                 </IconButton>
-
                 <Drawer
                   anchor="top"
                   open={drawerOpen}
@@ -317,6 +361,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         boxSizing: "border-box",
                       }}
                     >
+                      {/* --- MODIFICAREA 3: Meniul Mobil actualizat --- */}
                       <List
                         sx={{
                           width: "100%",
@@ -326,10 +371,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           alignItems: "center",
                         }}
                       >
-                        {navItems.map((item) => (
-                          <ListItem key={item} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
+                        {navLinks.map((link) => (
+                          <ListItem key={link.text} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
                             <ListItemButton
-                              onClick={handleDrawerClose}
+                              onClick={() => navigateTo(link.path)}
                               sx={{
                                 py: "0.25rem",
                                 width: "100%",
@@ -337,7 +382,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                               }}
                             >
                               <ListItemText
-                                primary={item}
+                                primary={link.text}
                                 primaryTypographyProps={{
                                   sx: {
                                     color: colors.white1,
@@ -357,7 +402,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                               <Button
                                 variant="contained"
                                 fullWidth
-                                onClick={handleDrawerClose}
+                                onClick={() =>
+                                  navigateTo(
+                                    role === "PRODUCER"
+                                      ? "/dashboard-producator"
+                                      : "/admin"
+                                  )
+                                }
                                 sx={{
                                   textTransform: "none",
                                   bgcolor: colors.lightGreen2,
@@ -394,7 +445,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           }}
                         >
                           <Button
-                            onClick={handleDrawerClose}
+                            onClick={() => navigateTo("/login")}
                             fullWidth
                             sx={{
                               textTransform: "none",
@@ -408,7 +459,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           </Button>
 
                           <Button
-                            onClick={handleDrawerClose}
+                            onClick={() => navigateTo("/inregistrare")}
                             variant="contained"
                             fullWidth
                             sx={{
@@ -459,9 +510,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           />
 
                           <Button
-                            onClick={() => {
-                              handleDrawerClose();
-                            }}
+                            onClick={handleLogout} // <-- APELARE LOGOUT MOBIL
                             variant="contained"
                             fullWidth
                             sx={{
