@@ -1,4 +1,4 @@
-package org.example.delasursa.model;
+ package org.example.delasursa.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,4 +48,4 @@ public class User {
 
     @Column(name = "verification_token", length = Integer.MAX_VALUE)
     private String verificationToken;
-}
+} 
