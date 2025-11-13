@@ -220,6 +220,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (!email || !password)
           throw Error("Can not send login request without email/password");
         const { token } = await loginApi({ email, password });
+        const decoded = jwtDecode<DecodedJwt>(token);  // <--- DECODE TOKEN HERE
         if (canceled) {
           return;
         }
@@ -227,6 +228,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setState((prev) => ({
           ...prev,
           token,
+            role: decoded.authorities[0],
+            email: decoded.sub,
           pendingAuthentication: false,
           isAuthenticated: true,
           isAuthenticating: false,
