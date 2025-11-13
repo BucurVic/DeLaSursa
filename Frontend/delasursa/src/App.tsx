@@ -1,10 +1,9 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import './App.css';
+import { Routes, Route, Navigate } from "react-router-dom";
+import "./App.css";
 
 // --- Componentele de Layout și Securitate ---
-import MainLayout from './components/MainLayout'; // Layout-ul cu Header/Sidebar/Footer
-import ProtectedRoute from './components/ProtectedRoute'; // Paznicul de rută
+import MainLayout from "./components/MainLayout"; // Layout-ul cu Header/Sidebar/Footer
+import ProtectedRoute from "./components/ProtectedRoute"; // Paznicul de rută
 import ProductsPage from "./pages/ProductsPage.tsx";
 import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
@@ -44,21 +43,19 @@ function App() {
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
-
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
-        <Route
-        //     element={<ProtectedRoute
-        //     allowedRoles={["PRODUCER"]}
-        // />}
-        >
-            <Route element={<ProducerLayout />}>
-
-                {/* redirect automat către lista produselor */}
-                <Route
-                    path="/dashboard-producator"
-                    element={<Navigate to="/dashboard-producator/produse/lista" />}
-                />
+      <Route
+          element={<ProtectedRoute
+           allowedRoles={["PRODUCATOR"]}
+       />}
+      >
+        <Route element={<ProducerLayout />}>
+          {/* redirect automat către lista produselor */}
+          <Route
+            path="/dashboard-producator"
+            element={<Navigate to="/dashboard-producator/produse/lista" />}
+          />
 
                 {/* pagina cu tab-uri */}
                 <Route path="/dashboard-producator/produse" element={<ProducerProductsPage />}>
@@ -84,7 +81,6 @@ function App() {
 
       {/* --- Orice alt URL care nu se potrivește --- */}
       <Route path="*" element={<Navigate to="/" />} />
-
     </Routes>
   );
 }

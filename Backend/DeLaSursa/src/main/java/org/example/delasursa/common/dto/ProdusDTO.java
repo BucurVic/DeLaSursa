@@ -14,6 +14,7 @@ public class ProdusDTO {
     private Integer id;
     private String produsName;
     private String categorie;
+    private String produsImagine;
 
     private String producatorName;
     private Double pret;

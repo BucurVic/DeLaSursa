@@ -1,43 +1,31 @@
 import { Box, Typography } from "@mui/material";
 import StockCard from "../components/StockCard";
 import StockCardAlert from "../components/StockCardAlert";
-import mereImg from "../images/mere.png";
-import rosiiImg from "../images/rosii.png";
-import carotfiImg from "../images/cartofi.png";
-import iaurtImg from "../images/iaurt.png";
-import { useState } from "react";
+// import mereImg from "../images/mere.png";
+// import rosiiImg from "../images/rosii.png";
+// import carotfiImg from "../images/cartofi.png";
+// import iaurtImg from "../images/iaurt.png";
+import {useEffect, useState} from "react";
+import type {Produs} from "../types/Produs.ts";
+import {produseApi} from "../api/produseApi.ts";
 export default function InventoryPage() {
 
-    const [products, setProducts] = useState([
-        {
-            id: 1,
-            name: "Roșii Cherry Bio",
-            category: "Legume",
-            quantity: 45,
-            imageUrl: rosiiImg
-        },
-        {
-            id: 2,
-            name: "Mere Ionathan",
-            category: "Fructe",
-            quantity: 120,
-            imageUrl: mereImg
-        },
-        {
-            id: 3,
-            name: "Cartofi Noi Bio",
-            category: "Legume",
-            quantity: 0,
-            imageUrl: carotfiImg
-        },
-        {
-            id: 4,
-            name: "Iaurt Natural",
-            category: "Lactate",
-            quantity: 3,
-            imageUrl: iaurtImg
-        },
-    ]);
+    const [products, setProducts] = useState<Produs[]>([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try{
+                const res = await produseApi.getAllProducator();
+                const backendData = res.data;
+                setProducts(backendData);
+            }
+            catch (err) {
+                console.error("Eroare la incarcarea produselor producatorului:", err);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     const updateStock = (id: number, newQuantity: number) => {
         setProducts(prev =>
@@ -56,12 +44,12 @@ export default function InventoryPage() {
             </Typography>
 
             {products
-                .filter(p => p.quantity <= 5) // doar produsele cu probleme
+                .filter(p => p.cantitate <= 5) // doar produsele cu probleme
                 .map(p => (
                     <StockCardAlert
                         key={p.id}
-                        productName={p.name}
-                        quantity={p.quantity}
+                        productName={p.produsName}
+                        quantity={p.cantitate}
                     />
                 ))
             }
@@ -75,10 +63,10 @@ export default function InventoryPage() {
                     <StockCard
                         key={p.id}
                         id={p.id}
-                        imageUrl={p.imageUrl}
-                        title={p.name}
-                        category={p.category}
-                        quantity={p.quantity}
+                        imageUrl={p.produsImagine ? p.produsImagine : "/images/default.jpg"}
+                        title={p.produsName}
+                        category={p.categorie}
+                        quantity={p.cantitate}
                         onQuantityChange={updateStock}
                     />
                 ))}

@@ -16,6 +16,7 @@ public interface ProdusService {
     Page<ProdusDTO> getFiltered(String categorie, String regiune,
                                 Double pretMin, Double pretMax,
                                 Boolean doarDisponibile,Pageable pageable);
+    List<ProdusDTO> getAllProducator();
     ProdusDTO getOne(Integer id);
     ProdusDTO add(CreateProdusRequest request);
     ProdusDTO update(Integer id, UpdateProdusRequest request);

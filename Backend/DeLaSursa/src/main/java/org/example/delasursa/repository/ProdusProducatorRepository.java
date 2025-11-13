@@ -14,6 +14,8 @@ public interface ProdusProducatorRepository extends JpaRepository<ProdusProducat
     @Query(value = "SELECT * FROM produs_producator ORDER BY RANDOM() LIMIT :count", nativeQuery = true)
     List<ProdusProducator> findRandom(@Param("count") Integer count);
 
+    List<ProdusProducator> findByProducator_Id(Integer prodducatorId);
+
     boolean existsByProdus_IdAndProducator_Id(Integer produsId, Integer producatorId);
 
     Optional<ProdusProducator> findByProdus_IdAndProducator_Id(Integer produsId, Integer producatorId);

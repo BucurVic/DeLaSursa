@@ -7,6 +7,7 @@ import Dropdown from "./Dropdown.tsx";
 import FileUploaderBox from "./FileUploader.tsx";
 import {textResources as tr} from "../theme/textResources.ts";
 import {useNotify} from "./NotifyProvider.tsx";
+import {type CreateProdusData, produseApi} from "../api/produseApi.ts";
 
 const categoryOptions = [
     {value: "fructe", label: "Fructe"},
@@ -55,35 +56,17 @@ export default function ProductForm() {
         e.preventDefault();
 
         try {
-            const form = new FormData();
-            form.append("nume", formData.name);
-            form.append("categorie", formData.category);
-            form.append("unitateMasura", formData.unit);
-            form.append("pret", formData.price);
-            form.append("cantitate", formData.stock);
-            form.append("descriere", formData.description);
+            const newProdus: CreateProdusData = {
+                nume: formData.name,
+                categorie: formData.category,
+                pret: Number(formData.price),
+                unitateMasura: formData.unit,
+                cantitate: Number(formData.stock),
+                imagine: formData.images ? formData.images[0] : null,
+            };
 
-            // if (formData.images && formData.images.length > 0) {
-            //     Array.from(formData.images).forEach(file => {
-            //         form.append("imagini", file);
-            //     });
-            // }
-            //
-            // console.log("Trimite formular cu datele:", formData);
-            //
-            // const response = await fetch("http://localhost:8080/api/produse", {
-            //     method: "POST",
-            //     body: form,
-            // });
-            //
-            // if (!response.ok) {
-            //   notify("Eroare la salvarea produsului!", "error");
-            //     return;
-            //
-            // }
-            //
-            // const result = await response.json();
-            // console.log("Produs adăugat:", result);
+            await produseApi.add(newProdus);
+
             notify("Produs adăugat cu succes!", "success");
             setFormData(initialFormState);
 

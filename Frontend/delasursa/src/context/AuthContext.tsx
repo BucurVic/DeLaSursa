@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setState({
             ...state,
             token: null,
-            username: undefined,
+            email: undefined,
             role: null,
             isAuthenticated: false,
           });
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setState({
             ...state,
             token: token,
-            username: decodedToken.sub,
+            email: decodedToken.sub,
             role: decodedToken.authorities[0],
             isAuthenticated: true,
           });
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setState({
           ...state,
           token: null,
-          username: undefined,
+          email: undefined,
           role: null,
           isAuthenticated: false,
         });
@@ -121,11 +121,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 
   function loginCallback(request: LoginRequest): void {
-    const { username, password } = request;
+    const { email, password } = request;
     setState({
       ...state,
       pendingAuthentication: true,
-      username,
+      email,
       password,
     });
   }
@@ -216,10 +216,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           ...prev,
           isAuthenticating: true,
         }));
-        const { username, password } = state;
-        if (!username || !password)
-          throw Error("Can not send login request without username/password");
-        const { token } = await loginApi({ username, password });
+        const { email, password } = state;
+        if (!email || !password)
+          throw Error("Can not send login request without email/password");
+        const { token } = await loginApi({ email, password });
         if (canceled) {
           return;
         }

@@ -33,4 +33,8 @@ public class ProdusProducator {
 
     @Column(name = "pret")
     private Double pret;
+
+    @Column(name = "imagine", length = Integer.MAX_VALUE)
+    private String imagine;
+
 }

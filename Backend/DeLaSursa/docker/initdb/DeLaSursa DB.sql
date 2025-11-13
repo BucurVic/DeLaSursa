@@ -80,7 +80,8 @@ CREATE TABLE produs_producator (
   id_produs integer NOT NULL REFERENCES produse(id),
   cantitate float,
   unitate_masura varchar,
-  pret float
+  pret float,
+  imagine varchar
 );
 
 

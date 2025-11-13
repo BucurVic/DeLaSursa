@@ -13,22 +13,13 @@ import { colors } from "../../theme/colors.ts";
 import { textResources } from "../../theme/textResources.ts";
 import { useNavigate } from "react-router-dom";
 
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/ForgotPasswordPage.tsx
 // --- 1. Importăm noul logo ---
-import logoSrc from '../assets/logo.png'; 
+import logoSrc from '../../assets/logo.png';
 
-interface ForgotPasswordPageProps {
-    onBack?: () => void;
-    onSubmit?: (email: string) => void;
-}
 
-const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({
-                                                                   onBack,
-                                                                   onSubmit,
-                                                               }) => {
-========
+
+
 const ForgotPasswordPage: React.FC = () => {
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/ForgotPasswordPage.tsx
     const [email, setEmail] = React.useState("");
     const navigate = useNavigate();
 
@@ -64,9 +55,7 @@ const ForgotPasswordPage: React.FC = () => {
                     textAlign: "center",
                 }}
             >
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/ForgotPasswordPage.tsx
-                {/* ... (Butonul Back rămâne la fel) ... */}
-========
+
                 {/* Back Button — mereu vizibil */}
                 <Box
                     sx={{
@@ -95,7 +84,6 @@ const ForgotPasswordPage: React.FC = () => {
                         }}
                     />
                 </Box>
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/ForgotPasswordPage.tsx
 
                 {/* --- 2. Logo Actualizat --- */}
                 <Box sx={{ mt: 4, mb: 3 }}>

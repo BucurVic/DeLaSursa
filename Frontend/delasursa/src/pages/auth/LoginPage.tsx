@@ -1,42 +1,46 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Checkbox,
-    FormControlLabel,
-    Link,
-    TextField,
-    Typography
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  TextField,
+  Typography,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { colors } from "../../theme/colors.ts";
 import { textResources } from "../../theme/textResources.ts";
+import { useState } from "react";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import { useNavigate } from "react-router-dom";
+import HandshakeIcon from "@mui/icons-material/Handshake"; // Ca placeholder pentru logo
+import LoadingSpinner from "../../components/LoadingSpinner.tsx";
+import logoSrc from '../../assets/logo.png'; 
 
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-// --- 1. Importăm noul logo ---
-import logoSrc from '../assets/logo.png'; 
 
-interface LoginPageMUIProps {
-    onBack?: () => void;
-    onLogin?: (email: string, password: string, remember: boolean) => void;
-}
-
-const LoginPage: React.FC<LoginPageMUIProps> = ({ onBack, onLogin }) => {
-========
 const LoginPage: React.FC = () => {
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [remember, setRemember] = React.useState(false);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Autentificare:", { email, password, remember });
-    };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+
+  const { login, authenticationError, isAuthenticated, isAuthenticating } =
+    useContext(AuthContext);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("test");
+    e.preventDefault();
+    if (!login) return;
+    await login({email, password });
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
     return (
         <Box
@@ -69,9 +73,7 @@ const LoginPage: React.FC = () => {
                     textAlign: "center",
                 }}
             >
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-                {/* ... (Butonul Back rămâne la fel) ... */}
-========
+
                 {/* 🔙 Buton înapoi — mereu vizibil */}
                 <Box
                     sx={{
@@ -100,7 +102,7 @@ const LoginPage: React.FC = () => {
                         }}
                     />
                 </Box>
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
+
 
                 {/* --- 2. Logo Actualizat --- */}
                 <Box sx={{ mt: 4, mb: 3 }}>
@@ -111,11 +113,8 @@ const LoginPage: React.FC = () => {
                     />
                 </Box>
 
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-                {/* ... (Restul formularului rămâne la fel) ... */}
-========
+
                 {/* Titlu */}
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
                 <Typography
                     sx={{
                         color: colors.white1,
@@ -127,11 +126,11 @@ const LoginPage: React.FC = () => {
                 >
                     {textResources.loginPage.title}
                 </Typography>
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-========
+
+
 
                 {/* Subtitlu */}
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
+
                 <Typography variant="body2" sx={{ mb: 4, color: colors.white2 }}>
                     {textResources.loginPage.noAccount}{" "}
                     <Link
@@ -152,11 +151,10 @@ const LoginPage: React.FC = () => {
                         {textResources.loginPage.registerLink}
                     </Link>
                 </Typography>
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-========
+
 
                 {/* Formular */}
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
+
                 <CardContent
                     sx={{
                         display: "flex",
@@ -212,11 +210,10 @@ const LoginPage: React.FC = () => {
                                 }}
                             />
                         </Box>
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-========
+
 
                         {/* Parolă */}
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
+
                         <Box sx={{ mb: 2 }}>
                             <Typography
                                 variant="body2"
@@ -306,11 +303,10 @@ const LoginPage: React.FC = () => {
                                 {textResources.loginPage.forgotPassword}
                             </Link>
                         </Box>
-<<<<<<<< HEAD:Frontend/delasursa/src/pages/LoginPage.tsx
-========
+
 
                         {/* Buton Login */}
->>>>>>>> feature/producer-dashboard-Victor:Frontend/delasursa/src/pages/auth/LoginPage.tsx
+
                         <Button
                             fullWidth
                             type="submit"

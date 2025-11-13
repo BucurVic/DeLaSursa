@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, TextField, Button, Checkbox, FormControlLabel, Link, IconButton, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import logoSrc from '../assets/logo.png'; 
+import logoSrc from '../../assets/logo.png';
 
 function SignUpPage() {
 
