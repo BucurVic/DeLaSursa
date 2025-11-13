@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import {textResources as tr, textResources} from "../theme";
+import {textResources as tr, textResources, colors} from "../theme";
 import SearchBar from "../components/SearchBar.tsx";
 import Card from "@mui/material/Card";
 import {useEffect, useMemo, useState} from "react";

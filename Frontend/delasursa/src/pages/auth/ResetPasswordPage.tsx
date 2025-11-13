@@ -3,7 +3,7 @@ import { Box, TextField, Button, Link, IconButton, Typography } from '@mui/mater
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // --- 1. Importăm noul logo ---
-import logoSrc from '../assets/logo.png'; 
+import logoSrc from '../../assets/logo.png';
 
 // Componenta principală a paginii de resetare
 function ResetPasswordPage() {

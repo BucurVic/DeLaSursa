@@ -27,7 +27,6 @@ public class ProduseController {
     private  final ProdusService produsService;
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ProdusDTO>> getAllProduse(){
         log.info("Get all produse request received ");
 

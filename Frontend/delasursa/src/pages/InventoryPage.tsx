@@ -63,7 +63,7 @@ export default function InventoryPage() {
                     <StockCard
                         key={p.id}
                         id={p.id}
-                        imageUrl={p.imagine ? p.imagine : "/images/default.jpg"}
+                        imageUrl={p.produsImagine ? p.produsImagine : "/images/default.jpg"}
                         title={p.produsName}
                         category={p.categorie}
                         quantity={p.cantitate}

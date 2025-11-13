@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setState({
             ...state,
             token: null,
-            username: undefined,
+            email: undefined,
             role: null,
             isAuthenticated: false,
           });
@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setState({
           ...state,
           token: null,
-          username: undefined,
+          email: undefined,
           role: null,
           isAuthenticated: false,
         });
