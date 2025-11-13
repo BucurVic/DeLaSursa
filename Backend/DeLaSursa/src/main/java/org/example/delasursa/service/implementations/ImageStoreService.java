@@ -19,8 +19,11 @@ import java.util.UUID;
 @Slf4j
 public class ImageStoreService {
 
-    @Value("${app.upload.dir:uploads/}")
+    @Value("${app.upload.dir:/uploads/}")
     private String baseUploadDir;
+
+    @Value("${app.upload.uri:/uploads/}")
+    private String baseUploadUri;
 
     public  String saveImage(MultipartFile file, Integer producatorId) {
         if (file == null || file.isEmpty()) {
@@ -43,7 +46,7 @@ public class ImageStoreService {
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
             log.info("💾 Saved image for producătorul {} at: {}", producatorId, destination.toAbsolutePath());
-            return uploadDir.resolve(uniqueName).toString().replace("\\", "/");
+            return baseUploadUri + "/" +  producatorId + "/" +  uniqueName;
 
         } catch (IOException e) {
             throw new ImageStorageException("Eroare la salvarea imaginii pentru producătorul cu ID: " + producatorId, e);
