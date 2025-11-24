@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from "react";
-import { Box } from "@mui/material";
-import HeroSection from "../sections/homepage/HeroSection.tsx";
-import PopularProductsSection from "../sections/homepage/PopularProductsSection.tsx";
-import { colors } from "../theme/colors.ts";
+
 import {produseApi} from "../api/produseApi.ts"
 import type {Produs} from "../types/Produs.ts";
+import {useCart} from "../context/CartContext.tsx";
+import {colors} from "../theme";
+import Box from "@mui/material/Box";
+import HeroSection from "../sections/homepage/HeroSection.tsx";
+import PopularProductsSection from "../sections/homepage/PopularProductsSection.tsx";
 
 const HomePage: React.FC = () => {
+
     const [popularProducts, setPopularProducts] = useState<Produs[]>([]);
+    const {addItem} = useCart();
 
     useEffect(() => {
         const fetchPopular = async () => {
@@ -23,8 +27,14 @@ const HomePage: React.FC = () => {
         fetchPopular();
     }, []);
 
-    const handleAddToCart = (productId: string) => {
-        console.log(`Adding product ${productId} to cart`);
+    const handleAddToCart = (product: Produs) => {
+        addItem({
+            id: product.id,
+            title: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1
+        })
     };
 
     return (
@@ -44,21 +54,31 @@ const HomePage: React.FC = () => {
             <PopularProductsSection
                 products={popularProducts.map((p) => ({
                     id: p.id.toString(),
-                    image: p.produsImagine
-                        ? p.produsImagine
-                        : "/images/default.jpg",
+                    image: p.produsImagine ?? "/images/default.jpg",
                     title: p.produsName,
                     category: p.categorie,
                     unit: p.unitate_masura ?? "",
                     supplierLogo: "",
                     supplier: p.producatorName,
-                    rating: 5.0,
+                    rating: 5,
                     reviewCount: 0,
                     price: p.pret,
-                    currency: "lei",
+                    currency: "lei"
                 }))}
-                onAddToCart={handleAddToCart}
+                onAddToCart={(productId: string) => {
+                    const p = popularProducts.find(x => x.id.toString() === productId);
+                    if (!p) return;
+                    addItem({
+                        id: p.id.toString(),
+                        title: p.produsName,
+                        price: p.pret,
+                        image: p.produsImagine ?? "/images/default.jpg",
+                        quantity: 1
+                    });
+                }}
             />
+
+
         </Box>
     );
 };

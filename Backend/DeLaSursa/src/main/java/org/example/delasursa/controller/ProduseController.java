@@ -105,7 +105,7 @@ public class ProduseController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
+  //  @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ProdusDTO> getProdusById(@PathVariable Integer id){
         log.info("Find produs by id {} request received ", id);
 

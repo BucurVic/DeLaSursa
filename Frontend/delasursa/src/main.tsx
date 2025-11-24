@@ -3,38 +3,39 @@ import "@fontsource/manrope/500.css";
 import "@fontsource/manrope/600.css";
 import "@fontsource/manrope/700.css";
 
-import { createRoot } from "react-dom/client";
+import {createRoot} from "react-dom/client";
 import App from "./App";
-import {
-  StyledEngineProvider,
-  CssBaseline,
-  ThemeProvider,
-} from "@mui/material";
+import {CssBaseline, StyledEngineProvider, ThemeProvider,} from "@mui/material";
 import theme from "./theme/theme.ts";
-import { StrictMode } from "react";
-import { NotifyProvider } from "./components/NotifyProvider.tsx";
+import {StrictMode} from "react";
+import {NotifyProvider} from "./components/NotifyProvider.tsx";
 
-import { BrowserRouter } from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import "./index.css";
-import { AuthProvider } from "./context/AuthContext.tsx";
+import {AuthProvider} from "./context/AuthContext.tsx";
+import {CartProvider} from "./context/CartContext.tsx";
 
 document.fonts.load('1rem "Manrope"').then(() => {
-  createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-      <AuthProvider>
-        <NotifyProvider>
-          <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <BrowserRouter>
+    createRoot(document.getElementById("root")!).render(
+        <StrictMode>
+            <CartProvider>
+
                 <AuthProvider>
-                  <App />
+                    <NotifyProvider>
+                        <StyledEngineProvider injectFirst>
+                            <ThemeProvider theme={theme}>
+                                <CssBaseline/>
+                                <BrowserRouter>
+                                    <AuthProvider>
+                                        <App/>
+                                    </AuthProvider>
+                                </BrowserRouter>
+                            </ThemeProvider>
+                        </StyledEngineProvider>
+                    </NotifyProvider>
                 </AuthProvider>
-              </BrowserRouter>
-            </ThemeProvider>
-          </StyledEngineProvider>
-        </NotifyProvider>
-      </AuthProvider>
-    </StrictMode>
-  );
+            </CartProvider>
+
+        </StrictMode>
+    );
 });

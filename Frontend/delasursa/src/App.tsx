@@ -19,6 +19,8 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import HomePage from './pages/HomePage';
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
 import ProductListPage from "./pages/ProductListPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
+import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -40,7 +42,11 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/" element={<HomePage />} />
-        {/* Aici vor veni /produse, /despre-noi, etc. */}
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
+
+
+          {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
       {/* --- Rute Protejate (Cu Layout) --- */}

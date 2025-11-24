@@ -10,8 +10,11 @@ import {
 } from "@mui/material";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 import { colors } from "../theme/colors.ts";
+import { useNavigate } from "react-router-dom";
+
 
 interface GridViewUserProductCardProps {
+    productId: string;
     image: string;
     title: string;
     category: string;
@@ -26,6 +29,7 @@ interface GridViewUserProductCardProps {
 }
 
 const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
+    productId,
     image,
     title,
     category,
@@ -38,8 +42,11 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
     currency = "lei",
     onAddToCart
 }) => {
+    const navigate = useNavigate();
+
     return (
         <Card
+            onClick={() => navigate(`/product/${productId}`)}
             sx={{
                 height: "24rem",
                 width: "12rem",
@@ -232,7 +239,11 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
                         fullWidth
                         variant="contained"
                         startIcon={<ShoppingCartOutlined />}
-                        onClick={onAddToCart}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                            e.stopPropagation();
+                            onAddToCart();
+                        }}
+
                         sx={{
                             height: "1.872rem", // 13% of content height
                             backgroundColor: colors.lightGreen1,

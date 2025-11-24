@@ -14,11 +14,11 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import MenuIcon from "@mui/icons-material/Menu";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import PersonOutline from "@mui/icons-material/PersonOutline";
+import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom"; 
 
@@ -28,7 +28,9 @@ import { textResources } from "../theme/textResources";
 // Am păstrat importul 'AuthContext' (din HEAD)
 import { AuthContext } from "../context/AuthContext.tsx"; 
 // Am păstrat importul 'logoSrc' (din 'cezar')
-import logoSrc from '../assets/logo.png'; 
+import logoSrc from '../assets/logo.png';
+import {useCart} from "../context/CartContext.tsx";
+import {Badge} from "@mui/material";
 
 export interface Props {
   variant?: "full" | "compact";
@@ -48,6 +50,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     null
   );
   const [scrollbarGap, setScrollbarGap] = React.useState<number>(0);
+  const { items } = useCart();
+  const total = items.reduce((acc, item) => acc + item.quantity, 0);
+
+
 
   React.useEffect(() => {
     const updateGap = () => {
@@ -69,6 +75,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     { text: textResources.navbar.producers, path: "/dashboard-producator/produse/lista" },
     { text: textResources.navbar.subscriptions, path: "/abonamente" },
     { text: textResources.navbar.support, path: "/suport" },
+    { type: "cart", path: "/cart" },
+
+
+
   ];
 
   const profileMenuItems = [
@@ -183,24 +193,37 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                 justifyContent: "center",
               }}
             >
-              {navLinks.map((link) => (
-                <Button
-                  key={link.text}
-                  color="inherit"
-                  disableRipple
-                  sx={{
-                    textTransform: "none",
-                    color: colors.white1,
-                    px: "0.25rem",
-                    minWidth: "auto",
-                    opacity: 0.9,
-                    typography: btnTypography,
-                  }}
-                  onClick={() => navigateTo(link.path)}
-                >
-                  {link.text}
-                </Button>
+              {navLinks.map((link, idx) => (
+                  <React.Fragment key={link.text ?? `nav-${idx}`}>
+                    {link.type === "cart" ? (
+                        <IconButton
+                            color="inherit"
+                            onClick={() => navigateTo("/cart")}
+                        >
+                          <Badge badgeContent={total} color="success">
+                            <ShoppingCartOutlinedIcon fontSize="small" />
+                          </Badge>
+                        </IconButton>
+                    ) : (
+                        <Button
+                            color="inherit"
+                            disableRipple
+                            sx={{
+                              textTransform: "none",
+                              color: colors.white1,
+                              px: "0.25rem",
+                              minWidth: "auto",
+                              opacity: 0.9,
+                              typography: btnTypography
+                            }}
+                            onClick={() => navigateTo(link.path)}
+                        >
+                          {link.text}
+                        </Button>
+                    )}
+                  </React.Fragment>
               ))}
+
             </Box>
           ) : (
             <Box sx={{ flex: 1 }} />
@@ -268,13 +291,22 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                       <FavoriteBorderIcon fontSize="small" />
                     </IconButton>
                     <IconButton
-                      color="inherit"
-                      aria-label="cart"
-                      size="large"
-                      sx={{ color: colors.white1 }}
+                        color="inherit"
+                        aria-label="cart"
+                        size="large"
+                        sx={{ color: colors.white1 }}
+                        onClick={() => navigate("/cart")}   // 🟢 Navigare spre coș
                     >
-                      <ShoppingCartOutlinedIcon fontSize="small" />
+                      <Badge
+                          badgeContent={total}              // 🟢 numărul de produse
+                          color="success"
+                          overlap="circular"
+                      >
+                        <ShoppingCartOutlinedIcon fontSize="small" />
+                      </Badge>
                     </IconButton>
+
+
                     <Menu
                       anchorEl={profileAnchor}
                       open={Boolean(profileAnchor)}
@@ -371,30 +403,31 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                           alignItems: "center",
                         }}
                       >
-                        {navLinks.map((link) => (
-                          <ListItem key={link.text} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
-                            <ListItemButton
-                              onClick={() => navigateTo(link.path)}
-                              sx={{
-                                py: "0.25rem",
-                                width: "100%",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <ListItemText
-                                primary={link.text}
-                                primaryTypographyProps={{
-                                  sx: {
-                                    color: colors.white1,
-                                    typography: btnTypography,
-                                    textAlign: "center",
+                        {navLinks.map((link, idx) => (
+                            <ListItem key={link.text ?? `nav-mobile-${idx}`} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
+                              <ListItemButton
+                                  onClick={() => navigateTo(link.path)}
+                                  sx={{
+                                    py: "0.25rem",
                                     width: "100%",
-                                  },
-                                }}
-                              />
-                            </ListItemButton>
-                          </ListItem>
+                                    justifyContent: "center",
+                                  }}
+                              >
+                                <ListItemText
+                                    primary={link.type === "cart" ? "Coș de cumpărături" : link.text}
+                                    primaryTypographyProps={{
+                                      sx: {
+                                        color: colors.white1,
+                                        typography: btnTypography,
+                                        textAlign: "center",
+                                        width: "100%",
+                                      },
+                                    }}
+                                />
+                              </ListItemButton>
+                            </ListItem>
                         ))}
+
 
                         {showPanelButton && (
                           <ListItem disablePadding sx={{ width: "100%", pt: 1 }}>
