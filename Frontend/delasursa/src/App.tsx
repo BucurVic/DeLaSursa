@@ -9,6 +9,9 @@ import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
 import ProducerLayout from "./components/ProducerLayout.tsx";
 import InventoryPage from "./pages/InventoryPage.tsx";
+import AdminOverviewPage from './pages/admin/AdminOverviewPage';
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
@@ -19,6 +22,7 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import HomePage from './pages/HomePage';
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
 import ProductListPage from "./pages/ProductListPage.tsx";
+import AdminLayout from './pages/admin/AdminLayout';
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -68,19 +72,22 @@ function App() {
             </Route>
         </Route>
 
-      <Route
+      <Route 
         element={
           <ProtectedRoute allowedRoles={["ADMIN"]} />
         }
       >
-        <Route element={<MainLayout />}>
-          {/* Doar Adminii pot vedea asta */}
-          <Route path="/admin" element={<AdminDashboard />} />
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminOverviewPage />} />
+          
+          <Route path="/admin/orders" element={<AdminOrdersPage />} />
+          <Route path="/admin/products" element={<AdminProductsPage />} />
         </Route>
       </Route>
 
       {/* --- Orice alt URL care nu se potrivește --- */}
       <Route path="*" element={<Navigate to="/" />} />
+      
     </Routes>
   );
 }
