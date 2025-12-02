@@ -8,29 +8,33 @@ import {
     DialogTitle,
     Typography,
 } from "@mui/material";
-import { colors } from "../theme/colors.ts";
-import { typography } from "../theme/typography.ts";
-import { textResources as tr } from "../theme/textResources.ts";
+import { colors } from "../theme/colors"; // Verifică calea importurilor
+import { typography } from "../theme/typography";
+import { textResources as tr } from "../theme/textResources"; // Sau calea corectă către TextResources
 
 interface DeleteConfirmationModalProps {
     open: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    productName: string;
+    itemName: string; // Am redenumit din productName în itemName
+    customMessage?: string; // Prop nou opțional
 }
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
                                                                              open,
                                                                              onClose,
                                                                              onConfirm,
-                                                                             productName,
+                                                                             itemName,
+                                                                             customMessage,
                                                                          }) => {
     const handleConfirm = () => {
         onConfirm();
         onClose();
     };
 
-    const message = tr.deleteModal.message.replace("{productName}", productName);
+    const message = customMessage
+        ? customMessage
+        : tr.deleteModal.message.replace("{productName}", itemName);
 
     return (
         <Dialog

@@ -6,7 +6,6 @@ import { colors } from '../../theme/colors';
 
 const AdminLayout: React.FC = () => {
   return (
-    // AICI AM MODIFICAT: colors.background -> colors.darkGreen1
     <Box sx={{ display: 'flex', bgcolor: colors.darkGreen1, minHeight: '100vh' }}>
       <CssBaseline />
       
@@ -23,7 +22,6 @@ const AdminLayout: React.FC = () => {
           color: colors.white1
         }}
       >
-        {/* Aici vor apărea paginile tale (Overview, Users, etc.) */}
         <Outlet />
       </Box>
     </Box>

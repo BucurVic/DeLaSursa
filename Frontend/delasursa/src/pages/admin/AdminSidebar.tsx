@@ -62,7 +62,7 @@ const AdminSidebar: React.FC = () => {
                         borderRight: `4px solid ${colors.lightGreen1}`
                     },
                     '&:hover': {
-                        backgroundColor: 'rgba(95, 238, 149, 0.05)'
+                        backgroundColor: colors.darkGreen2,
                     }
                 }}
               >
@@ -80,13 +80,13 @@ const AdminSidebar: React.FC = () => {
         <List>
             <ListItem disablePadding>
                 <ListItemButton onClick={() => { 
-                    if (logout) logout(); // Verificare de siguranță
+                    if (logout) logout();
                     navigate('/login'); 
                 }}>
-                    <ListItemIcon sx={{ color: '#ff5252' }}>
+                    <ListItemIcon sx={{ color: colors.red1 }}>
                         <LogoutIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Deconectare" sx={{ color: '#ff5252' }} />
+                    <ListItemText primary="Deconectare" sx={{ color: colors.red1 }} />
                 </ListItemButton>
             </ListItem>
         </List>
