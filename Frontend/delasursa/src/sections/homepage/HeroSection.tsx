@@ -77,7 +77,7 @@ export default function HeroSection() {
                   text={hero.ctaPrimary}
                   onClick={() => navigate("/products")}
                 />
-                <SecondaryButton text={hero.ctaSecondary} />
+                <SecondaryButton text={hero.ctaSecondary} onClick={() => navigate("/become-producer")} />
               </Box>
             </Box>
           </Grid>

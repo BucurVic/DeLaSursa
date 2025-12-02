@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Grid, IconButton } from "@mui/material";
 import { colors } from "../theme/colors.ts";
-import { textResources as tr } from "../theme/textResources.ts";
+import {textResources, textResources as tr} from "../theme/textResources.ts";
 import { GridViewRounded, ViewListRounded } from "@mui/icons-material";
 import SearchBar from "../components/SearchBar.tsx";
 import ProductCardGridView from "../components/ProductCardGridView.tsx";
@@ -267,7 +267,7 @@ export default function ProductListPage() {
                     open={deleteModalOpen}
                     onClose={() => setDeleteModalOpen(false)}
                     onConfirm={handleConfirmDelete}
-                    productName={productToDelete.title}
+                    itemName={productToDelete.title}
                 />
             )}
         </Box>
