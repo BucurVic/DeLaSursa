@@ -9,6 +9,9 @@ import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
 import ProducerLayout from "./components/ProducerLayout.tsx";
 import InventoryPage from "./pages/InventoryPage.tsx";
+import AdminOverviewPage from './pages/admin/AdminOverviewPage';
+import AdminOrdersPage from './pages/admin/AdminOrdersPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
@@ -21,10 +24,14 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
 import ProductListPage from "./pages/ProductListPage.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
-const AdminDashboard = () => <div style={{color: 'white', fontSize: '2rem', padding: '2rem'}}>Panou Admin (Super Protejat)</div>;
+
+import CheckoutPage from "./pages/CheckoutPage";
+import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 
 function App() {
   return (
@@ -41,23 +48,25 @@ function App() {
       {/* Folosim MainLayout pentru a înveli pagina Home */}
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
-        <Route path="/" element={<HomePage />} />
+          <Route path="/become-producer" element={<BecomeProducerPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
 
 
           {/* Aici vor veni /produse, /despre-noi, etc. */}
+
+          <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am cosul, e doar de test
+
+        {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
       <Route
-          element={<ProtectedRoute
-           allowedRoles={["PRODUCATOR"]}
-       />}
+          element={<ProtectedRoute allowedRoles={["PRODUCATOR"]}/>}
       >
         <Route element={<ProducerLayout />}>
-          {/* redirect automat către lista produselor */}
           <Route
             path="/dashboard-producator"
             element={<Navigate to="/dashboard-producator/produse/lista" />}
@@ -74,19 +83,20 @@ function App() {
             </Route>
         </Route>
 
-      <Route
-        element={
-          <ProtectedRoute allowedRoles={["ADMIN"]} />
-        }
+      <Route 
+        element={<ProtectedRoute allowedRoles={["ADMIN"]} />}
       >
-        <Route element={<MainLayout />}>
-          {/* Doar Adminii pot vedea asta */}
-          <Route path="/admin" element={<AdminDashboard />} />
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminOverviewPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/orders" element={<AdminOrdersPage />} />
+          <Route path="/admin/products" element={<AdminProductsPage />} />
         </Route>
       </Route>
 
       {/* --- Orice alt URL care nu se potrivește --- */}
       <Route path="*" element={<Navigate to="/" />} />
+      
     </Routes>
   );
 }

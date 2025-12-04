@@ -72,7 +72,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
   const navLinks = [
     { text: textResources.navbar.home, path: "./pages/HomePage" },
     { text: textResources.navbar.products, path: "/products" },
-    { text: textResources.navbar.producers, path: "/dashboard-producator/produse/lista" },
+    { text: textResources.navbar.producers, path: "" },
     { text: textResources.navbar.subscriptions, path: "/abonamente" },
     { text: textResources.navbar.support, path: "/suport" },
     { type: "cart", path: "/cart" },
@@ -89,9 +89,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     textResources.navbar.mySubscriptions,
   ];
 
-  const showPanelButton = role === "PRODUCER" || role === "ADMIN";
+  const showPanelButton = role === "PRODUCATOR" || role === "ADMIN";
   const panelLabel =
-    role === "PRODUCER"
+    role === "PRODUCATOR"
       ? textResources.navbar.producerPanel
       : textResources.navbar.adminPanel;
 
@@ -265,7 +265,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         }}
                         onClick={() =>
                           navigateTo(
-                            role === "PRODUCER"
+                            role === "PRODUCATOR"
                               ? "/dashboard-producator"
                               : "/admin"
                           )

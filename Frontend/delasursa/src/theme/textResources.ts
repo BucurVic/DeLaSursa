@@ -209,4 +209,116 @@ export const textResources = {
         addToCartButton: "Adaugă în coș",
         loadingText: "Se încarcă detaliile produsului...",
     }
+    adminUsers: {
+        title: "Gestiune Utilizatori",
+        addButton: "Adaugă Utilizator",
+        columns: {
+            avatar: "Avatar",
+            user: "Utilizator",
+            role: "Rol",
+            joinDate: "Data Înreg.",
+        },
+        status: {
+            suspended: "Suspendat",
+        },
+        tooltips: {
+            suspend: "Suspendă Contul",
+            reactivate: "Reactivează Contul",
+        },
+        messages: {
+            deleteConfirmDynamic: "Ești sigur că vrei să ștergi contul utilizatorului {name}? Această acțiune este ireversibilă.",
+            deleted: "Utilizatorul cu ID {id} a fost șters."
+        },
+        editModal: {
+            title: "Editează Utilizator",
+            addTitle: "Adaugă Utilizator Nou",
+            subtitle: "Gestionează datele de acces și permisiunile.",
+            fields: {
+                username: "Nume utilizator",
+                role: "Rol / Permisiuni",
+                password: "Schimbă Parola",
+                passwordPlaceholderEdit: "Lasă gol pentru a păstra parola actuală",
+                passwordPlaceholderAdd: "Setează o parolă",
+            }
+        },
+    },
+
+    checkout: {
+        title: "Finalizare Comandă",
+        sections: {
+            delivery: "Adresă de Livrare",
+            billing: "Adresă de Facturare",
+            deliveryMethod: "Metoda de Livrare",
+            orderSummary: "Sumar Comandă",
+            payment: "Metoda de Plată",
+            cardDetails: "Datele Cardului",
+        },
+        fields: {
+            fullName: "Nume Complet",
+            phone: "Număr de Telefon",
+            street: "Stradă și număr",
+            city: "Oraș / Localitate",
+            county: "Județ",
+            zip: "Cod Poștal",
+            sameAsDelivery: "Facturarea la aceeași adresă de livrare",
+            observations: "Observații comandă (opțional)",
+        },
+        paymentMethods: {
+            card: "Card Online",
+            cash: "Ramburs la livrare",
+        },
+        summary: {
+            subtotal: "Subtotal",
+            shipping: "Taxă livrare",
+            total: "TOTAL DE PLATĂ",
+        },
+        deliveryMethods: {
+            courier: "Curier Rapid (15 RON)",
+            pickup: "Ridicare personală (Gratuit)",
+        },
+        card: {
+            number: "Număr Card",
+            name: "Nume Deținător",
+            expiry: "Data Expirării (MM/YY)",
+            cvv: "CVV",
+        },
+        paymentModal: {
+            title: "Confirmare Plată",
+            message: "Ești pe cale să plătești suma de {amount} RON. Confirmi tranzacția?",
+            confirmButton: "Confirmă Plata",
+        },
+        button: "Plasează Comanda",
+        successMessage: "Comanda a fost plasată cu succes! Vei primi un email de confirmare.",
+    },
+
+    becomeProducer: {
+        title: "Devino Partener DeLaSursă",
+        subtitle: "Completează formularul pentru a-ți activa contul de producător.",
+        sections: {
+            account: "Creează-ți Contul",
+            details: "Detalii Producător",
+        },
+        fields: {
+            lastName: "Nume",
+            firstName: "Prenume",
+            email: "Email",
+            password: "Parolă",
+            confirmPassword: "Confirmă Parola",
+            farmName: "Nume Fermă / Brand",
+            phone: "Telefon Contact",
+            region: "Regiune / Județ",
+            cui: "CUI (Opțional)",
+            description: "Povestea Fermei",
+        },
+        placeholders: {
+            lastName: "ex: Ion",
+            firstName: "ex: Popescu",
+            farmName: "ex: Ferma Bio Valea Verde",
+            description: "Descrie produsele tale și modul de cultivare...",
+        },
+        button: "Trimite Solicitarea",
+        successMessage: "Solicitarea a fost trimisă cu succes!",
+        loginQuestion: "Ai deja cont?",
+        loginAction: "Autentifică-te",
+    },
 }as const;
