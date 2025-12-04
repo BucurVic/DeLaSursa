@@ -208,7 +208,8 @@ export const textResources = {
         reviewsTile: " Recenziile clienților",
         addToCartButton: "Adaugă în coș",
         loadingText: "Se încarcă detaliile produsului...",
-    }
+    },
+    
     adminUsers: {
         title: "Gestiune Utilizatori",
         addButton: "Adaugă Utilizator",
