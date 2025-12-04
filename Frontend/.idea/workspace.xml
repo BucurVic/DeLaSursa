@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="producer dashboard skeleton" />
+    <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="add to cart button, cart page, product details page, cart context">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/CartPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/CartPage.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,8 +31,24 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "filippoanaa"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/BucurVic/DeLaSursa.git",
+    "accountId": "93621daa-5050-41ea-9f76-4136ae46f7a3"
+  }
+}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -43,15 +62,15 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/producer-dashboard-Victor&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/cart-oana&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Semestrul 5/LFTC/labs/LAB-1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Semestrul 5/PC/DeLaSursa/Backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/victorbucur/FACC/ANUL3/SEM1/PC/Frontend/delasursa/node_modules/typescript/lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Semestrul 5\\PC\\DeLaSursa\\Frontend\\delasursa\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -89,6 +108,7 @@
       <workItem from="1762510222197" duration="1315000" />
       <workItem from="1762861675645" duration="685000" />
       <workItem from="1762862386716" duration="7021000" />
+      <workItem from="1763983296002" duration="14000" />
     </task>
     <task id="LOCAL-00001" summary="dropdpwn, file uploader and add product form">
       <option name="closed" value="true" />
@@ -122,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762867155063</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="add to cart button, cart page, product details page, cart context">
+      <option name="closed" value="true" />
+      <created>1763971381517</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1763971381517</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +170,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="dropdpwn, file uploader and add product form" />
     <MESSAGE value="producer dashboard skeleton" />
-    <option name="LAST_COMMIT_MESSAGE" value="producer dashboard skeleton" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="add to cart button, cart page, product details page, cart context" />
+    <option name="LAST_COMMIT_MESSAGE" value="add to cart button, cart page, product details page, cart context" />
   </component>
 </project>

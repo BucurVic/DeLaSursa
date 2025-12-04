@@ -31,6 +31,7 @@ const CartPage: React.FC = () => {
 
             </Typography>
 
+
             {items.length === 0 ? (
                 <Typography variant="h6" sx={{opacity: 0.7}}>
                     {textResources.cartPage.emptyCart}
@@ -51,7 +52,7 @@ const CartPage: React.FC = () => {
                                 backgroundColor: colors.darkGreen2,
                                 marginBottom: "1rem",
                                 gap: "1rem",
-                                flexWrap: "wrap",   // 🔥 face responsive PERFECT pe mobil
+                                flexWrap: "wrap",
                             }}
                         >
                             {/* STÂNGA — imagine + nume */}
@@ -96,7 +97,10 @@ const CartPage: React.FC = () => {
                                         width: "2rem",
                                         height: "2rem",
                                     }}
-                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateQuantity(item.id, item.quantity - 1);
+                                    }}
                                 >
                                     <RemoveIcon fontSize="small" />
                                 </IconButton>
@@ -114,7 +118,10 @@ const CartPage: React.FC = () => {
                                         width: "2rem",
                                         height: "2rem",
                                     }}
-                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateQuantity(item.id, item.quantity + 1);
+                                    }}
                                 >
                                     <AddIcon fontSize="small" />
                                 </IconButton>
@@ -138,7 +145,10 @@ const CartPage: React.FC = () => {
                                 </Typography>
 
                                 <IconButton
-                                    onClick={() => removeItem(item.id)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeItem(item.id);
+                                    }}
                                     sx={{
                                         color: colors.lightGreen1,
                                         "&:hover": { color: colors.lightGreen2 },
@@ -186,6 +196,7 @@ const CartPage: React.FC = () => {
                         </Typography>
                     </Box>
                     <Divider sx={{borderColor: colors.lightGreen1Transparent, my: "1.5rem"}}/>
+
 
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mt: "2rem" }}>
                         <Button
