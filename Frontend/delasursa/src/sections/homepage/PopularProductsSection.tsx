@@ -98,6 +98,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                 {displayProducts.map((product) => (
                     <GridViewUserProductCard
                         key={product.id}
+                        productId={product.id.toString()}
                         image={product.image}
                         title={product.title}
                         category={product.category}

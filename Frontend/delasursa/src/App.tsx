@@ -22,6 +22,8 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
 import HomePage from './pages/HomePage';
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
 import ProductListPage from "./pages/ProductListPage.tsx";
+import CartPage from "./pages/CartPage.tsx";
+import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 
@@ -47,7 +49,12 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
           <Route path="/become-producer" element={<BecomeProducerPage />} />
-        <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
+
+
+          {/* Aici vor veni /produse, /despre-noi, etc. */}
 
           <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am cosul, e doar de test
 

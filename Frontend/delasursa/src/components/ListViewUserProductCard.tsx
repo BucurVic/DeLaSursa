@@ -10,8 +10,10 @@ import {
 } from "@mui/material";
 import { ShoppingCartOutlined, LocationOnOutlined } from "@mui/icons-material";
 import { colors } from "../theme/colors.ts";
+import { useNavigate } from "react-router-dom";
 
 interface ListViewUserProductCardProps {
+    productId: string;
     image: string;
     title: string;
     category: string;
@@ -27,6 +29,7 @@ interface ListViewUserProductCardProps {
 }
 
 const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
+    productId,
     image,
     title,
     category,
@@ -40,8 +43,13 @@ const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
     currency = "lei",
     onAddToCart
 }) => {
+    const navigate = useNavigate();
+
     return (
         <Card
+            onClick={() =>
+                navigate(`/product/${productId}`)}
+
             sx={{
                 height: "13rem",
                 width: "100%",
@@ -230,7 +238,10 @@ const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
                     <Button
                         variant="contained"
                         startIcon={<ShoppingCartOutlined />}
-                        onClick={onAddToCart}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                            e.stopPropagation(); // 🔥 oprește navigarea
+                            onAddToCart();
+                        }}
                         sx={{
                             backgroundColor: colors.lightGreen1,
                             color: colors.darkGreen1,
@@ -242,6 +253,7 @@ const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
                     >
                         ADAUGĂ ÎN COȘ
                     </Button>
+
                 </Box>
             </CardContent>
         </Card>

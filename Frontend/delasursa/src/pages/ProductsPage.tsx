@@ -16,6 +16,7 @@ import ViewListIcon from "@mui/icons-material/ViewList";
 import GridViewIcon from "@mui/icons-material/GridView";
 import type {Produs} from "../types/Produs.ts";
 import {produseApi} from "../api/produseApi.ts";
+import {useCart} from "../context/CartContext.tsx";
 
 
 type Product = {
@@ -114,6 +115,8 @@ export default function ProductsPage() {
 
     const [recomendedProducts, setRecomendedProducts] = useState<Product[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+    const { addItem } = useCart();
+
 
     useEffect(() => {
         const fetchRecommended = async () => {
@@ -561,6 +564,7 @@ export default function ProductsPage() {
                                 key={product.id}
                             >
                                 <GridViewUserProductCard
+                                    productId={product.id.toString()}
                                     image={product.image ?? "/images/default.jpg"}
                                     title={product.name}
                                     category={product.category}
@@ -569,8 +573,13 @@ export default function ProductsPage() {
                                     rating={product.rating}
                                     reviewCount={Math.floor(Math.random() * 50) + 5}
                                     price={product.price}
-                                    onAddToCart={() => console.log("Adăugat în coș:", product.name)}
-                                />
+                                    onAddToCart={() => addItem({
+                                        id: product.id,
+                                        title: product.name,
+                                        price: product.price,
+                                        image: product.image,
+                                        quantity: 1
+                                    })}                                />
                             </Grid>
                         ))}
                     </Grid>
@@ -585,6 +594,7 @@ export default function ProductsPage() {
                         {filteredProducts.map((product) => (
                             <Box key={product.id} sx={{ minWidth: 300, flexShrink: 0 }}>
                                 <ListViewUserProductCard
+                                    productId={product.id.toString()}
                                     image={product.image ?? "/images/default.jpg"}
                                     title={product.name}
                                     category={product.category}
@@ -594,7 +604,13 @@ export default function ProductsPage() {
                                     rating={product.rating}
                                     reviewCount={Math.floor(Math.random() * 50) + 5}
                                     price={product.price}
-                                    onAddToCart={() => console.log("Adăugat în coș:", product.name)}
+                                    onAddToCart={() => addItem({
+                                        id: product.id,
+                                        title: product.name,
+                                        price: product.price,
+                                        image: product.image,
+                                        quantity: 1
+                                    })}
                                 />
                             </Box>
                         ))}
@@ -614,6 +630,7 @@ export default function ProductsPage() {
                     {recomendedProducts.map((product) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
                             <GridViewUserProductCard
+                                productId={product.id.toString()}
                                 image={product.image ?? "/images/default.jpg"}
                                 title={product.name}
                                 category={product.category}
@@ -622,7 +639,13 @@ export default function ProductsPage() {
                                 rating={product.rating}
                                 reviewCount={Math.floor(Math.random() * 100)}
                                 price={product.price}
-                                onAddToCart={() => console.log("Recomandat:", product.name)}
+                                onAddToCart={() => addItem({
+                                    id: product.id,
+                                    title: product.name,
+                                    price: product.price,
+                                    image: product.image,
+                                    quantity: 1
+                                })}
                             />
                         </Grid>
                     ))}

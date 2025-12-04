@@ -100,6 +100,7 @@ export const textResources = {
     home: "Acasă",
     products: "Produse",
     producers: "Producători",
+      cart: "Coș de cumpărături",
     subscriptions: "Abonamente",
     support: "Suport Clienți",
     login: "Autentificare",
@@ -192,6 +193,22 @@ export const textResources = {
         },
     },
 
+    cartPage: {
+        title: "Coșul meu de cumpărături",
+        emptyCart: "Coșul tău este gol.",
+        totalProducts: "Total produse:",
+        deliveryFee: "Taxă de livrare:",
+        freeDelivery: "Gratuit",
+        totalPrice: "Total de plată:",
+        proceedToCheckout: "Finalizează comanda",
+
+    },
+
+    productDetailsPage : {
+        reviewsTile: " Recenziile clienților",
+        addToCartButton: "Adaugă în coș",
+        loadingText: "Se încarcă detaliile produsului...",
+    }
     adminUsers: {
         title: "Gestiune Utilizatori",
         addButton: "Adaugă Utilizator",
