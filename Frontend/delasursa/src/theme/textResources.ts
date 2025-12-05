@@ -181,6 +181,22 @@ export const textResources = {
       activeFiltersLabel:"Filtre active:",
       clearAll:"Resetează filtrele"
   },
+    orders:{
+        loadingOrder: "Se încarcă comanda...",
+        order:"Comanda",
+        date:"Data:",
+        status:"Status:",
+        products:"Produse:",
+        paymentMethod:"Metodă de plată:",
+        deliveryMethod: "Metodă de livrare:",
+        deliveryAddress: "Adresă de livrare",
+        zipCode:"Cod poștal:",
+        phone:"Telefon:",
+        billingAddress: "Adresă de facturare",
+        total:"Total:",
+        currency:"LEI",
+        addReview:"ADAUGĂ RECENZIE"
+    },
     producerPage: {
         title: "Produsele mele",
         subtitle: "Gestionează produsele tale, stocul și promoțiile",
