@@ -1,52 +1,41 @@
 import {
     Box,
-    Button,
     Card,
     CardContent,
     CardMedia,
     Rating,
     Typography
 } from "@mui/material";
-import {LocationOnOutlined} from "@mui/icons-material";
 import {colors, textResources} from "../theme";
-import { useNavigate } from "react-router-dom";
 import React from "react";
 
-interface OrderViewClientProductCardProps {
-    productId: string;
+interface ProducerOrderViewProductCardProps {
+    productId: number;
     image: string;
     title: string;
-    category: string;
     quantity: number;
     unit: string;
-    supplierRegion: string;
-    supplierLogo?: string;
-    supplier: string;
     price: number;
     currency?: string;
-    onAddReview:()=>void;
+    rating:number;
+    reviewCount:number;
 }
 
-const OrderViewProductCard: React.FC<OrderViewClientProductCardProps> = ({
-                                                                             productId,
-                                                                             image,
-                                                                             title,
-                                                                             category,
-                                                                             quantity,
-                                                                             unit,
-                                                                             supplierRegion,
-                                                                             supplierLogo,
-                                                                             supplier,
-                                                                             price,
-                                                                             currency = "lei",
-                                                                             onAddReview,
-                                                                         }) => {
-    const navigate = useNavigate();
+const ProducerOrderViewProductCard: React.FC<ProducerOrderViewProductCardProps> = ({
+                                                                                   productId,
+                                                                                   image,
+                                                                                   title,
+                                                                                   quantity,
+                                                                                   unit,
+                                                                                   price,
+                                                                                   currency,
+                                                                                   rating,
+                                                                                   reviewCount,
+                                                                               }) => {
     const tr=textResources.orders;
 
     return (
         <Card
-            onClick={() => navigate(`/product/${productId}`)}
             sx={{
                 width: "100%",
                 height: { xs: "auto", sm: "13rem" },
@@ -58,7 +47,6 @@ const OrderViewProductCard: React.FC<OrderViewClientProductCardProps> = ({
                 display: "flex",
                 flexDirection: { xs: "column", sm: "row" },
                 gap: "1rem",
-                cursor: "pointer",
             }}
         >
             <CardMedia
@@ -124,30 +112,33 @@ const OrderViewProductCard: React.FC<OrderViewClientProductCardProps> = ({
                             textAlign: "left"
                         }}
                     >
-                        {category} • {quantity} {unit} • <LocationOnOutlined sx={{ fontSize: "0.9rem" }} /> {supplierRegion}
+                        {quantity} {unit}
                     </Typography>
                 </Box>
 
                 <Box
                     sx={{
-                        height: { xs: "auto", sm: "1.95rem" },
+                        height: "1.95rem", // 15% of content height
                         display: "flex",
                         alignItems: "center"
                     }}
                 >
-                    {supplierLogo && (
-                        <Box
-                            component="img"
-                            src={supplierLogo}
-                            alt={supplier}
-                            sx={{
-                                height: "1.5rem",
-                                width: "1.5rem",
-                                borderRadius: "50%",
-                                marginRight: "0.39rem"
-                            }}
-                        />
-                    )}
+                    <Rating
+                        value={rating}
+                        readOnly
+                        size="small"
+                        sx={{
+                            "& .MuiRating-iconFilled": {
+                                color: colors.lightGreen1
+                            },
+                            "& .MuiRating-iconEmpty": {
+                                color: colors.lightGreen1
+                            },
+                            "& .MuiRating-icon": {
+                                fontSize: "0.9rem"
+                            }
+                        }}
+                    />
                     <Typography
                         variant="body2"
                         sx={{
@@ -155,10 +146,11 @@ const OrderViewProductCard: React.FC<OrderViewClientProductCardProps> = ({
                             overflow: "hidden",
                             whiteSpace: "nowrap",
                             textOverflow: "ellipsis",
-                            textAlign:"left"
+                            marginLeft: "0.39rem",
+                            textAlign: "left"
                         }}
                     >
-                        {supplier}
+                        {rating.toFixed(1)} ({reviewCount})
                     </Typography>
                 </Box>
 
@@ -184,28 +176,10 @@ const OrderViewProductCard: React.FC<OrderViewClientProductCardProps> = ({
                         {price} {currency}
                     </Typography>
 
-                    <Button
-                        variant="contained"
-                        startIcon={<Rating />}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onAddReview();
-                        }}
-                        sx={{
-                            backgroundColor: colors.lightGreen1,
-                            color: colors.darkGreen1,
-                            borderRadius: "0.6rem",
-                            "&:hover": { backgroundColor: colors.lightGreen2 },
-                            fontSize: "0.75rem",
-                            padding: "0.25rem 0.5rem",
-                        }}
-                    >
-                        {tr.addReview}
-                    </Button>
                 </Box>
             </CardContent>
         </Card>
     );
 };
 
-export default OrderViewProductCard;
+export default ProducerOrderViewProductCard;

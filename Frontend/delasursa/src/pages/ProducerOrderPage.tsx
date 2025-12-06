@@ -1,11 +1,13 @@
-import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import {colors, textResources} from "../theme";
-import ClientOrderViewProductCard from "../components/ClientOrderViewProductCard.tsx";
+import { colors, textResources } from "../theme";
+import ProducerOrderViewProductCard from "../components/ProducerOrderViewProductCard";
 import Box from "@mui/material/Box";
-import {Card, CardContent, Step, StepLabel, Stepper} from "@mui/material";
+import {Card, CardContent, FormControl, InputLabel, Select, Step, StepLabel, Stepper} from "@mui/material";
 import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import PrimaryButton from "../components/buttons/PrimaryButton.tsx";
 
 type Address = {
     name: string;
@@ -28,7 +30,8 @@ type ProductInOrder ={
     supplier: string;
     price: number;
     currency?: string;
-    onAddReview:()=>void;
+    rating:number;
+    reviewCount: number;
 }
 
 type Order = {
@@ -40,7 +43,9 @@ type Order = {
     billingAddress:Address;
     deliveryMethod: string;
     paymentMethod: string;
-    transportCost:number;
+    clientEmail?: string;
+    shippingCost?: number;
+    trackingNumber?: string;
 }
 
 const mockProducts: ProductInOrder[] = [
@@ -55,7 +60,8 @@ const mockProducts: ProductInOrder[] = [
         supplier: "FreshFruits SRL",
         price: 4.5,
         currency: "LEI",
-        onAddReview: () => console.log("Review added for 1")
+        rating:5.0,
+        reviewCount:38
     },
     {
         id: 2,
@@ -68,7 +74,8 @@ const mockProducts: ProductInOrder[] = [
         supplier: "AgroPol",
         price: 1.7,
         currency: "LEI",
-        onAddReview: () => console.log("Review added for 2")
+        rating:4.7,
+        reviewCount:20
     },
     {
         id: 3,
@@ -81,7 +88,8 @@ const mockProducts: ProductInOrder[] = [
         supplier: "Supplier",
         price: 2.8,
         currency: "LEI",
-        onAddReview: () => console.log("Review added for 3")
+        rating:4.9,
+        reviewCount:57
     }
 ];
 
@@ -92,7 +100,9 @@ const mockOrders: Order[] = [
         status: "Livrata",
         deliveryMethod: "Curier rapid",
         paymentMethod: "Card online",
-        transportCost: 19.99,
+        clientEmail: "ion.popescu@example.com",
+        trackingNumber: "FNC-123456789",
+        shippingCost: 15,
         deliveryAddress: {
             name: "Ion Popescu",
             street: "Str. Zorilor 15",
@@ -117,7 +127,9 @@ const mockOrders: Order[] = [
         status: "In procesare",
         deliveryMethod: "Ridicare personală",
         paymentMethod: "Numerar",
-        transportCost: 15,
+        clientEmail: "andreeaion@example.com",
+        trackingNumber: "FNC-123456678",
+        shippingCost: 15,
         deliveryAddress: {
             name: "Andreea Ionescu",
             street: "Str. Horea 12",
@@ -138,18 +150,15 @@ const mockOrders: Order[] = [
     }
 ];
 
-
-// select * from comenzi where id_client=?
-// select * from comanda_produs where id_comanda=?
-
-export default function ClientOrderPage() {
+export default function ProducerOrderPage() {
     const { id } = useParams();
     const [order, setOrder] = useState<Order>();
-    const tr=textResources.orders;
+
+    const tr = textResources.orders;
 
     useEffect(() => {
         const load = async () => {
-            //const res = await comenziApi.getById(parseInt(id));
+            // aici ai apela API-ul: comenziApi.getByIdForProducer(parseInt(id))
             const res = mockOrders.find(o => o.id === Number(id));
             setOrder(res);
         };
@@ -159,10 +168,19 @@ export default function ClientOrderPage() {
     if (!order) return <Typography>{tr.loadingOrder}</Typography>;
 
     const subtotal = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
-    const total = subtotal + order.transportCost;
+    const total=subtotal+(order.shippingCost || 0);
 
     const steps = ["Creata", "In procesare", "Pregatita", "Livrata"];
     const activeStep = steps.indexOf(order.status === "Pregatita" ? "Pregatita" : order.status);
+
+    const handleStatusChange = (e: any) => {
+        const newStatus = e.target.value;
+        setOrder(prev => prev ? { ...prev, status: newStatus } : prev);
+    };
+
+    const handleMarkShipped = () => {
+        setOrder(prev => prev ? { ...prev, status: "Livrata" } : prev);
+    };
 
     return (
         <Box
@@ -179,7 +197,6 @@ export default function ClientOrderPage() {
 
             <Card
                 sx={{
-                    width: "100%",
                     padding: "2rem",
                     borderRadius: "1rem",
                     backgroundColor: colors.darkGreen2
@@ -208,6 +225,21 @@ export default function ClientOrderPage() {
                         {tr.deliveryMethod} {order.deliveryMethod}
                     </Typography>
 
+                    <Typography variant="h4">
+                        {tr.clientEmail} {order.clientEmail}
+                    </Typography>
+
+                    <FormControl sx={{ width: "15rem" }}>
+                        <InputLabel>{tr.changeStatus}</InputLabel>
+                        <Select value={order.status} label={tr.changeStatus} onChange={handleStatusChange}>
+                            <MenuItem value="In procesare">{tr.processing}</MenuItem>
+                            <MenuItem value="Pregatita">{tr.ready}</MenuItem>
+                            <MenuItem value="Livrata">{tr.delivered}</MenuItem>
+                            <MenuItem value="Anulata">{tr.canceled}</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <PrimaryButton text={tr.markDelivered} onClick={handleMarkShipped}/>
                 </CardContent>
             </Card>
 
@@ -219,7 +251,6 @@ export default function ClientOrderPage() {
 
             <Box
                 sx={{
-                    width: "100%",
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",
                     gap: "1.5rem",
@@ -229,7 +260,7 @@ export default function ClientOrderPage() {
                 }}
             >
 
-                <Box
+                <Card
                     sx={{
                         padding: "2rem",
                         borderRadius: "1rem",
@@ -239,7 +270,7 @@ export default function ClientOrderPage() {
                     <Typography variant="h4" color={colors.lightGreen2}>
                         {tr.deliveryAddress}
                     </Typography>
-                    <Divider sx={{my:"0.5rem"}}/>
+                    <Divider sx={{my: "0.5rem"}}/>
 
                     <Typography variant="body1">{order.deliveryAddress.name}</Typography>
                     <Typography variant="body2">{order.deliveryAddress.street}</Typography>
@@ -248,9 +279,9 @@ export default function ClientOrderPage() {
                     </Typography>
                     <Typography variant="body2">{tr.zipCode} {order.deliveryAddress.zip}</Typography>
                     <Typography variant="body2">{tr.phone} {order.deliveryAddress.phone}</Typography>
-                </Box>
+                </Card>
 
-                <Box
+                <Card
                     sx={{
                         padding: "2rem",
                         borderRadius: "1rem",
@@ -260,7 +291,7 @@ export default function ClientOrderPage() {
                     <Typography variant="h4" color={colors.lightGreen2}>
                         {tr.billingAddress}
                     </Typography>
-                    <Divider sx={{my:"0.5rem"}}/>
+                    <Divider sx={{my: "0.5rem"}}/>
 
                     <Typography variant="body1">{order.billingAddress.name}</Typography>
                     <Typography variant="body2">{order.billingAddress.street}</Typography>
@@ -269,13 +300,20 @@ export default function ClientOrderPage() {
                     </Typography>
                     <Typography variant="body2">{tr.zipCode} {order.billingAddress.zip}</Typography>
                     <Typography variant="body2">{tr.phone} {order.billingAddress.phone}</Typography>
-                </Box>
+                </Card>
 
             </Box>
 
+            <Card sx={{ p: "2rem", backgroundColor: colors.darkGreen2,borderRadius: "1rem" }}>
+                <Typography variant="h4" color={colors.lightGreen2}>{tr.deliveryDetails}</Typography>
+                <Divider sx={{ my: "0.5rem" }} />
+                <Typography>{tr.fanCourier}</Typography>
+                <Typography>{tr.trackingNO} {order.trackingNumber}</Typography>
+                <Typography>{tr.trackingCost} {order.shippingCost} lei</Typography>
+            </Card>
+
             <Box
                 sx={{
-                    width: "100%",
                     backgroundColor: colors.darkGreen1,
                     borderRadius: "1rem",
                     padding: "1.5rem",
@@ -285,27 +323,24 @@ export default function ClientOrderPage() {
                 }}
             >
                 {order.products.map((prod) => (
-                    <ClientOrderViewProductCard
+                    <ProducerOrderViewProductCard
                         key={prod.id}
                         productId={prod.id}
                         image={prod.image}
                         title={prod.title}
-                        category={prod.category}
                         quantity={prod.quantity}
                         unit={prod.unit}
-                        supplierRegion={prod.supplierRegion}
-                        supplierLogo={prod.supplierLogo}
-                        supplier={prod.supplier}
                         price={prod.price}
                         currency={prod.currency}
-                        onAddReview={prod.onAddReview}
+                        rating={prod.rating}
+                        reviewCount={prod.reviewCount}
                     />
                 ))}
 
                 <Divider sx={{ my: "1rem" }} />
 
                 <Typography variant="h5">{tr.subtotal} {subtotal.toFixed(2)} {tr.currency}</Typography>
-                <Typography variant="h5">{tr.delivery} {(order.transportCost || 0).toFixed(2)} {tr.currency}</Typography>
+                <Typography variant="h5">{tr.delivery} {(order.shippingCost || 0).toFixed(2)} {tr.currency}</Typography>
                 <Typography variant="h3">
                     {tr.total} {total.toFixed(2)} {tr.currency}
                 </Typography>
@@ -313,5 +348,4 @@ export default function ClientOrderPage() {
 
         </Box>
     );
-
 }

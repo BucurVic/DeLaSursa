@@ -33,6 +33,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 import CheckoutPage from "./pages/CheckoutPage";
 import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 import ClientOrderPage from "./pages/ClientOrderPage.tsx";
+import ProducerOrderPage from "./pages/ProducerOrderPage.tsx";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
 
           <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am cosul, e doar de test
           <Route path="/order/:id" element={<ClientOrderPage />}/>
+          <Route path="/order-prod/:id" element={<ProducerOrderPage/>}/>
 
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>

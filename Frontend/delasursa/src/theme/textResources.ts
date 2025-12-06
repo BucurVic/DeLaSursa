@@ -195,7 +195,20 @@ export const textResources = {
         billingAddress: "Adresă de facturare",
         total:"Total:",
         currency:"LEI",
-        addReview:"ADAUGĂ RECENZIE"
+        addReview:"ADAUGĂ RECENZIE",
+        clientEmail:"Email client:",
+        changeStatus: "Schimbă status",
+        processing:"În procesare",
+        ready:"Pregătită",
+        delivered:"Livrată",
+        canceled:"Anulată",
+        markDelivered:"Marchează ca livrată",
+        deliveryDetails:"Detalii livrare",
+        fanCourier:"Curier: Fan Courier",
+        trackingNO:"Tracking:",
+        trackingCost:"Cost transport:",
+        subtotal:"Subtotal:",
+        delivery:"Transport:"
     },
     producerPage: {
         title: "Produsele mele",
