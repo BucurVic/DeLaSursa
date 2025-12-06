@@ -1,13 +1,13 @@
-import React, { useContext } from 'react'; // 1. Am importat useContext
+import React, { useContext } from 'react';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Drawer, Toolbar, Typography, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // <-- 1. Importăm săgeata
 import { useNavigate, useLocation } from 'react-router-dom';
 
-// 2. Importăm AuthContext direct (nu useAuth)
 import { AuthContext } from '../../context/AuthContext'; 
 import { colors } from '../../theme/colors'; 
 
@@ -17,7 +17,6 @@ const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 3. Folosim useContext pentru a accesa logout
   const { logout } = useContext(AuthContext); 
 
   const menuItems = [
@@ -49,7 +48,8 @@ const AdminSidebar: React.FC = () => {
       </Toolbar>
       <Divider sx={{ borderColor: colors.lightGreen1Transparent }} />
       
-      <Box sx={{ overflow: 'auto', mt: 2 }}>
+      <Box sx={{ overflow: 'auto', mt: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Lista Principală de Navigare */}
         <List>
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
@@ -62,7 +62,7 @@ const AdminSidebar: React.FC = () => {
                         borderRight: `4px solid ${colors.lightGreen1}`
                     },
                     '&:hover': {
-                        backgroundColor: colors.darkGreen2,
+                        backgroundColor: 'rgba(95, 238, 149, 0.05)'
                     }
                 }}
               >
@@ -75,18 +75,33 @@ const AdminSidebar: React.FC = () => {
           ))}
         </List>
         
+        {/* Spacer pentru a împinge butoanele de jos la final */}
+        <Box sx={{ flexGrow: 1 }} />
+
         <Divider sx={{ my: 2, borderColor: colors.lightGreen1Transparent }} />
         
+        {/* Zona de Jos: Înapoi la Site + Deconectare */}
         <List>
+            {/* 2. Butonul NOU: Înapoi la Site */}
+            <ListItem disablePadding>
+                <ListItemButton onClick={() => navigate('/')}>
+                    <ListItemIcon sx={{ color: colors.white2 }}>
+                        <ArrowBackIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Înapoi la Site" sx={{ color: colors.white2 }} />
+                </ListItemButton>
+            </ListItem>
+
+            {/* Butonul de Deconectare */}
             <ListItem disablePadding>
                 <ListItemButton onClick={() => { 
-                    if (logout) logout();
+                    if (logout) logout(); 
                     navigate('/login'); 
                 }}>
-                    <ListItemIcon sx={{ color: colors.red1 }}>
+                    <ListItemIcon sx={{ color: '#ff5252' }}>
                         <LogoutIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Deconectare" sx={{ color: colors.red1 }} />
+                    <ListItemText primary="Deconectare" sx={{ color: '#ff5252' }} />
                 </ListItemButton>
             </ListItem>
         </List>
