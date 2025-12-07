@@ -1,17 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
-import {produseApi} from "../api/produseApi.ts"
-import type {Produs} from "../types/Produs.ts";
-import {useCart} from "../context/CartContext.tsx";
-import {colors} from "../theme";
+import { produseApi } from "../api/produseApi.ts"
+import type { Produs } from "../types/Produs.ts";
+import { useCart } from "../context/CartContext.tsx";
+import { colors } from "../theme";
 import Box from "@mui/material/Box";
 import HeroSection from "../sections/homepage/HeroSection.tsx";
 import PopularProductsSection from "../sections/homepage/PopularProductsSection.tsx";
+import FaqSection from "../sections/homepage/FaqSection";
+import StatsSection from "../sections/homepage/StatsSection.tsx";
+import ReviewsSection from "../sections/homepage/ReviewsSection.tsx";
+import CTASection from "../sections/homepage/CTASection.tsx";
 
 const HomePage: React.FC = () => {
 
     const [popularProducts, setPopularProducts] = useState<Produs[]>([]);
-    const {addItem} = useCart();
+    const { addItem } = useCart();
 
     useEffect(() => {
         const fetchPopular = async () => {
@@ -49,7 +53,7 @@ const HomePage: React.FC = () => {
 
             {/* hero section */}
             <HeroSection />
-
+            
             {/* popular products section */}
             <PopularProductsSection
                 products={popularProducts.map((p) => ({
@@ -77,7 +81,10 @@ const HomePage: React.FC = () => {
                     });
                 }}
             />
-
+            <CTASection />
+            <StatsSection />
+            <ReviewsSection />
+            <FaqSection />
 
         </Box>
     );

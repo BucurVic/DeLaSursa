@@ -61,7 +61,7 @@ export default function HeroSection() {
               </Fade>
 
               <Fade in>
-                <Typography variant="subtitle1" >
+                <Typography variant="body1" >
                   {textResources.hero.title}
                 </Typography>
               </Fade>
