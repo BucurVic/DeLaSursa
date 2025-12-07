@@ -120,8 +120,8 @@ export const textResources = {
   hero: {
     title: "Produse organice proaspete, direct de la sursă",
     subtitle: "Descoperă cele mai bune produse locale de la producători verificați. Sustennabilitate, calitate și prospețime în fiecare comandă.",
-    ctaPrimary: "Descoperă produse",
-    ctaSecondary: "Devino producător",
+    ctaPrimary: "DESCOPERĂ PRODUSE",
+    ctaSecondary: "DEVINO PRODUCĂTOR",
     searchPlaceholder: "Caută produse, categorii sau producători...",
   },
   // sidebar texts (producator only)
