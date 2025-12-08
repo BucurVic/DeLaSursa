@@ -9,10 +9,8 @@ import {
   TextField,
   Box,
   IconButton,
-  Stack,
   MenuItem,
-  FormControlLabel,
-  Switch
+  Stack
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { colors } from '../../theme/colors';
@@ -21,8 +19,8 @@ import { colors } from '../../theme/colors';
 export interface OrderData {
   id?: number;
   customer: string;
-  date: string; // Format YYYY-MM-DD
-  total: string; // Îl ținem ca string pentru simplificare în form (ex: "150.00 RON")
+  date: string;
+  total: string;
   status: 'PENDING' | 'COMPLETED' | 'SHIPPED' | 'CANCELLED';
   items: number;
 }
@@ -44,11 +42,9 @@ const AdminOrderModal: React.FC<AdminOrderModalProps> = ({
   initialData,
   mode
 }) => {
-  
-  // Stare inițială goală
   const emptyOrder: OrderData = {
     customer: '',
-    date: new Date().toISOString().split('T')[0], // Data de azi
+    date: new Date().toISOString().split('T')[0],
     total: '',
     status: 'PENDING',
     items: 1
@@ -73,20 +69,37 @@ const AdminOrderModal: React.FC<AdminOrderModalProps> = ({
     onClose();
   };
 
-  // Stiluri comune
-  const textFieldStyles = {
-    '& .MuiInput-root': {
-      backgroundColor: colors.darkGreen2,
-      color: colors.white1,
-      borderRadius: '8px',
-      '& fieldset': { borderColor: colors.lightGreen1Transparent },
-      '&:hover fieldset': { borderColor: colors.lightGreen1 },
-      '&.Mui-focused fieldset': { borderColor: colors.lightGreen1 },
+  // --- STILURI CONSISTENTE (Ca la EditUserModal) ---
+  const textFieldStyles = (disabled: boolean = false) => ({
+    "& .MuiInput-root": {
+        backgroundColor: colors.darkGreen2,
+        color: colors.white1,
+        borderRadius: "1rem", // Rotunjire mare
+        border: `1px solid ${colors.lightGreen1Transparent}`,
+        marginTop: "0.25rem", // Spațiu mic între label și input
+        padding: "0.75rem 0.75rem",
+        opacity: disabled ? 0.7 : 1,
+        transition: "border-color 0.2s ease-in-out",
+        "&::before, &::after": { display: "none" }, // Ascunde linia de jos
+        "&:hover:not(.Mui-focused)": {
+            borderColor: disabled ? colors.lightGreen1Transparent : `${colors.lightGreen1}`,
+        },
+        "&.Mui-focused": { borderColor: colors.lightGreen1 },
     },
-    '& .MuiInputBase-input': { color: colors.white1 },
-    '& .MuiInputLabel-root': { color: colors.white2 },
-    '& .MuiInputLabel-root.Mui-focused': { color: colors.lightGreen1 },
-    '& .MuiSelect-icon': { color: colors.lightGreen1 },
+    "& .MuiInputBase-input": {
+        color: colors.white1,
+        padding: 0,
+        "&.MuiSelect-select": { display: 'flex', alignItems: 'center' },
+    },
+    "& .MuiSvgIcon-root": { color: colors.lightGreen1 } // Iconița dropdown verde
+  });
+
+  const labelStyles = {
+    color: colors.white2,
+    mb: "0.25rem",
+    fontSize: "0.875rem",
+    textAlign: "left",
+    fontWeight: 500
   };
 
   return (
@@ -97,110 +110,131 @@ const AdminOrderModal: React.FC<AdminOrderModalProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          bgcolor: '#0C1A14',
+          bgcolor: colors.darkGreen1, // Fundal închis (ca la pagină)
           color: colors.white1,
-          borderRadius: '12px',
-          boxShadow: 24,
-          border: `1px solid ${colors.lightGreen1Transparent}`
+          borderRadius: "1rem",
+          border: `1px solid ${colors.lightGreen1Transparent}`,
+          boxShadow: "1rem 1rem 1rem rgba(0,0,0,0.4)",
+          p: "0.5rem",
         },
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: colors.lightGreen1 }}>
-          {mode === 'add' ? 'Adaugă Comandă (Admin)' : 'Editează Comandă (Admin)'}
+      <DialogTitle sx={{ p: "1rem", borderBottom: `2px solid ${colors.darkGreen2}` }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold", color: colors.lightGreen1 }}>
+            {mode === 'add' ? 'Adaugă Comandă' : 'Editează Comandă'}
+          </Typography>
+          <IconButton onClick={onClose} sx={{ color: colors.white1 }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Typography variant="body2" sx={{ color: colors.white2, opacity: 0.7, mt: "0.25rem" }}>
+          Gestionează detaliile comenzii.
         </Typography>
-        <IconButton onClick={onClose} sx={{ color: colors.white1 }}>
-          <CloseIcon />
-        </IconButton>
       </DialogTitle>
 
-      <Box component="form" onSubmit={handleSubmit} sx={{ p: 3, pt: 1 }}>
-        <Stack spacing={2}>
+      <Box component="form" onSubmit={handleSubmit}>
+        <DialogContent sx={{ display: "grid", gap: "1rem", pt: "1.5rem" }}>
           
           {/* Nume Client */}
-          <TextField
-            label="Nume Client"
-            name="customer"
-            fullWidth
-            required
-            value={formData.customer}
-            onChange={handleInputChange}
-            sx={textFieldStyles}
-          />
-
-          <Stack direction="row" spacing={2}>
-            {/* Data */}
+          <Box>
+            <Typography sx={labelStyles}>Nume Client</Typography>
             <TextField
-              label="Data"
-              name="date"
-              type="date"
               fullWidth
-              required
-              value={formData.date}
+              name="customer"
+              value={formData.customer}
               onChange={handleInputChange}
-              sx={textFieldStyles}
-              InputLabelProps={{ shrink: true }}
-            />
-             {/* Nr. Produse */}
-             <TextField
-              label="Nr. Articole"
-              name="items"
-              type="number"
-              fullWidth
               required
-              value={formData.items}
-              onChange={handleInputChange}
-              sx={textFieldStyles}
+              variant="standard"
+              margin="none"
+              InputProps={{ disableUnderline: true }}
+              sx={textFieldStyles(false)}
             />
+          </Box>
+
+          {/* Data și Nr. Articole (Pe același rând) */}
+          <Stack direction="row" spacing={2}>
+            <Box sx={{ flex: 1 }}>
+                <Typography sx={labelStyles}>Data</Typography>
+                <TextField
+                fullWidth
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                required
+                variant="standard"
+                margin="none"
+                InputProps={{ disableUnderline: true }}
+                sx={textFieldStyles(false)}
+                />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+                <Typography sx={labelStyles}>Nr. Articole</Typography>
+                <TextField
+                fullWidth
+                name="items"
+                type="number"
+                value={formData.items}
+                onChange={handleInputChange}
+                required
+                variant="standard"
+                margin="none"
+                InputProps={{ disableUnderline: true }}
+                sx={textFieldStyles(false)}
+                />
+            </Box>
           </Stack>
 
-          {/* Status (Select) */}
-          <TextField
-            select
-            label="Status Comandă"
-            name="status"
-            fullWidth
-            required
-            value={formData.status}
-            onChange={handleInputChange}
-            sx={textFieldStyles}
-          >
-            {STATUS_OPTIONS.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+          {/* Status */}
+          <Box>
+            <Typography sx={labelStyles}>Status Comandă</Typography>
+            <TextField
+              select
+              fullWidth
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+              required
+              variant="standard"
+              margin="none"
+              InputProps={{ disableUnderline: true }}
+              sx={textFieldStyles(false)}
+            >
+              {STATUS_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
 
-          {/* Total (Simplificat ca text pentru acest demo) */}
-          <TextField
-            label="Total (ex: 150.00 RON)"
-            name="total"
-            fullWidth
-            required
-            value={formData.total}
-            onChange={handleInputChange}
-            sx={textFieldStyles}
-          />
+          {/* Total */}
+          <Box>
+            <Typography sx={labelStyles}>Total</Typography>
+            <TextField
+              fullWidth
+              name="total"
+              value={formData.total}
+              onChange={handleInputChange}
+              required
+              placeholder="ex: 150.00 RON"
+              variant="standard"
+              margin="none"
+              InputProps={{ disableUnderline: true }}
+              sx={textFieldStyles(false)}
+            />
+          </Box>
 
-        </Stack>
+        </DialogContent>
 
-        <DialogActions sx={{ mt: 4, p: 0 }}>
-          <Button onClick={onClose} sx={{ color: colors.white2 }}>
-            Anulează
-          </Button>
-          <Button 
-            type="submit" 
-            variant="contained"
-            sx={{ 
-              bgcolor: colors.lightGreen1, 
-              color: colors.darkGreen2,
-              fontWeight: 'bold',
-              '&:hover': { bgcolor: colors.lightGreen2 }
-            }}
-          >
-            {mode === 'add' ? 'Adaugă Comandă' : 'Salvează Modificările'}
-          </Button>
+        <DialogActions sx={{ p: "1.5rem", gap: "1rem", justifyContent: "flex-end" }}>
+            <Button onClick={onClose} sx={{ color: colors.lightGreen1, border: `1px solid ${colors.lightGreen1}`, borderRadius: "0.5rem", px: "1.5rem", "&:hover": { backgroundColor: colors.lightGreen1Transparent } }}>
+                Anulează
+            </Button>
+            <Button type="submit" sx={{ backgroundColor: colors.lightGreen1, color: colors.darkGreen1, borderRadius: "0.5rem", px: "1.5rem", fontWeight: "bold", "&:hover": { backgroundColor: colors.lightGreen2 } }}>
+                {mode === 'add' ? 'Adaugă' : 'Salvează'}
+            </Button>
         </DialogActions>
       </Box>
     </Dialog>
