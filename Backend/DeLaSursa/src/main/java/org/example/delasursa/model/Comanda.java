@@ -31,7 +31,7 @@ public class Comanda {
     @OneToMany(mappedBy = "comanda")
     private Set<ComandaPachet> comandaPachete = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "comanda")
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)
     private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
 
 }
