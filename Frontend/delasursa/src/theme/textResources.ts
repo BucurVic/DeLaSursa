@@ -100,6 +100,7 @@ export const textResources = {
     home: "Acasă",
     products: "Produse",
     producers: "Producători",
+      cart: "Coș de cumpărături",
     subscriptions: "Abonamente",
     support: "Suport Clienți",
     login: "Autentificare",
@@ -119,8 +120,8 @@ export const textResources = {
   hero: {
     title: "Produse organice proaspete, direct de la sursă",
     subtitle: "Descoperă cele mai bune produse locale de la producători verificați. Sustennabilitate, calitate și prospețime în fiecare comandă.",
-    ctaPrimary: "Descoperă produse",
-    ctaSecondary: "Devino producător",
+    ctaPrimary: "DESCOPERĂ PRODUSE",
+    ctaSecondary: "DEVINO PRODUCĂTOR",
     searchPlaceholder: "Caută produse, categorii sau producători...",
   },
   // sidebar texts (producator only)
@@ -192,6 +193,23 @@ export const textResources = {
         },
     },
 
+    cartPage: {
+        title: "Coșul meu de cumpărături",
+        emptyCart: "Coșul tău este gol.",
+        totalProducts: "Total produse:",
+        deliveryFee: "Taxă de livrare:",
+        freeDelivery: "Gratuit",
+        totalPrice: "Total de plată:",
+        proceedToCheckout: "Finalizează comanda",
+
+    },
+
+    productDetailsPage : {
+        reviewsTile: " Recenziile clienților",
+        addToCartButton: "Adaugă în coș",
+        loadingText: "Se încarcă detaliile produsului...",
+    },
+    
     adminUsers: {
         title: "Gestiune Utilizatori",
         addButton: "Adaugă Utilizator",

@@ -5,39 +5,35 @@ import {
     Button,
     Typography
 } from "@mui/material";
-import GridViewUserProductCard from "../../components/GridViewUserProductCard.tsx";
+import GridViewUserProducerCard from "../../components/GridViewUserProducerCard.tsx";
 import { colors } from "../../theme/colors.ts";
 
-interface Product {
-    id: string;
-    image: string;
-    title: string;
+interface Producer {
+    producerId: string;
+    coverImage: string;
+    logo: string;
+    name: string;
+    location: string;
     category: string;
-    unit: string;
-    supplierLogo?: string;
-    supplier: string;
     rating: number;
-    reviewCount: number;
-    price: number;
-    currency?: string;
+    productCount: number;
+    description: string;
 }
 
-interface PopularProductsSectionProps {
-    products: Product[];
-    onAddToCart: (productId: string) => void;
+interface TopProducersSectionProps {
+    producers: Producer[];
 }
 
-const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
-    products,
-    onAddToCart
+const TopProducersSection: React.FC<TopProducersSectionProps> = ({
+    producers
 }) => {
     const navigate = useNavigate();
 
-    // display only first 12 products
-    const displayProducts = products.slice(0, 12);
+    // display only first 12 producers
+    const displayProducers = producers.slice(0, 12);
 
     const handleViewAll = () => {
-        navigate("/products");
+        navigate("/producers");
     }
 
     return (
@@ -47,11 +43,11 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "3rem",
-                backgroundColor: colors.darkGreen2,
                 width: "100%",
                 padding: "4rem 8rem"
             }}
         >
+
             {/* title and subtitle */}
             <Box
                 sx={{
@@ -68,7 +64,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                         textAlign: "center"
                     }}
                 >
-                    PRODUSE POPULARE
+                    TOP PRODUCĂTORI
                 </Typography>
                 <Typography
                     variant="body1"
@@ -77,39 +73,36 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                         textAlign: "center"
                     }}
                 >
-                    Descoperă cele mai apreciate produse locale.
+                    Oameni dedicați care aduc produse autentice, direct de la sursă.
                 </Typography>
             </Box>
 
-            {/* products grid */}
+            {/* producers grid */}
             <Box
                 sx={{
                     display: "grid",
                     gridTemplateColumns: {
-                        xs: "repeat(2, 1fr)",
-                        sm: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
-                        lg: "repeat(4, 1fr)",
-                        xl: "repeat(6, 1fr)"
+                        xs: "repeat(1, 1fr)",
+                        sm: "repeat(1, 1fr)",
+                        md: "repeat(2, 1fr)",
+                        lg: "repeat(3, 1fr)",
+                        xl: "repeat(4, 1fr)"
                     },
                     gap: "1.5rem"
                 }}
             >
-                {displayProducts.map((product) => (
-                    <GridViewUserProductCard
-                        key={product.id}
-                        productId={product.id.toString()}
-                        image={product.image}
-                        title={product.title}
-                        category={product.category}
-                        unit={product.unit}
-                        supplierLogo={product.supplierLogo}
-                        supplier={product.supplier}
-                        rating={product.rating}
-                        reviewCount={product.reviewCount}
-                        price={product.price}
-                        currency={product.currency}
-                        onAddToCart={() => onAddToCart(product.id)}
+                {displayProducers.map((producer) => (
+                    <GridViewUserProducerCard
+                        key={producer.producerId}
+                        producerId={producer.producerId}
+                        coverImage={producer.coverImage}
+                        logo={producer.logo}
+                        name={producer.name}
+                        location={producer.location}
+                        category={producer.category}
+                        rating={producer.rating}
+                        productCount={producer.productCount}
+                        description={producer.description}
                     />
                 ))}
             </Box>
@@ -122,16 +115,17 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                     borderRadius: "0.6rem",
                     border: `1px solid ${colors.lightGreen1}`,
                     padding: "0.5rem 2rem",
+                    color: colors.lightGreen1,
                     "&:hover": {
                         border: `1px solid ${colors.lightGreen1}`,
                         backgroundColor: `${colors.lightGreen1Transparent}`
                     }
                 }}
             >
-                VEZI TOATE PRODUSELE
+                VEZI TOȚI PRODUCĂTORII
             </Button>
         </Box>
     );
 };
 
-export default PopularProductsSection;
+export default TopProducersSection;
