@@ -28,7 +28,7 @@ const MainLayout: React.FC = () => {
             pl: { 
               xs: WIDTH_COLLAPSED, 
             },
-            pt: 4, 
+            //pt: 4, 
             px: 4,
             pr: 0,
             width: '100%',

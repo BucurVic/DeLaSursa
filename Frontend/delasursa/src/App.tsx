@@ -26,6 +26,7 @@ import CartPage from "./pages/CartPage.tsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
+import UserProducerPage from "./pages/UserProducerPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -48,6 +49,7 @@ function App() {
       {/* Folosim MainLayout pentru a înveli pagina Home */}
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/producer/:producerId" element={<UserProducerPage />} />
           <Route path="/become-producer" element={<BecomeProducerPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
