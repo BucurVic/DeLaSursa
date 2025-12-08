@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { colors } from '../../theme/colors';
-import {adminApi, type AdminStats} from "../../api/adminApi.ts";
-import React from 'react';
 import { Box, Typography, Paper, Button, Chip } from '@mui/material';
+import {adminApi, type AdminStats} from "../../api/adminApi.ts";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { colors } from '../../theme/colors';
 import { useNavigate } from 'react-router-dom';
@@ -57,25 +54,20 @@ const AdminOverviewPage: React.FC = () => {
         {loading ? (
             <Typography variant="h3" sx={{ color: colors.lightGreen1, mt: 1 }}>Loading statistics...</Typography>
         ) : (
-      <Box sx={{ 
-          display: 'flex', 
+      <Box sx={{
+          display: 'flex',
           flexWrap: 'wrap',
           gap: 3, // Gap folosește unități relative din temă (3 * 8px = 24px)
           mb: 4
       }}>
-        
-        {/* Card 1 - Utilizatori */}
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}> {/* flex-grow, flex-shrink, flex-basis */}
-          <Paper sx={{ p: 3, bgcolor: colors.darkGreen2, color: colors.white1, borderRadius: '12px' }}>
-            <Typography variant="h6">Utilizatori Totali</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, mt: 1 }}>
-                {stats?.totalUseri ?? "-"}
-            </Typography>
+
         {/* Cardurile se adaptează automat */}
         <Box sx={{ flexGrow: 1, flexBasis: { xs: '100%', sm: '45%', md: '30%' } }}>
           <Paper sx={cardStyle}>
             <Typography variant="body2" sx={{ color: colors.white2, mb: 1 }}>Utilizatori Totali</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>1,240</Typography>
+            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>
+                {stats?.totalUseri ?? "-"}
+            </Typography>
             <Typography variant="caption" sx={{ color: colors.lightGreen2 }}>+12 săptămâna asta</Typography>
           </Paper>
         </Box>
@@ -83,7 +75,9 @@ const AdminOverviewPage: React.FC = () => {
         <Box sx={{ flexGrow: 1, flexBasis: { xs: '100%', sm: '45%', md: '30%' } }}>
           <Paper sx={cardStyle}>
             <Typography variant="body2" sx={{ color: colors.white2, mb: 1 }}>Comenzi Azi</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>45</Typography>
+            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>
+                {stats?.totalComenzi ?? "-"}
+            </Typography>
             <Typography variant="caption" sx={{ color: '#ffca28' }}>În așteptare: 12</Typography>
           </Paper>
         </Box>
@@ -91,19 +85,13 @@ const AdminOverviewPage: React.FC = () => {
         <Box sx={{ flexGrow: 1, flexBasis: { xs: '100%', sm: '45%', md: '30%' } }}>
           <Paper sx={cardStyle}>
             <Typography variant="body2" sx={{ color: colors.white2, mb: 1 }}>Venituri (Luna Asta)</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>3,400 Lei</Typography>
+            <Typography variant="h3" sx={{ color: colors.lightGreen1, fontWeight: 'bold', fontSize: { xs: '2rem', md: '3rem' } }}>
+                {stats?.totalVanzari ?? "-"} lei
+            </Typography>
             <Typography variant="caption" sx={{ color: colors.lightGreen2 }}>+5% față de luna trecută</Typography>
           </Paper>
         </Box>
 
-        {/* Card 2 - Comenzi */}
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <Paper sx={{ p: 3, bgcolor: colors.darkGreen2, color: colors.white1, borderRadius: '12px' }}>
-            <Typography variant="h6">Comenzi Azi</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, mt: 1 }}>
-                {stats?.totalComenzi ?? "-"}
-            </Typography>
-      </Box>
 
       {/* --- SECȚIUNEA 2: DETALII --- */}
       <Box sx={{
@@ -158,13 +146,6 @@ const AdminOverviewPage: React.FC = () => {
           </Paper>
         </Box>
 
-        {/* Card 3 - Venituri */}
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <Paper sx={{ p: 3, bgcolor: colors.darkGreen2, color: colors.white1, borderRadius: '12px' }}>
-            <Typography variant="h6">Venituri</Typography>
-            <Typography variant="h3" sx={{ color: colors.lightGreen1, mt: 1 }}>
-                {stats?.totalVanzari ?? "-"} lei
-            </Typography>
         {/* PANOU DREAPTA: Activitate Recentă */}
         <Box sx={{ flexGrow: 1, flexBasis: { xs: '100%', md: '30%' } }}>
           <Paper sx={{ ...cardStyle, border: 'none' }}>
@@ -189,6 +170,8 @@ const AdminOverviewPage: React.FC = () => {
             </Button>
           </Paper>
         </Box>
+
+      </Box>
 
       </Box>
             )}
