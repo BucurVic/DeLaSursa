@@ -37,4 +37,7 @@ public class ProdusProducator {
     @Column(name = "imagine", length = Integer.MAX_VALUE)
     private String imagine;
 
+    @Column(name = "denumire_personalizata")
+    private String denumirePersonalizata;
+
 }

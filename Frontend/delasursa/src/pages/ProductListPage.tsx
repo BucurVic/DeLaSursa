@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Box, Grid, IconButton } from "@mui/material";
 import { colors } from "../theme/colors.ts";
 import {textResources, textResources as tr} from "../theme/textResources.ts";
@@ -8,60 +8,26 @@ import ProductCardGridView from "../components/ProductCardGridView.tsx";
 import ProductCardListView from "../components/ProductCardListView.tsx";
 import EditProductModal from "../components/EditProductModal.tsx";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal.tsx";
-
-// 🖼️ Imagini
-import mereImg from "../images/mere.png";
-import rosiiImg from "../images/rosii.png";
-import cartofiImg from "../images/cartofi.png";
-import iaurtImg from "../images/iaurt.png";
+import {produseApi} from "../api/produseApi.ts";
+import type {Produs} from "../types/Produs.ts";
 
 export default function ProductListPage() {
     const [search, setSearch] = useState("");
     const [gridView, setGridView] = useState(true);
 
     // 📦 Lista de produse
-    const [products, setProducts] = useState([
-        {
-            id: 1,
-            title: "Roșii Cherry Bio",
-            category: "Legume",
-            price: 22,
-            unit: "45 kg",
-            image: rosiiImg,
-            active: true,
-            stock: "45",
-        },
-        {
-            id: 2,
-            title: "Mere Ionathan",
-            category: "Fructe",
-            price: 15,
-            unit: "120 kg",
-            image: mereImg,
-            active: true,
-            stock: "120",
-        },
-        {
-            id: 3,
-            title: "Iaurt Tradițional Natural",
-            category: "Lactate & Ouă",
-            price: 8,
-            unit: "8 g",
-            image: iaurtImg,
-            active: true,
-            stock: "8",
-        },
-        {
-            id: 4,
-            title: "Cartofi Noi Bio",
-            category: "Legume",
-            price: 12,
-            unit: "0 kg",
-            image: cartofiImg,
-            active: false,
-            stock: "0",
-        },
-    ]);
+    const [products, setProducts] = useState<Produs[]>([]);
+
+    useEffect(() => {
+        produseApi.getAllProducator()
+            .then((res) => {
+                console.log("Produse primite: ", res.data);
+                setProducts(res.data);
+            })
+            .catch((err) => {
+                console.error("Eroare la incarcarea produselor: ", err);
+            })
+    }, []);
 
     // 🔄 Activare/dezactivare produs
     const toggleActiveStatus = (id: number) => {
@@ -72,16 +38,10 @@ export default function ProductListPage() {
 
     // ✏️ Editare produs
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<Produs | null>(null);
 
-    const handleEditClick = (product: any) => {
-        setSelectedProduct({
-            name: product.title,
-            category: product.category,
-            price: product.price.toString(),
-            stock: product.stock.toString(),
-            unit: product.unit,
-        });
+    const handleEditClick = (product: Produs) => {
+        setSelectedProduct(product);
         setEditModalOpen(true);
     };
 
@@ -89,7 +49,7 @@ export default function ProductListPage() {
         if (!selectedProduct) return;
         setProducts((prev) =>
             prev.map((p) =>
-                p.title === selectedProduct.name
+                p.produsName === selectedProduct.name
                     ? {
                         ...p,
                         title: updatedData.name,
@@ -117,7 +77,7 @@ export default function ProductListPage() {
 
     // 🔍 Filtrare produse
     const filteredProducts = products.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase())
+        p.produsName.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -224,12 +184,12 @@ export default function ProductListPage() {
                                 }}
                             >
                                 <ProductCardGridView
-                                    image={p.image}
-                                    title={p.title}
-                                    category={p.category}
-                                    price={p.price}
-                                    unit={p.unit}
-                                    active={p.active}
+                                    image={p.produsImagine}
+                                    title={p.produsName}
+                                    category={p.categorie}
+                                    price={p.pret}
+                                    unit={p.unitate_masura}
+                                    active={true}
                                     onEdit={() => handleEditClick(p)}
                                     onDeactivate={() => toggleActiveStatus(p.id)}
                                     onDelete={() => handleDeleteClick(p)}

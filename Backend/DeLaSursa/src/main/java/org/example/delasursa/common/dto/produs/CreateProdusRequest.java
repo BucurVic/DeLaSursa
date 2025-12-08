@@ -1,4 +1,4 @@
-package org.example.delasursa.common.dto;
+package org.example.delasursa.common.dto.produs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 public class CreateProdusRequest {
+
+    private Integer idProdusGeneric;
+    private String numeProdusGenericNou;
     private String nume;
     private String categorie;
 

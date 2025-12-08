@@ -1,4 +1,4 @@
-package org.example.delasursa.common.dto;
+package org.example.delasursa.common.dto.produs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +19,6 @@ public class ProdusDTO {
     private String producatorName;
     private Double pret;
     private String unitate_masura;
+    private Double cantitate;
 
 }
