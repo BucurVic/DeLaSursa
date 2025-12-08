@@ -2,10 +2,7 @@ package org.example.delasursa.common.exceptions.handler;
 
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.exceptions.ImageStorageException;
-import org.example.delasursa.common.exceptions.OperationFailedException;
-import org.example.delasursa.common.exceptions.ResourceNotFoundException;
-import org.example.delasursa.common.exceptions.UserException;
+import org.example.delasursa.common.exceptions.*;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +68,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("Unexpected error occurred", e);
         return ResponseEntity.status(404).body("Resource not found: " + e.getMessage());
+    }
+
+    @ExceptionHandler(ProducatorException.class)
+    public ResponseEntity<String> handleProducatorException(ProducatorException e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ProdusException.class)
+    public ResponseEntity<String> handleProdusException(ProdusException e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(e.getMessage());
     }
 
     @ExceptionHandler(OperationFailedException.class)
