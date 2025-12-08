@@ -3,6 +3,7 @@
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -42,6 +43,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "name")
     )
     private Set<Role> role;
+
+    @Column(name = "data_inregistrare")
+    LocalDate dataInregistrare;
+
+    @Column(name = "avatar")
+    private String avatar;
+
+    @Column(name = "status")
+    private Boolean status;
 
     @Column(name = "is_email_verified")
     private boolean isEmailVerified;

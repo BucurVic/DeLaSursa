@@ -3,7 +3,7 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.VerifyEmailResponse;
+import org.example.delasursa.common.dto.auth.VerifyEmailResponse;
 import org.example.delasursa.service.implementations.MailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

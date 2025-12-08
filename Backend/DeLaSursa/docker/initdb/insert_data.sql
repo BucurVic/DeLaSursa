@@ -202,3 +202,10 @@ INSERT INTO subscriptii (id_client, id_pachet, data_inceput, freceventa, status)
     (9, 8, '2025-01-08', 14, 'activa'),
     (10, 9, '2025-01-09', 30, 'activa'),
     (11, 10, '2025-01-10', 7, 'activa');
+
+
+INSERT INTO admini(id,nume,prenume) VALUES
+    (1, 'De La', 'Sursa');
+
+
+update useri set data_inregistrare = CURRENT_DATE, status = true;

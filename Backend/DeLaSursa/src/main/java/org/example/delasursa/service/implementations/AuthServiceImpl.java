@@ -2,7 +2,7 @@ package org.example.delasursa.service.implementations;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.*;
+import org.example.delasursa.common.dto.auth.*;
 import org.example.delasursa.common.exceptions.UserAlreadyExistsException;
 import org.example.delasursa.common.exceptions.UserSaveFailedException;
 import org.example.delasursa.jwt.JwtTokenProvider;
