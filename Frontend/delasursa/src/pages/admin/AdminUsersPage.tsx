@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Typography,
@@ -20,6 +20,8 @@ import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import EditButton from '../../components/buttonsProductView/EditButton';
 import DeactivateButton from '../../components/buttonsProductView/DeactivateButton';
 import DeleteButton from '../../components/buttonsProductView/DeleteButton';
+import type {User} from "../../types/User.ts";
+import {adminApi} from "../../api/adminApi.ts";
 
 // --- DATE SIMULATE ---
 const CURRENT_ADMIN_ID = 1;
@@ -34,7 +36,10 @@ const mockUsers = [
 ];
 
 const AdminUsersPage: React.FC = () => {
-    const [rows, setRows] = useState(mockUsers);
+    const [rows, setRows] = useState<any[]>([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(6);
+    const [rowCount, setRowCount] = useState(0);
 
     // --- STATE MODALE ---
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -46,6 +51,25 @@ const AdminUsersPage: React.FC = () => {
     const TR = textResources;
     const TUsers = TR.adminUsers;
     const TCommon = TR.productCard;
+
+    useEffect(() => {
+        adminApi.getUsers(page,pageSize).then(response => {
+            const data = response.data;
+
+            const mapped = data.content.map( u => ({
+                id: u.id,
+                fullName: `${u.userDetails?.nume ?? ""} ${u.userDetails?.prenume ?? ""}`.trim(),
+                email: u.email,
+                role: u.roles.length > 0 ? u.roles[0].toUpperCase() : "UNKNOWN",
+                status: u.status ?? true,
+                joinDate: u.registrationDate,
+                avatar: u.avatar
+            }));
+
+            setRows(mapped);
+            setRowCount(data.totalElements);
+        })
+    }, [page, pageSize]);
 
     // --- HANDLERS ---
 
@@ -317,8 +341,13 @@ const AdminUsersPage: React.FC = () => {
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    initialState={{
-                        pagination: { paginationModel: { page: 0, pageSize: 10 } },
+                    pagination
+                    paginationMode="server"
+                    rowCount={rowCount}
+                    paginationModel={{page, pageSize}}
+                    onPaginationModelChange={(model) => {
+                        setPage(model.page);
+                        setPageSize(model.pageSize);
                     }}
                     pageSizeOptions={[5, 10, 20]}
                     checkboxSelection

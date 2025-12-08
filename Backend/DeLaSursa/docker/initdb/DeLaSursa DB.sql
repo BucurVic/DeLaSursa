@@ -3,6 +3,9 @@ CREATE TABLE useri (
   username varchar,
   email varchar,
   parola varchar,
+  status bool,
+  data_inregistrare date,
+  avatar varchar,
   is_email_verified boolean,
   verification_token varchar
 );
@@ -29,6 +32,12 @@ CREATE TABLE clienti (
   id integer PRIMARY KEY REFERENCES useri(id) ON DELETE CASCADE,
   nume varchar,
   telefon varchar,
+  prenume varchar
+);
+
+CREATE TABLE admini (
+  id integer PRIMARY KEY REFERENCES useri(id) ON DELETE CASCADE,
+  nume varchar,
   prenume varchar
 );
 
@@ -81,7 +90,8 @@ CREATE TABLE produs_producator (
   cantitate float,
   unitate_masura varchar,
   pret float,
-  imagine varchar
+  imagine varchar,
+  denumire_personalizata varchar
 );
 
 

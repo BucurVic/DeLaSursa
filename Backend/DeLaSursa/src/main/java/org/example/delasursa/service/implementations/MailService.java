@@ -1,15 +1,12 @@
 package org.example.delasursa.service.implementations;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.VerifyEmailResponse;
-import org.example.delasursa.common.exceptions.EmailException;
+import org.example.delasursa.common.dto.auth.VerifyEmailResponse;
 import org.example.delasursa.common.exceptions.UserNotFoundException;
 import org.example.delasursa.model.User;
 import org.example.delasursa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;

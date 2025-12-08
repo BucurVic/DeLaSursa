@@ -2,11 +2,12 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.CreateProdusRequest;
-import org.example.delasursa.common.dto.ProdusDTO;
-import org.example.delasursa.common.dto.UpdateProdusRequest;
+import org.example.delasursa.common.dto.produs.CreateProdusRequest;
+import org.example.delasursa.common.dto.produs.ProdusDTO;
+import org.example.delasursa.common.dto.produs.ProdusGenericSummary;
+import org.example.delasursa.common.dto.produs.UpdateProdusRequest;
 import org.example.delasursa.model.Produs;
-import org.example.delasursa.model.ProdusProducator;
+import org.example.delasursa.service.ProdusProducatorService;
 import org.example.delasursa.service.ProdusService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,13 +25,14 @@ import java.util.List;
 @RequestMapping("/api/produse")
 @AllArgsConstructor
 public class ProduseController {
-    private  final ProdusService produsService;
+    private  final ProdusProducatorService produsProducatorService;
+    private final ProdusService produsService;
 
     @GetMapping
     public ResponseEntity<List<ProdusDTO>> getAllProduse(){
         log.info("Get all produse request received ");
 
-        List<ProdusDTO> all = produsService.getAll();
+        List<ProdusDTO> all = produsProducatorService.getAll();
 
         log.info("Fetched {} produse successfully", all.size());
 
@@ -42,7 +44,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getAllProducator(){
         log.info("Get all produse for producator request received ");
 
-        List<ProdusDTO> all = produsService.getAllProducator();
+        List<ProdusDTO> all = produsProducatorService.getAllProducator();
 
         log.info("Fetched {} produse for producator successfully", all.size());
 
@@ -53,7 +55,7 @@ public class ProduseController {
     public ResponseEntity<Page<ProdusDTO>> getPopularProduse(@PageableDefault(size = 12) Pageable pageable){
         log.info("Get all popular produse request received ");
 
-        Page<ProdusDTO> page = produsService.getAll(pageable);
+        Page<ProdusDTO> page = produsProducatorService.getAll(pageable);
 
         log.info("Fetched {} pages with {} popular produse successfully", page.getTotalPages(),page.getSize());
 
@@ -64,7 +66,7 @@ public class ProduseController {
     public ResponseEntity<Page<ProdusDTO>> getRecomendedProduse(@PageableDefault(size = 8) Pageable pageable){
         log.info("Get all recomended produse request received ");
 
-        Page<ProdusDTO> page = produsService.getAll(pageable);
+        Page<ProdusDTO> page = produsProducatorService.getAll(pageable);
 
         log.info("Fetched {} pages with {} recomended produse successfully", page.getTotalPages(),page.getSize());
 
@@ -75,7 +77,7 @@ public class ProduseController {
     public ResponseEntity<List<ProdusDTO>> getRandom(@RequestParam() Integer count){
         log.info("Get random {} produse request received ", count);
 
-        List<ProdusDTO> random = produsService.getRandom(count);
+        List<ProdusDTO> random = produsProducatorService.getRandom(count);
 
         log.info("Fetched {} random produse successfully", random.size());
 
@@ -95,7 +97,7 @@ public class ProduseController {
                 categorie, regiune, pretMin, pretMax, doarDisponibile,
                 pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
-        Page<ProdusDTO> page = produsService.getFiltered(categorie, regiune, pretMin, pretMax, doarDisponibile, pageable);
+        Page<ProdusDTO> page = produsProducatorService.getFiltered(categorie, regiune, pretMin, pretMax, doarDisponibile, pageable);
 
         log.info("Fetched {} filtered produse across {} total pages (page size: {})",
                 page.getNumberOfElements(), page.getTotalPages(), page.getSize());
@@ -109,7 +111,7 @@ public class ProduseController {
     public ResponseEntity<ProdusDTO> getProdusById(@PathVariable Integer id){
         log.info("Find produs by id {} request received ", id);
 
-        ProdusDTO produs = produsService.getOne(id);
+        ProdusDTO produs = produsProducatorService.getOne(id);
         log.info("Fetched produs with id {}", id);
         return ResponseEntity.ok(produs);
     }
@@ -119,7 +121,7 @@ public class ProduseController {
     public ResponseEntity<ProdusDTO> addProdus(@ModelAttribute CreateProdusRequest request){
         log.info("Add produs request received  {}", request.getNume());
 
-        ProdusDTO result = produsService.add(request);
+        ProdusDTO result = produsProducatorService.add(request);
 
         log.info("Product created successfully with id {}", result.getId());
 
@@ -134,7 +136,7 @@ public class ProduseController {
     ){
         log.info("Update produs with id {} request received  ", id);
 
-        ProdusDTO result = produsService.update(id, request);
+        ProdusDTO result = produsProducatorService.update(id, request);
 
         log.info("Product updated successfully with id {}", id);
 
@@ -146,8 +148,31 @@ public class ProduseController {
     public ResponseEntity<Produs> deleteProdus(@PathVariable Integer id){
         log.info("Delete produs from producator with id {} request received", id);
 
-        produsService.delete(id);
+        produsProducatorService.delete(id);
         log.info("Product deleted from producator successfully with id {}", id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categorii")
+    public ResponseEntity<List<String>> getAllCategorie(){
+        log.info("Get all categorie request received ");
+
+        List<String> categorii = produsService.getAllCategorie();
+
+        log.info("Fetched {} categorie successfully", categorii.size());
+
+        return ResponseEntity.ok(categorii);
+    }
+
+    @GetMapping(params = "categorie")
+    public ResponseEntity<List<ProdusGenericSummary>> getAllProduseByCategorie(@RequestParam(required = false) String categorie){
+        List<ProdusGenericSummary> produse;
+
+        if(categorie != null)
+            produse = produsService.getAllByCategorie(categorie);
+        else
+            produse = produsService.getALl();
+
+        return ResponseEntity.ok(produse);
     }
 }

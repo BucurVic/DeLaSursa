@@ -11,6 +11,7 @@ import org.example.delasursa.common.exceptions.UserException;
 import org.example.delasursa.common.mappers.ComandaMapper;
 import org.example.delasursa.model.*;
 import org.example.delasursa.repository.*;
+import org.example.delasursa.repository.ComandaProdusRepository;
 import org.example.delasursa.service.ComandaService;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,6 +37,7 @@ public class ComandaServiceImpl implements ComandaService {
     private final ProducatorRepository producatorRepository;
     private final ComandaMapper comandaMapper;
     private final ProdusProducatorRepository produsProducatorRepository;
+    private final ComandaProdusRepository comandaProdusRepository;
 
     @Override
     @Transactional
@@ -113,5 +117,14 @@ public class ComandaServiceImpl implements ComandaService {
         comandaProdus.setProdus(produs.getKey());
         return comandaProdus;
 
+    }
+    @Override
+    public Integer getTotalComenziUltimulAn() {
+        return comenziRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
+    }
+
+    @Override
+    public Double getVenitTotal() {
+        return comandaProdusRepository.getVenitTotal();
     }
 }

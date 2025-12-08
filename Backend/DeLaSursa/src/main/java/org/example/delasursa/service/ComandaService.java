@@ -10,4 +10,6 @@ public interface ComandaService {
     CreateComandaResponse createComanda(CreateComandaRequest request);
     List<ComandaDto> getAllComandsByUserId(Integer userId);
     List<ComandaDto> getAllCommandsByProducatorId(Integer id);
+    Integer getTotalComenziUltimulAn();
+    Double getVenitTotal();
 }
