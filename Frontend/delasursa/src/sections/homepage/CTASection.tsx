@@ -16,7 +16,7 @@ const CTASection: React.FC = () => {
                 display: "flex",
                 justifyContent: "center",
                 px: { xs: "1.5rem", md: "4rem", lg: "6rem" },
-                pb: "6rem"
+                padding: "4rem 8rem"
             }}
         >
             <Box
