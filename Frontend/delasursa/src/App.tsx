@@ -30,9 +30,10 @@ import UserProducerPage from "./pages/UserProducerPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
-
 import CheckoutPage from "./pages/CheckoutPage";
 import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
+import ClientOrderPage from "./pages/ClientOrderPage.tsx";
+import ProducerOrderPage from "./pages/ProducerOrderPage.tsx";
 
 function App() {
   return (
@@ -55,19 +56,17 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
 
-
           {/* Aici vor veni /produse, /despre-noi, etc. */}
-
           <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am cosul, e doar de test
 
+          <Route path="/order/:id" element={<ClientOrderPage />} />
+          <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
       {/* --- Rute Protejate (Cu Layout) --- */}
       {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
-      <Route
-          element={<ProtectedRoute allowedRoles={["PRODUCATOR"]}/>}
-      >
+      <Route element={<ProtectedRoute allowedRoles={["PRODUCATOR"]} />}>
         <Route element={<ProducerLayout />}>
           <Route
             path="/dashboard-producator"
@@ -85,12 +84,10 @@ function App() {
             </Route>
         </Route>
 
-      <Route 
-        element={<ProtectedRoute allowedRoles={["ADMIN"]} />}
-      >
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminOverviewPage />} />
-            <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
           <Route path="/admin/products" element={<AdminProductsPage />} />
         </Route>
@@ -98,7 +95,6 @@ function App() {
 
       {/* --- Orice alt URL care nu se potrivește --- */}
       <Route path="*" element={<Navigate to="/" />} />
-      
     </Routes>
   );
 }
