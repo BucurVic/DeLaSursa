@@ -1,13 +1,12 @@
 package org.example.delasursa.common.mappers;
 
-import org.example.delasursa.common.dto.ComandaProdusDto;
+import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
 import org.example.delasursa.model.ComandaProdus;
 import org.example.delasursa.model.Produs;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ComandaProdusMapper {
-
 
     public ComandaProdusDto toDto(ComandaProdus entity){
         return ComandaProdusDto.builder()
@@ -24,6 +23,5 @@ public class ComandaProdusMapper {
                 .nume(entity.getNume())
                 .categorie(entity.getCategorie())
                 .build();
-
     }
 }

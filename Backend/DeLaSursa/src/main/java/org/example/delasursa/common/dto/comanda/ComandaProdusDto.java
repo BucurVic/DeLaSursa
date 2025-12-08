@@ -1,4 +1,4 @@
-package org.example.delasursa.common.dto;
+package org.example.delasursa.common.dto.comanda;
 
 import lombok.*;
 

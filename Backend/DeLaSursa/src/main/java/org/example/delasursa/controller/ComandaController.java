@@ -3,11 +3,10 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.*;
+import org.example.delasursa.common.dto.comanda.*;
 import org.example.delasursa.service.ComandaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +37,7 @@ public class ComandaController {
     }
 
     @GetMapping("/producator/{id}")
-    @PreAuthorize("hasRole('PRODUCATOR')")
+   // @PreAuthorize("hasRole('PRODUCATOR')")
     public ResponseEntity<List<ComandaDto>> getAllComenziForProducator(@PathVariable Integer id) {
         List<ComandaDto> comenzi = comandaService.getAllCommandsByProducatorId(id);
         return ResponseEntity.status(HttpStatus.OK).body(comenzi);
@@ -48,7 +47,7 @@ public class ComandaController {
 
     /// TODO: implementation
     @PutMapping
-    public ResponseEntity<CreateUpateCoamandaResponse> updateComanda(@RequestBody CreateUpdateComandaRequest request) {
+    public ResponseEntity<UpateCoamandaResponse> updateComanda(@RequestBody UpdateComandaRequest request) {
         return null;
     }
 

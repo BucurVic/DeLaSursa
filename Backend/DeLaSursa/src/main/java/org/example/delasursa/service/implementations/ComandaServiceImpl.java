@@ -2,9 +2,9 @@ package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.delasursa.common.dto.ComandaDto;
-import org.example.delasursa.common.dto.CreateComandaRequest;
-import org.example.delasursa.common.dto.CreateComandaResponse;
+import org.example.delasursa.common.dto.comanda.ComandaDto;
+import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
+import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
 import org.example.delasursa.common.exceptions.ProducatorException;
 import org.example.delasursa.common.exceptions.ProdusException;
 import org.example.delasursa.common.exceptions.UserException;
@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -120,7 +118,7 @@ public class ComandaServiceImpl implements ComandaService {
     }
     @Override
     public Integer getTotalComenziUltimulAn() {
-        return comenziRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
+        return comandaRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
     }
 
     @Override

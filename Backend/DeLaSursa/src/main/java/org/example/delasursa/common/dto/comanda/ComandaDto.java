@@ -1,6 +1,7 @@
-package org.example.delasursa.common.dto;
+package org.example.delasursa.common.dto.comanda;
 
 import lombok.*;
+import org.example.delasursa.common.dto.ClientDto;
 
 import java.time.LocalDate;
 import java.util.Set;

@@ -1,8 +1,8 @@
 package org.example.delasursa.service;
 
-import org.example.delasursa.common.dto.ComandaDto;
-import org.example.delasursa.common.dto.CreateComandaRequest;
-import org.example.delasursa.common.dto.CreateComandaResponse;
+import org.example.delasursa.common.dto.comanda.ComandaDto;
+import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
+import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
 
 import java.util.List;
 

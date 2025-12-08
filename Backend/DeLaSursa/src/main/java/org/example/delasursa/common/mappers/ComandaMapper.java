@@ -1,7 +1,7 @@
 package org.example.delasursa.common.mappers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.delasursa.common.dto.ComandaDto;
+import org.example.delasursa.common.dto.comanda.ComandaDto;
 import org.example.delasursa.model.Comanda;
 import org.springframework.stereotype.Component;
 
