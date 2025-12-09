@@ -34,6 +34,10 @@ import CheckoutPage from "./pages/CheckoutPage";
 import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 import ClientOrderPage from "./pages/ClientOrderPage.tsx";
 import ProducerOrderPage from "./pages/ProducerOrderPage.tsx";
+import MyAccountPage from "./pages/MyAccountPage.tsx";
+import MyOrdersPage from "./pages/MyOrdersPage.tsx";
+import EditAccountPage from "./pages/EditAccountPage.tsx";
+import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
 
 function App() {
   return (
@@ -61,7 +65,13 @@ function App() {
 
           <Route path="/order/:id" element={<ClientOrderPage />} />
           <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
-        {/* Aici vor veni /produse, /despre-noi, etc. */}
+
+          <Route path="/contul-meu" element={<MyAccountPage />} />
+
+          <Route path="/my-orders" element={<MyOrdersPage />} />
+          <Route path="/edit-account" element={<EditAccountPage />} />
+
+          {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
       {/* --- Rute Protejate (Cu Layout) --- */}
@@ -81,7 +91,9 @@ function App() {
                     {/* <Route path="promotii" element={<PromotionsPage />} /> */}
                 </Route>
 
-            </Route>
+            <Route path="/dashboard-producator/comenzi-primite" element={<ProducerReceivedOrders />} />
+
+        </Route>
         </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
