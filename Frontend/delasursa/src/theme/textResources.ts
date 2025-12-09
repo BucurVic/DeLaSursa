@@ -182,6 +182,24 @@ export const textResources = {
     activeFiltersLabel: "Filtre active:",
     clearAll: "Resetează filtrele",
   },
+    producers: {
+        addText: {
+            localProducts: "Producătorii noștri",
+            discoverProducers:
+                "Descoperă oamenii dedicați care aduc produse autentice, direct de la sursă",
+        },
+        filters: {
+            category: "Categorie",
+            region: "Regiune",
+            rating: "Rating minim",
+            sort: "Sortare",
+        },
+        noResults: "Nu s-au găsit producători care să corespundă cu filtrul",
+        currency: "RON",
+        rating: "Rating",
+        activeFiltersLabel: "Filtre active:",
+        clearAll: "Resetează filtrele",
+    },
   orders: {
     loadingOrder: "Se încarcă comanda...",
     order: "Comanda",

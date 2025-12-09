@@ -72,7 +72,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
   const navLinks = [
     { text: textResources.navbar.home, path: "./pages/HomePage" },
     { text: textResources.navbar.products, path: "/products" },
-    { text: textResources.navbar.producers, path: "" },
+    { text: textResources.navbar.producers, path: "/producers" },
     { text: textResources.navbar.subscriptions, path: "/abonamente" },
     { text: textResources.navbar.support, path: "/suport" },
     { type: "cart", path: "/cart" },
