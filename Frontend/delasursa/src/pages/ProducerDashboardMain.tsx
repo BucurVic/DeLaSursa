@@ -10,9 +10,9 @@ import IconComponent from "../components/IconComponent.tsx";
 import { useEffect, useState } from "react";
 import type { Produs } from "../types/Produs.ts";
 import { produseApi } from "../api/produseApi.ts";
-import ProducerOrderViewProductCard from "../components/ProducerOrderViewProductCard.tsx";
 import Typography from "@mui/material/Typography";
 import IncomeChart from "../components/IncomeChart.tsx";
+import ProducerProductCardSimple from "../components/ProducerProductCardSimple.tsx";
 
 const stats = [
   {
@@ -121,23 +121,21 @@ export default function ProducerDashboardMain() {
               alignItems: "center",
               padding: 2,
               backgroundColor: colors.darkGreen1,
-              borderRadius: "2rem",
+              borderRadius: "1rem",
               border: "0.5px solid",
               borderColor: `${colors.lightGreen1Transparent}`,
+              gap: "1rem",
             }}
           >
             {products.map((p) => (
-              <ProducerOrderViewProductCard
-                key={p.id}
-                productId={p.id}
-                image={p.produsImagine}
-                rating={5.0}
-                quantity={p.cantitate}
+              <ProducerProductCardSimple
                 title={p.produsName}
-                currency={"LEI"}
-                unit={p.unitate_masura}
-                price={p.pret}
+                produsImagine={p.produsImagine}
+                rating={5}
                 reviewCount={30}
+                price={p.pret}
+                unit={p.unitate_masura}
+                currency={"LEI"}
               />
             ))}
           </Card>
