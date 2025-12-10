@@ -3,6 +3,7 @@ package org.example.delasursa.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.ConfirmNewPasswordRequest;
 import org.example.delasursa.common.dto.auth.*;
 import org.example.delasursa.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,13 @@ public class AuthController {
         log.info("Reset password request received : {}", request);
         authService.resetPassword(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Reset password has been sent");
+    }
+
+    @PostMapping("/confirm-password")
+    public ResponseEntity<String> confirmNewPassword(@RequestBody ConfirmNewPasswordRequest request) {
+        log.info("Confirm password request received : {}", request);
+        authService.confirmNewPassword(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("New password has been set");
     }
 
     @PostMapping("/register")

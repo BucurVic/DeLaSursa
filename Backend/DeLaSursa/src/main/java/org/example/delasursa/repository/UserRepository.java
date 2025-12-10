@@ -13,10 +13,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
-    boolean existsByEmail(String email);
-
-    User findByVerificationToken(String token);
-
     @Query("""
        SELECT COUNT(u)
        FROM User u
@@ -28,6 +24,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
        )
        """)
     Integer countUsersNotAdmin();
-
     List<User> findAll();
 }

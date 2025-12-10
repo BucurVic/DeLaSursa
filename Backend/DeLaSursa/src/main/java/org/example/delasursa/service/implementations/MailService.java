@@ -1,40 +1,40 @@
 package org.example.delasursa.service.implementations;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.auth.VerifyEmailResponse;
+import org.example.delasursa.common.dto.enums.TokenType;
 import org.example.delasursa.common.exceptions.UserNotFoundException;
+import org.example.delasursa.common.util.TokenUtil;
+import org.example.delasursa.model.Token;
 import org.example.delasursa.model.User;
+import org.example.delasursa.repository.TokenRepository;
 import org.example.delasursa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MailService {
-
-
     private final JavaMailSenderImpl mailSender;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final TokenRepository tokenRepository;
 
     @Value("${spring.mail.username}")
     private String username;
 
-
     @Value("${mail.confirmation.url}")
     private String mailConfirmationBaseUrl;
 
-    public MailService(JavaMailSenderImpl mailSender, UserRepository userRepository,  PasswordEncoder passwordEncoder) {
-        this.mailSender = mailSender;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Value("${mail.reset.password.url}")
+    private String mailResetPasswordUrl;
 
     private SimpleMailMessage createGenericMessageToUser(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -59,15 +59,18 @@ public class MailService {
     }
 
 
+    @Transactional
     public VerifyEmailResponse verifyEmail(String token) {
-        User user = userRepository.findByVerificationToken(token);
+
+        Token emailToken = tokenRepository.findByToken(token);
+        User user = emailToken.getUser();
         if (user == null) {
             log.warn("Verification token {} not found", token);
             throw new UserNotFoundException("The user with the specified verify token does not exist", HttpStatus.NOT_FOUND);
         }
         user.setEmailVerified(true);
-        user.setVerificationToken(null);
         userRepository.save(user);
+        tokenRepository.delete(emailToken);
         return new VerifyEmailResponse(true);
     }
 
@@ -80,39 +83,54 @@ public class MailService {
             return new UserNotFoundException("User with this email does not exist", HttpStatus.NOT_FOUND);
         });
 
+        TokenUtil.TokenPair tokenPair = TokenUtil.generatePasswordResetToken();
+        String url = mailResetPasswordUrl + "/" + tokenPair.rawToken();
+        Token token = createResetPasswordToken(user, tokenPair.hashedToken());
 
-        String newPassword = generateRandomPassword();
-        user.setParola(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
 
         SimpleMailMessage message = createGenericMessageToUser(email);
         message.setSubject("DeLaSursa - Password Reset");
         message.setText(
                 "Hello, " + user.getUsername() + "!\n\n" +
-                        "Your password has been reset successfully.\n" +
-                        "Here is your new password: " + newPassword + "\n\n" +
+                        "Your password reset request has been received.\n" +
+                        "Here is the link for resetting the password: " + "\n" +
+                        url + "\n" +
                         "Please log in and change it as soon as possible.\n\n" +
                         "Best regards,\n" +
                         "DeLaSursa Team"
         );
 
+        this.tokenRepository.save(token);
         this.mailSender.send(message);
         log.info("Password reset email sent to {}", email);
-        user.setParola(passwordEncoder.encode(newPassword));
     }
 
-    private String generateRandomPassword() {
-        int length = 10;
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-        StringBuilder password = new StringBuilder();
-        java.util.Random random = new java.util.Random();
+    @Async
+    public void sendPasswordChangedMail(String email) {
+        log.info("Sending password changed notification to {}", email);
 
-        for (int i = 0; i < length; i++) {
-            password.append(chars.charAt(random.nextInt(chars.length())));
-        }
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        return password.toString();
+        SimpleMailMessage message = createGenericMessageToUser(email);
+        message.setSubject("DeLaSursa - Password Changed");
+        String greeting = user != null ? "Hello, " + user.getUsername() + "!\n\n" : "";
+        message.setText(
+                greeting +
+                        "Your password has been changed successfully.\n" +
+                        "If you did not perform this change, please contact support immediately or reset your password.\n\n" +
+                        "Best regards,\n" +
+                        "DeLaSursa Team"
+        );
+
+        this.mailSender.send(message);
+        log.info("Password changed notification sent to {}", email);
     }
 
-
+    private Token createResetPasswordToken(User user, String hashedToken) {
+        Token token = new Token();
+        token.setType(TokenType.RESET_PASSWORD);
+        token.setUser(user);
+        token.setToken(hashedToken);
+        return token;
+    }
 }
