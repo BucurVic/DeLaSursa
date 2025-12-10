@@ -1,31 +1,31 @@
 -- ========================================================
 -- STEP 1: Inserăm useri (1 admin, 10 clienți, 9 producători)
 -- ========================================================
-INSERT INTO useri (username, email, parola, is_email_verified) VALUES
-    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+INSERT INTO useri (username, email, parola, is_email_verified,avatar) VALUES
+    ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/1/admin.png'),
 
     -- 10 clienti
-    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
+    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/2/man.jpg'),
+    ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/3/woman.jpg'),
+    ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/4/man.jpg'),
+    ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/5/woman.jpg'),
+    ('client5', 'client5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/6/man.jpg'),
+    ('client6', 'client6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/7/woman.jpg'),
+    ('client7', 'client7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/8/woman.jpg'),
+    ('client8', 'client8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/9/man.jpg'),
+    ('client9', 'client9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/10/woman.jpg'),
+    ('client10', 'client10@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/11/man.jpg'),
 
     -- 9 producatori
-    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true),
-    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true);
+    ('producator1', 'prod1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/12/man.jpg'),
+    ('producator2', 'prod2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/13/man.jpg'),
+    ('producator3', 'prod3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/14/woman.jpg'),
+    ('producator4', 'prod4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/15/woman.jpg'),
+    ('producator5', 'prod5@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/16/man.jpg'),
+    ('producator6', 'prod6@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/17/man.jpg'),
+    ('producator7', 'prod7@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/18/woman.jpg'),
+    ('producator8', 'prod8@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/19/man.jpg'),
+    ('producator9', 'prod9@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/20/woman.jpg');
 
 INSERT INTO roles (name) VALUES
     ('admin'),
@@ -102,16 +102,16 @@ INSERT INTO produse (nume, categorie) VALUES
 -- STEP 5: Inserăm produs_producator
 -- ========================================================
 INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masura, pret,imagine) VALUES
-    (12, 1, 100, 'kg', 2.5,'/uploads/12/mere.jpg'),
-    (12, 2, 80, 'kg', 3.0,'/uploads/12/pere.jpg'),
-    (13, 3, 50, 'kg', 4.0,'/uploads/13/rosii.jpg'),
-    (14, 4, 60, 'kg', 4.5,'/uploads/14/castraveti.jpg'),
-    (15, 5, 40, 'kg', 6.0,'/uploads/15/branza_cu_lapte_de_vaca.jpg'),
-    (16, 6, 30, 'l', 5.0,'/uploads/16/lapte.jpg'),
-    (17, 7, 100, 'buc', 1.0,'/uploads/17/paine.jpg'),
-    (18, 8, 80, 'l', 10.0,'/uploads/18/ulei.jpg'),
-    (19, 9, 70, 'kg', 8.0,'/uploads/19/cafea.jpg'),
-    (20, 10, 90, 'kg', 5.5,'/uploads/20/zahar.jpg');
+    (12, 1, 100, 'kg', 2.5,'/uploads/produse/12/mere.jpg'),
+    (12, 2, 80, 'kg', 3.0,'/uploads/produse/12/pere.jpg'),
+    (13, 3, 50, 'kg', 4.0,'/uploads/produse/13/rosii.jpg'),
+    (14, 4, 60, 'kg', 4.5,'/uploads/produse/14/castraveti.jpg'),
+    (15, 5, 40, 'kg', 6.0,'/uploads/produse/15/branza_cu_lapte_de_vaca.jpg'),
+    (16, 6, 30, 'l', 5.0,'/uploads/produse/16/lapte.jpg'),
+    (17, 7, 100, 'buc', 1.0,'/uploads/produse/17/paine.jpg'),
+    (18, 8, 80, 'l', 10.0,'/uploads/produse/18/ulei.jpg'),
+    (19, 9, 70, 'kg', 8.0,'/uploads/produse/19/cafea.jpg'),
+    (20, 10, 90, 'kg', 5.5,'/uploads/produse/20/zahar.jpg');
 
 -- ========================================================
 -- STEP 6: Inserăm pachete
