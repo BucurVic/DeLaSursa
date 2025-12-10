@@ -22,7 +22,7 @@ public class PachetProdus {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_produs", nullable = false)
-    private Produs produs;
+    private ProdusProducator produs;
 
     @Column(name = "cantitate")
     private Double cantitate;
