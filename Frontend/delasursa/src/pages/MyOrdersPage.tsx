@@ -168,7 +168,7 @@ const MyOrdersPage: React.FC = () => {
                 boxShadow: "none",
               }}
               onClick={() => {
-                navigate(`/order/${order.id}`);
+                navigate(`/my-orders/${order.id}`);
               }}
             >
               <CardContent>

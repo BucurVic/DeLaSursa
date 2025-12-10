@@ -65,8 +65,7 @@ function App() {
         {/* Aici vor veni /produse, /despre-noi, etc. */}
         <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am
         cosul, e doar de test
-        <Route path="/order/:id" element={<ClientOrderPage />} />
-        <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
+        <Route path="/my-orders/:id" element={<ClientOrderPage />} />
         <Route path="/contul-meu" element={<MyAccountPage />} />
         <Route path="/my-orders" element={<MyOrdersPage />} />
         <Route path="/edit-account" element={<EditAccountPage />} />
@@ -97,6 +96,11 @@ function App() {
           <Route
             path="/dashboard-producator/comenzi-primite"
             element={<ProducerReceivedOrders />}
+          />
+
+          <Route
+            path="/dashboard-producator/comenzi-primite/:id"
+            element={<ProducerOrderPage />}
           />
         </Route>
       </Route>

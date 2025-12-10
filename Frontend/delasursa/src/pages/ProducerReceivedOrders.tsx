@@ -193,7 +193,7 @@ const ProducerReceivedOrders: React.FC = () => {
                 variant="outlined"
                 sx={{ mt: 2, textTransform: "none" }}
                 onClick={() => {
-                  navigate(`/order-producer/${order.id}`);
+                  navigate(`/dashboard-producator/comenzi-primite/${order.id}`);
                 }}
               >
                 {textResources.orders.details}
