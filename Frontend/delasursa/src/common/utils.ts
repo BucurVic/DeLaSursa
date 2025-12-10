@@ -6,19 +6,22 @@ export default function getValidTokenFromStorage(): string {
   return token ?? "";
 }
 
-interface DecodedToken {
-  id?: number;
-  [key: string]: any;
+export interface DecodedJwt {
+  sub: string;
+  id: string;
+  authorities: string[];
+  iat: number;
+  exp: number;
 }
 
-export function getUserIdFromToken(token: string): number {
-  if (!token) return 0;
+export function getUserIdFromToken(token: string): string {
+  if (!token) return "";
 
   try {
-    const decoded = jwtDecode<DecodedToken>(token);
-    return decoded.id || 0;
+    const decoded = jwtDecode<DecodedJwt>(token);
+    return decoded.id || "";
   } catch (error) {
     console.error("Failed to decode token:", error);
-    return 0;
+    return "";
   }
 }
