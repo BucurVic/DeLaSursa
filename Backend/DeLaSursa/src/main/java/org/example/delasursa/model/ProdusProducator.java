@@ -3,11 +3,14 @@ package org.example.delasursa.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "produs_producator", schema = "public")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"producator", "produs"})
+@ToString(exclude = {"producator", "produs","comandaProduse", "pachetProduse"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class ProdusProducator {
@@ -39,5 +42,11 @@ public class ProdusProducator {
 
     @Column(name = "denumire_personalizata")
     private String denumirePersonalizata;
+
+    @OneToMany(mappedBy = "produs")
+    private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "produs")
+    private Set<PachetProdus> pachetProduse = new LinkedHashSet<>();
 
 }
