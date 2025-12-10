@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface ComandaRepository extends JpaRepository<Comanda, Integer> {
     List<Comanda> findByClient_Id(Integer id);
-    List<Comanda> findByComandaProduse_Produs_ProdusProducatori(ProdusProducator produsProducatori);
+    List<Comanda> findByComandaProduse_Produs(ProdusProducator produsProducator);
     Integer countByDataEfectuariiAfter(LocalDate dataEfectuariiAfter);
 }

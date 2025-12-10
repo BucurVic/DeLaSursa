@@ -69,7 +69,7 @@ const HomePage: React.FC = () => {
             coverImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
             logo: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400',
             name: 'Brutăria Artizanală',
-            location: 'București, România',
+            location: 'Timișoara, România',
             category: 'Panificație',
             rating: 4.7,
             productCount: 28,

@@ -78,17 +78,6 @@ CREATE TABLE subscriptii (
   status varchar
 );
 
-
-
-CREATE TABLE comanda_produs (
-  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  id_comanda integer NOT NULL REFERENCES comenzi(id),
-  id_produs integer NOT NULL REFERENCES  produse(id),
-  cantitate float,
-  pret_unitar float
-);
-
-
 CREATE TABLE produs_producator (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_producator integer NOT NULL REFERENCES producatori(id),
@@ -104,10 +93,19 @@ CREATE TABLE produs_producator (
 CREATE TABLE pachet_produs (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_pachet integer NOT NULL references pachete(id),
-  id_produs integer NOT NULL references produse(id),
+  id_produs integer NOT NULL references produs_producator(id),
   cantitate float,
   pret_unitar float
 );
+
+CREATE TABLE comanda_produs (
+  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id_comanda integer NOT NULL REFERENCES comenzi(id),
+  id_produs integer NOT NULL REFERENCES  produs_producator(id),
+  cantitate float,
+  pret_unitar float
+);
+
 
 
 CREATE TABLE comanda_pachet (

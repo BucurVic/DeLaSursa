@@ -42,10 +42,10 @@ public class ComandaServiceImpl implements ComandaService {
     public CreateComandaResponse createComanda(CreateComandaRequest request) {
         //finding the products based of the id from the request
         //Map Entry format   <Produs, Pair<PretUnitar,Cantitate>>
-        Map<Produs, Pair<Double, Double>> produse = request.getComandaProduseList()
+        Map<ProdusProducator, Pair<Double, Double>> produse = request.getComandaProduseList()
                 .stream()
                 .map(t -> {
-                    Produs produs = produsRepository.findById(t.getProdusId())
+                    ProdusProducator produs = produsProducatorRepository.findById(t.getProdusId())
                             .orElseThrow(() -> {
                                 log.warn("Produs with id {} not found", t.getProdusId());
                                 return new ProdusException("Produs with id " + t.getProdusId() + " not found!", HttpStatus.NOT_FOUND);
@@ -99,14 +99,15 @@ public class ComandaServiceImpl implements ComandaService {
         List<ProdusProducator> produsProducators = produsProducatorRepository.findByProducator_Id(id);
 
         return produsProducators.stream()
-                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs_ProdusProducatori(pp).stream())
+                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs(pp)
+                        .stream())
                 .distinct()
                 .map(comandaMapper::toDto)
                 .collect(Collectors.toList());
     }
 
 
-    private ComandaProdus createFromMapEntryComanda(Map.Entry<Produs, Pair<Double, Double>> produs, Comanda comanda) {
+    private ComandaProdus createFromMapEntryComanda(Map.Entry<ProdusProducator, Pair<Double, Double>> produs, Comanda comanda) {
         ComandaProdus comandaProdus = new ComandaProdus();
         Pair<Double, Double> pair =  produs.getValue();
         comandaProdus.setComanda(comanda);

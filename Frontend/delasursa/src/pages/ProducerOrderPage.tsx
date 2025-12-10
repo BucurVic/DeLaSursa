@@ -123,7 +123,7 @@ const mockOrders: Order[] = [
   {
     id: 1002,
     date: new Date("2024-03-01"),
-    status: "In procesare",
+    status: "În procesare",
     deliveryMethod: "Ridicare personală",
     paymentMethod: "Numerar",
     clientEmail: "andreeaion@example.com",

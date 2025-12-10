@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 // --- Componentele de Layout și Securitate ---
@@ -27,6 +27,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 import UserProducerPage from "./pages/UserProducerPage.tsx";
+import ProducersPage from "./pages/ProducersPage.tsx";
 
 // --- Pagini Placeholder (pentru test) ---
 // Acestea vor fi paginile reale ale aplicației tale
@@ -34,6 +35,11 @@ import CheckoutPage from "./pages/CheckoutPage";
 import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 import ClientOrderPage from "./pages/ClientOrderPage.tsx";
 import ProducerOrderPage from "./pages/ProducerOrderPage.tsx";
+import MyAccountPage from "./pages/MyAccountPage.tsx";
+import MyOrdersPage from "./pages/MyOrdersPage.tsx";
+import EditAccountPage from "./pages/EditAccountPage.tsx";
+import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
+import ProducerDashboardMain from "./pages/ProducerDashboardMain.tsx";
 
 function App() {
   return (
@@ -53,6 +59,7 @@ function App() {
       {/* Folosim MainLayout pentru a înveli pagina Home */}
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/producers" element={<ProducersPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
         <Route path="/become-producer" element={<BecomeProducerPage />} />
         <Route path="/" element={<HomePage />} />
@@ -61,8 +68,10 @@ function App() {
         {/* Aici vor veni /produse, /despre-noi, etc. */}
         <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am
         cosul, e doar de test
-        <Route path="/order/:id" element={<ClientOrderPage />} />
-        <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
+        <Route path="/my-orders/:id" element={<ClientOrderPage />} />
+        <Route path="/contul-meu" element={<MyAccountPage />} />
+        <Route path="/my-orders" element={<MyOrdersPage />} />
+        <Route path="/edit-account" element={<EditAccountPage />} />
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
@@ -72,7 +81,7 @@ function App() {
         <Route element={<ProducerLayout />}>
           <Route
             path="/dashboard-producator"
-            element={<Navigate to="/dashboard-producator/produse/lista" />}
+            element={<ProducerDashboardMain />}
           />
 
           {/* pagina cu tab-uri */}
@@ -80,11 +89,22 @@ function App() {
             path="/dashboard-producator/produse"
             element={<ProducerProductsPage />}
           >
+            <Route index element={<Navigate to="lista" replace />} />
             <Route path="lista" element={<ProductListPage />} />
             <Route path="adauga" element={<ProductForm />} />
             <Route path="inventar" element={<InventoryPage />} />
             {/* <Route path="promotii" element={<PromotionsPage />} /> */}
           </Route>
+
+          <Route
+            path="/dashboard-producator/comenzi-primite"
+            element={<ProducerReceivedOrders />}
+          />
+
+          <Route
+            path="/dashboard-producator/comenzi-primite/:id"
+            element={<ProducerOrderPage />}
+          />
         </Route>
       </Route>
 

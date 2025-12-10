@@ -109,7 +109,7 @@ export default function ProductListPage() {
                     }}
                 >
                     <SearchBar
-                        placeholder={tr.searchBar.placeholder}
+                        placeholder={tr.searchBar.placeholderProduse}
                         value={search}
                         onChange={setSearch}
                         fullWidth={false}
