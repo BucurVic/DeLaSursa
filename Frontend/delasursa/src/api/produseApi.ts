@@ -21,6 +21,9 @@ export interface UpdateProdusData {
 export const produseApi = {
     getAll: () => api.get<Produs[]>("/produse"),
 
+    getAllPaged: (page: number, size: number) =>
+        api.get<PaginatedResponse<Produs>>(`/produse?page=${page}&size=${size}`),
+
     getAllProducator: () => api.get<Produs[]>("/produse/producator"),
 
     getPopular: (page = 0, size = 12) =>
