@@ -3,7 +3,9 @@ package org.example.delasursa.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.admin.AdminStatsDTO;
+import org.example.delasursa.common.dto.admin.ComandaSummary;
 import org.example.delasursa.common.dto.admin.UserDTO;
+import org.example.delasursa.common.dto.comanda.ComandaDto;
 import org.example.delasursa.service.ComandaService;
 import org.example.delasursa.service.UserService;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,16 @@ public class AdminController {
         Page<UserDTO> page = userService.getAllUsers(pageable);
 
         log.info("Fetched {} users successfully", page.getNumberOfElements());
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<Page<ComandaSummary>> getAllComenzi(
+            @PageableDefault(size = 6) Pageable pageable)
+    {
+        log.info("Get all comenzi request received");
+        Page<ComandaSummary> page = comandaService.getAllComenziSummary(pageable);
+        log.info("Fetched {} comenzi successfully", page.getNumberOfElements());
         return ResponseEntity.ok(page);
     }
 }

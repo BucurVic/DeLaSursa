@@ -55,7 +55,4 @@ public class User {
 
     @Column(name = "is_email_verified")
     private boolean isEmailVerified;
-
-    @Column(name = "verification_token", length = Integer.MAX_VALUE)
-    private String verificationToken;
 } 

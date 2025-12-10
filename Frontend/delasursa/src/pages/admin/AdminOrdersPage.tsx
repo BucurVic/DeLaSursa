@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   Box, Typography, Paper, IconButton, Chip, Button, Tooltip 
 } from '@mui/material';
@@ -11,6 +11,8 @@ import { colors } from '../../theme/colors';
 // --- IMPORTĂM MODALELE ---
 import AdminOrderModal, {type OrderData } from '../../pages/admin/AdminOrderModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import {adminApi} from "../../api/adminApi.ts";
+import type {ComandaSummary} from "../../types/ComandaSummary.ts";
 
 // Date Simulate
 const mockOrders: OrderData[] = [
@@ -22,7 +24,10 @@ const mockOrders: OrderData[] = [
 ];
 
 const AdminOrdersPage: React.FC = () => {
-  const [rows, setRows] = useState(mockOrders);
+  const [rows, setRows] = useState<any[]>([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState<number>(6);
+  const [rowCount, setRowCount] = useState<number>(0);
 
   // --- STARE MODALE ---
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +35,26 @@ const AdminOrdersPage: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
   
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+    useEffect(() => {
+        adminApi.getOrders(page, pageSize)
+            .then(res => {
+                const data = res.data;
+
+                const mappedRows = data.content.map((p: ComandaSummary)=> ({
+                    id: p.id,
+                    customer: p.numeClient,
+                    date: p.dataEfectuarii,
+                    items: p.numarProduse,
+                    total: p.valoareTotala,
+                    status: 'COMPLETED'
+                }));
+
+                setRows(mappedRows);
+                setRowCount(data.totalElements);
+            })
+            .catch(console.error);
+    }, [page,pageSize]);
 
   // --- HANDLERS ---
   const handleOpenAdd = () => {
@@ -155,7 +180,14 @@ const AdminOrdersPage: React.FC = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          pagination
+          paginationMode="server"
+          rowCount={rowCount}
+          paginationModel={{page,pageSize}}
+          onPaginationModelChange={(model) => {
+              setPage(model.page);
+              setPageSize(model.pageSize);
+          }}
           pageSizeOptions={[5, 10, 20]}
           checkboxSelection
           disableRowSelectionOnClick
