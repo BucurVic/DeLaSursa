@@ -4,40 +4,41 @@ import {
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
-  MenuItem,
-  Select,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { colors, textResources } from "../theme";
 
-// TIPURI
 type Address = {
+  name: string;
   street: string;
   city: string;
-  county: string;
+  region: string;
+  zip: string;
+  phone: string;
 };
 
 type ProductInOrder = {
-  name: string;
+  id: number;
+  image: string;
+  title: string;
+  category: string;
   quantity: number;
+  unit: string;
+  supplierRegion: string;
+  supplierLogo?: string;
+  supplier: string;
+  price: number;
+  currency?: string;
+  rating: number;
+  reviewCount: number;
 };
-
-type OrderStatus =
-  | "Creată"
-  | "În procesare"
-  | "Pregatită"
-  | "Livrată"
-  | "Anulată";
 
 type Order = {
   id: number;
   date: Date;
-  status: OrderStatus;
+  status: "Creată" | "În procesare" | "Pregatită" | "Livrată" | "Anulată";
   products: ProductInOrder[];
   deliveryAddress: Address;
   billingAddress: Address;
@@ -48,93 +49,112 @@ type Order = {
   trackingNumber?: string;
 };
 
-// OPȚIUNI STATUS
-const orderStatusOptions = [
-  { value: "Creată", label: textResources.orders.created },
-  { value: "În procesare", label: textResources.orders.processing },
-  { value: "Pregatită", label: textResources.orders.ready },
-  { value: "Livrată", label: textResources.orders.delivered },
-  { value: "Anulată", label: textResources.orders.canceled },
-];
-
-// CULORI CARD DUPĂ STATUS
-const statusColors: Record<OrderStatus, string> = {
-  Creată: "#d9eaff",
-  "În procesare": "#fff4cc",
-  Pregatită: "#e6ffe6",
-  Livrată: "#ccffea",
-  Anulată: "#ffd6d6",
-};
-
-// MOCK DATA
-const mockOrders: Order[] = [
+const mockProducts: ProductInOrder[] = [
   {
     id: 1,
-    date: new Date("2025-01-03"),
-    status: "În procesare",
-    products: [
-      { name: "Mere", quantity: 10 },
-      { name: "Pere", quantity: 4 },
-    ],
-    deliveryAddress: {
-      street: "Str. Lalelelor 12",
-      city: "Cluj",
-      county: "CJ",
-    },
-    billingAddress: { street: "Str. Unirii 22", city: "Cluj", county: "CJ" },
-    deliveryMethod: "Curier",
-    paymentMethod: "Card",
-    clientEmail: "client1@mail.com",
-    shippingCost: 15,
-    trackingNumber: "TRK12345",
+    image: "../../public/images/pea.jpg",
+    title: "Mazare",
+    category: "Legume",
+    quantity: 10,
+    unit: "kg",
+    supplierRegion: "Cluj-Napoca",
+    supplier: "FreshFruits SRL",
+    price: 4.5,
+    currency: "LEI",
+    rating: 5.0,
+    reviewCount: 38,
   },
   {
     id: 2,
-    date: new Date("2025-01-04"),
-    status: "Livrată",
-    products: [{ name: "Portocale", quantity: 5 }],
-    deliveryAddress: {
-      street: "Str. Florilor 50",
-      city: "Oradea",
-      county: "BH",
-    },
-    billingAddress: {
-      street: "Str. Florilor 50",
-      city: "Oradea",
-      county: "BH",
-    },
-    deliveryMethod: "Pickup local",
-    paymentMethod: "Cash",
+    image: "../../public/images/cheese.jpg",
+    title: "Branza",
+    category: "Lactate",
+    quantity: 25,
+    unit: "kg",
+    supplierRegion: "Salaj",
+    supplier: "AgroPol",
+    price: 1.7,
+    currency: "LEI",
+    rating: 4.7,
+    reviewCount: 20,
   },
   {
     id: 3,
-    date: new Date("2025-01-05"),
-    status: "Anulată",
-    products: [{ name: "Banane", quantity: 7 }],
+    image: "../../public/images/cheese2.jpg",
+    title: "Alta branza",
+    category: "Lactate",
+    quantity: 12,
+    unit: "kg",
+    supplierRegion: "Alba",
+    supplier: "Supplier",
+    price: 2.8,
+    currency: "LEI",
+    rating: 4.9,
+    reviewCount: 57,
+  },
+];
+
+const mockOrders: Order[] = [
+  {
+    id: 1001,
+    date: new Date("2024-02-10"),
+    status: "Livrată",
+    deliveryMethod: "Curier rapid",
+    paymentMethod: "Card online",
+    clientEmail: "ion.popescu@example.com",
+    trackingNumber: "FNC-123456789",
+    shippingCost: 15,
     deliveryAddress: {
-      street: "Str. Libertatii 3",
-      city: "București",
-      county: "B",
+      name: "Ion Popescu",
+      street: "Str. Zorilor 15",
+      city: "Cluj-Napoca",
+      region: "Cluj",
+      zip: "400123",
+      phone: "0745 123 456",
     },
     billingAddress: {
-      street: "Str. Libertatii 3",
-      city: "București",
-      county: "B",
+      name: "Ion Popescu",
+      street: "Str. Observatorului 20",
+      city: "Cluj-Napoca",
+      region: "Cluj",
+      zip: "400456",
+      phone: "0745 123 456",
     },
-    deliveryMethod: "Curier",
-    paymentMethod: "Card",
+    products: [mockProducts[0], mockProducts[1]],
+  },
+  {
+    id: 1002,
+    date: new Date("2024-03-01"),
+    status: "În procesare",
+    deliveryMethod: "Ridicare personală",
+    paymentMethod: "Numerar",
+    clientEmail: "andreeaion@example.com",
+    trackingNumber: "FNC-123456678",
+    shippingCost: 15,
+    deliveryAddress: {
+      name: "Andreea Ionescu",
+      street: "Str. Horea 12",
+      city: "Alba Iulia",
+      region: "Alba",
+      zip: "510789",
+      phone: "0723 456 789",
+    },
+    billingAddress: {
+      name: "Andreea Ionescu",
+      street: "Str. Horea 12",
+      city: "Alba Iulia",
+      region: "Alba",
+      zip: "510789",
+      phone: "0723 456 789",
+    },
+    products: [mockProducts[2]],
   },
 ];
 
 const ProducerReceivedOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [newStatus, setNewStatus] = useState<OrderStatus>("Creată");
-  const [confirmCancel, setConfirmCancel] = useState(false);
 
-  const changeOrderStatus = (id: number, status: OrderStatus) => {
-    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
-  };
+  const navigate = useNavigate();
 
   return (
     <Box sx={{ mt: 4, px: 2, maxWidth: "900px", mx: "auto" }}>
@@ -156,136 +176,32 @@ const ProducerReceivedOrders: React.FC = () => {
           >
             <CardContent>
               <Typography variant="h5" sx={{ mb: 1 }}>
-                Comanda #{order.id}
+                {textResources.orders.order} #{order.id}
               </Typography>
               <Divider sx={{ mb: 2 }} />
 
               <Typography>
-                <strong>Data:</strong> {order.date.toLocaleDateString()}
+                <strong>{textResources.orders.date}</strong>
+                {order.date.toLocaleDateString()}
               </Typography>
 
               <Typography sx={{ mt: 1 }}>
-                <strong>Status:</strong> {order.status}
+                <strong>{textResources.orders.status}</strong> {order.status}
               </Typography>
 
               <Button
                 variant="outlined"
                 sx={{ mt: 2, textTransform: "none" }}
                 onClick={() => {
-                  setSelectedOrder(order);
-                  setNewStatus(order.status);
+                  navigate(`/order-producer/${order.id}`);
                 }}
               >
-                Detalii
+                {textResources.orders.details}
               </Button>
             </CardContent>
           </Card>
         ))}
       </Box>
-
-      {/* MODAL DETALII COMANDĂ */}
-      <Dialog
-        open={!!selectedOrder}
-        onClose={() => setSelectedOrder(null)}
-        fullWidth
-        maxWidth="sm"
-      >
-        {selectedOrder && (
-          <>
-            <DialogTitle>Comanda #{selectedOrder.id}</DialogTitle>
-
-            <DialogContent dividers>
-              <Typography>
-                <strong>Data:</strong> {selectedOrder.date.toLocaleDateString()}
-              </Typography>
-
-              <Typography sx={{ mt: 2 }}>
-                <strong>Produse:</strong>
-              </Typography>
-              {selectedOrder.products.map((p, i) => (
-                <Typography key={i}>
-                  • {p.name} x {p.quantity}
-                </Typography>
-              ))}
-
-              <Typography sx={{ mt: 2 }}>
-                <strong>Adresă livrare:</strong>
-              </Typography>
-              <Typography>
-                {selectedOrder.deliveryAddress.street},{" "}
-                {selectedOrder.deliveryAddress.city},{" "}
-                {selectedOrder.deliveryAddress.county}
-              </Typography>
-
-              <Typography sx={{ mt: 2 }}>
-                <strong>Metodă plată:</strong> {selectedOrder.paymentMethod}
-              </Typography>
-              <Typography>
-                <strong>Metodă livrare:</strong> {selectedOrder.deliveryMethod}
-              </Typography>
-
-              <Typography sx={{ mt: 2 }}>
-                <strong>Status actual:</strong> {selectedOrder.status}
-              </Typography>
-
-              {/* SELECT STATUS */}
-              <Select
-                fullWidth
-                sx={{ mt: 2 }}
-                value={newStatus}
-                onChange={(e) => {
-                  const v = e.target.value as OrderStatus;
-                  if (v === "Anulată") {
-                    setConfirmCancel(true);
-                  } else {
-                    setNewStatus(v);
-                  }
-                }}
-              >
-                {orderStatusOptions.map((opt) => (
-                  <MenuItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </DialogContent>
-
-            <DialogActions>
-              <Button onClick={() => setSelectedOrder(null)}>Închide</Button>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  changeOrderStatus(selectedOrder.id, newStatus);
-                  setSelectedOrder(null);
-                }}
-              >
-                Salvează
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-
-      {/* CONFIRMARE ANULARE */}
-      <Dialog open={confirmCancel} onClose={() => setConfirmCancel(false)}>
-        <DialogTitle>Confirmare anulare</DialogTitle>
-        <DialogContent>Sigur vrei să anulezi această comandă?</DialogContent>
-        <DialogActions>
-          <Button onClick={() => setConfirmCancel(false)}>Nu</Button>
-          <Button
-            color="error"
-            variant="contained"
-            onClick={() => {
-              if (selectedOrder) {
-                setNewStatus("Anulată");
-              }
-              setConfirmCancel(false);
-            }}
-          >
-            Da, anulează
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };
