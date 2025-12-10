@@ -1,17 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Link,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Box, TextField, Button, IconButton, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { AuthApi } from "../../api/authApi";
 import logoSrc from "../../assets/logo.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { getUserIdFromToken } from "../../common/utils";
 import { AuthContext } from "../../context/AuthContext";
 
 const confirmationPasswordApi = AuthApi.confirmationPassword;

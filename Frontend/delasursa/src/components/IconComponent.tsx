@@ -7,6 +7,7 @@ interface IconComponentProps {
   icon: ReactElement;
   value: string;
   label: string;
+  sx?: any;
 }
 
 export default function IconComponent(props: IconComponentProps) {
@@ -23,9 +24,10 @@ export default function IconComponent(props: IconComponentProps) {
         borderRadius: "2rem",
         border: "0.5px solid",
         borderColor: `${colors.lightGreen1Transparent}`,
+        ...props.sx,
       }}
     >
-      <props.icon sx={{ fontSize: 40, mb: 1 }} />
+      {props.icon}
       <Typography variant="h3">{props.value}</Typography>
       <Typography variant="body1">{props.label}</Typography>
     </Card>
