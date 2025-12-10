@@ -2,7 +2,7 @@ package org.example.delasursa.common.mappers;
 
 import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
 import org.example.delasursa.model.ComandaProdus;
-import org.example.delasursa.model.Produs;
+import org.example.delasursa.model.ProdusProducator;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,11 +17,14 @@ public class ComandaProdusMapper {
                 .build();
     }
 
-    public ComandaProdusDto.ProdusComandaProdusDto toDto(Produs entity){
+    public ComandaProdusDto.ProdusComandaProdusDto toDto(ProdusProducator entity){
         return ComandaProdusDto.ProdusComandaProdusDto
                 .builder()
-                .nume(entity.getNume())
-                .categorie(entity.getCategorie())
+                .produsProducatorId(entity.getId())
+                .numeProdus(entity.getProdus().getNume())
+                .categorie(entity.getProdus().getCategorie())
+                .numeProducator(entity.getProducator().getNume())
+                .pret(entity.getPret())
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { 
   Box, Typography, Paper, IconButton, Chip, Button, Tooltip, Switch, Avatar 
 } from '@mui/material';
@@ -10,6 +10,8 @@ import { colors } from '../../theme/colors';
 
 import AdminProductModal from '../../pages/admin/AdminProductModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import {produseApi} from "../../api/produseApi.ts";
+import type {Produs} from "../../types/Produs.ts";
 
 const initialProducts = [
   { id: 1, name: 'Roșii Cherry Bio', producer: 'Ferma Vedeta', price: 22.00, stock: 45, category: 'Legume', active: true, image: '', unit: 'kg' },
@@ -20,13 +22,39 @@ const initialProducts = [
 ];
 
 const AdminProductsPage: React.FC = () => {
-  const [rows, setRows] = useState(initialProducts);
+  const [rows, setRows] = useState<any[]>([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState<number>(6);
+  const [rowCount, setRowCount] = useState<number>(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+    useEffect(() => {
+        produseApi.getAllPaged(page,pageSize)
+            .then(res => {
+                const data = res.data;
+
+                const mappedRows = data.content.map((p: Produs) => ({
+                    id: p.id,
+                    name: p.produsName,
+                    producer: p.producatorName,
+                    category: p.categorie,
+                    price: p.pret,
+                    stock: p.cantitate,
+                    unit: p.unitate_masura,
+                    image: p.produsImagine || "",
+                    active: true // dacă backend-ul nu trimite încă activ/inactiv
+                }));
+
+                setRows(mappedRows);
+                setRowCount(data.totalElements);
+            })
+            .catch(console.error)
+    }, [page,pageSize]);
 
   // --- HANDLERS ---
   const handleOpenAdd = () => {
@@ -78,7 +106,20 @@ const AdminProductsPage: React.FC = () => {
     { 
       field: 'image', headerName: 'Img', width: 60, sortable: false,
       renderCell: (params: GridRenderCellParams) => (
-        <Avatar variant="rounded" sx={{ width: 35, height: 35, bgcolor: colors.lightGreen1Transparent, color: colors.lightGreen1 }}>{params.row.name.charAt(0)}</Avatar>
+        <Avatar
+            variant="rounded"
+            src={params.row.image}
+            alt={params.row.name}
+            sx={{
+                width: 35,
+                height: 35,
+                bgcolor: colors.lightGreen1Transparent,
+                color: colors.lightGreen1,
+                objectFit: 'cover'
+            }}
+        >
+            {params.row.name.charAt(0)}
+        </Avatar>
       )
     },
     { field: 'name', headerName: 'Nume Produs', flex: 1, minWidth: 150 },
@@ -123,7 +164,19 @@ const AdminProductsPage: React.FC = () => {
       </Box>
 
       <Paper sx={{ flexGrow: 1, bgcolor: colors.darkGreen2, color: colors.white1, '& .MuiDataGrid-root': { border: 'none' }, '& .MuiDataGrid-cell': { borderBottom: `1px solid ${colors.lightGreen1Transparent}`, color: colors.white1 }, '& .MuiDataGrid-columnHeaders': { bgcolor: 'rgba(95, 238, 149, 0.05)', color: colors.lightGreen1, fontWeight: 'bold' }, '& .MuiDataGrid-footerContainer': { borderTop: `1px solid ${colors.lightGreen1Transparent}` }, '& .MuiTablePagination-root': { color: colors.white2 }, '& .MuiSvgIcon-root': { color: colors.white2 } }}>
-        <DataGrid rows={rows} columns={columns} initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }} pageSizeOptions={[5, 10, 20]} checkboxSelection disableRowSelectionOnClick />
+        <DataGrid rows={rows}
+                  columns={columns}
+                  pagination
+                  paginationMode="server"
+                  rowCount={rowCount}
+                  paginationModel={{page,pageSize}}
+                  onPaginationModelChange={(model) =>{
+                    setPage(model.page);
+                    setPageSize(model.pageSize);
+                  }}
+                  pageSizeOptions={[5, 10, 20]}
+                  checkboxSelection
+                  disableRowSelectionOnClick />
       </Paper>
 
       <AdminProductModal 

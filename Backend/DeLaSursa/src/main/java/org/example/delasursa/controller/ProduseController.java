@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,20 +24,23 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/produse")
+@Validated
 @AllArgsConstructor
 public class ProduseController {
     private  final ProdusProducatorService produsProducatorService;
     private final ProdusService produsService;
 
     @GetMapping
-    public ResponseEntity<List<ProdusDTO>> getAllProduse(){
+    public ResponseEntity<Page<ProdusDTO>> getAllProduse(
+            @PageableDefault(size = 6) Pageable pageable
+    ){
         log.info("Get all produse request received ");
 
-        List<ProdusDTO> all = produsProducatorService.getAll();
+        Page<ProdusDTO> page = produsProducatorService.getAll(pageable);
 
-        log.info("Fetched {} produse successfully", all.size());
+        log.info("Fetched {} produse successfully", page.getNumberOfElements());
 
-        return ResponseEntity.ok(all);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/producator")

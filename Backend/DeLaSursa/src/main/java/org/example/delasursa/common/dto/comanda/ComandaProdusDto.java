@@ -20,7 +20,10 @@ public class ComandaProdusDto {
     @NoArgsConstructor
     @Builder
     public static class ProdusComandaProdusDto implements Serializable {
-        String nume;
+        Integer produsProducatorId;
+        String numeProdus;
         String categorie;
+        String numeProducator;
+        Double pret;
     }
 }
