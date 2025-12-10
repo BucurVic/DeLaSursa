@@ -246,6 +246,9 @@ export const textResources = {
     trackingCost: "Cost transport:",
     subtotal: "Subtotal:",
     delivery: "Transport:",
+    details: "Detalii",
+    noOrders: "Nu ai nicio comandă",
+    allOrders: "Toate comenzile mele",
   },
   producerPage: {
     title: "Produsele mele",
