@@ -56,13 +56,16 @@ export const textResources = {
       "Ești sigur că vrei să ștergi produsul {productName}? Această acțiune nu poate fi anulată.",
   },
 
-  editModal: {
-    title: "Editează produs",
-    subtitle:
-      "Modifică informațiile produsului. Unele câmpuri nu pot fi editate.",
-    fields: {
-      price: "Preț",
-      stockNote: "*Stocul se gestionează în secțiunea Inventar",
+    searchBar: {
+        placeholderProduse: "Caută produse...",
+        placeholderProducatori: "Caută producători...",
+    },
+    uploader: {
+        title: 'Apasă pentru a încărca',
+        acceptedFiles: 'Fișiere acceptate: ',
+    },
+    pages: {
+        uploadFormTitle: 'Formular de Upload',
     },
     buttons: {
       save: "Salvează modificările",
@@ -323,34 +326,52 @@ export const textResources = {
     },
   },
 
-  checkout: {
-    title: "Finalizare Comandă",
-    sections: {
-      delivery: "Adresă de Livrare",
-      billing: "Adresă de Facturare",
-      deliveryMethod: "Metoda de Livrare",
-      orderSummary: "Sumar Comandă",
-      payment: "Metoda de Plată",
-      cardDetails: "Datele Cardului",
-    },
-    fields: {
-      fullName: "Nume Complet",
-      phone: "Număr de Telefon",
-      street: "Stradă și număr",
-      city: "Oraș / Localitate",
-      county: "Județ",
-      zip: "Cod Poștal",
-      sameAsDelivery: "Facturarea la aceeași adresă de livrare",
-      observations: "Observații comandă (opțional)",
-    },
-    paymentMethods: {
-      card: "Card Online",
-      cash: "Ramburs la livrare",
-    },
-    summary: {
-      subtotal: "Subtotal",
-      shipping: "Taxă livrare",
-      total: "TOTAL DE PLATĂ",
+    checkout: {
+        title: "Finalizare Comandă",
+        sections: {
+            delivery: "Adresă de Livrare",
+            billing: "Adresă de Facturare",
+            deliveryMethod: "Metoda de Livrare",
+            orderSummary: "Sumar Comandă",
+            payment: "Metoda de Plată",
+            cardDetails: "Datele Cardului",
+        },
+        fields: {
+            fullName: "Nume Complet",
+            phone: "Număr de Telefon",
+            street: "Stradă și număr",
+            city: "Oraș / Localitate",
+            county: "Județ",
+            zip: "Cod Poștal",
+            sameAsDelivery: "Facturarea la aceeași adresă de livrare",
+            observations: "Observații comandă (opțional)",
+        },
+        paymentMethods: {
+            card: "Card Online",
+            cash: "Ramburs la livrare",
+        },
+        summary: {
+            subtotal: "Subtotal",
+            shipping: "Taxă livrare",
+            total: "TOTAL DE PLATĂ",
+        },
+        deliveryMethods: {
+            courier: "Curier Rapid (20 RON)",
+            pickup: "Ridicare personală (Gratuit)",
+        },
+        card: {
+            number: "Număr Card",
+            name: "Nume Deținător",
+            expiry: "Data Expirării (MM/YY)",
+            cvv: "CVV",
+        },
+        paymentModal: {
+            title: "Confirmare Plată",
+            message: "Ești pe cale să plătești suma de {amount} RON. Confirmi tranzacția?",
+            confirmButton: "Confirmă Plata",
+        },
+        button: "Plasează Comanda",
+        successMessage: "Comanda a fost plasată cu succes! Vei primi un email de confirmare.",
     },
     deliveryMethods: {
       courier: "Curier Rapid (15 RON)",

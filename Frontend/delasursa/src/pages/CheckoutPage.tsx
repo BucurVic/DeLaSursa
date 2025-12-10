@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Box,
     Typography,
@@ -14,18 +14,26 @@ import {
     Stack,
     Container,
     InputAdornment,
-    MenuItem
+    MenuItem,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PaymentIcon from '@mui/icons-material/Payment';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LockIcon from '@mui/icons-material/Lock';
+import { useNavigate } from "react-router-dom";
 
 import { colors, textResources, typography } from '../theme';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
 
-// --- INTERFEȚE ---
+// --- IMPORTS ---
+import { useCart } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
+import { ordersApi, type CreateComandaRequest } from "../api/ordersApi";
+
+// --- INTERFEȚE LOCALE (FORMULAR) ---
 interface AddressData {
     fullName: string;
     phone: string;
@@ -41,12 +49,6 @@ interface CardData {
     expiry: string;
     cvv: string;
 }
-
-// Date Mock
-const mockCartItems = [
-    { id: 1, name: 'Roșii Cherry Bio', price: 22.00, quantity: 2 },
-    { id: 2, name: 'Miere de Salcâm', price: 35.00, quantity: 1 },
-];
 
 // --- GENERARE DATE ---
 const months = Array.from({ length: 12 }, (_, i) => {
@@ -156,8 +158,13 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
 
 const CheckoutPage: React.FC = () => {
     const tr = textResources.checkout;
+    const navigate = useNavigate();
 
-    // --- STATE ---
+    // --- CONTEXTE ---
+    const { items, clearCart } = useCart();
+    const { user } = useContext(AuthContext); // Luăm user-ul curent pentru clientId
+
+    // --- STATE FORMULAR ---
     const [deliveryAddress, setDeliveryAddress] = useState<AddressData>({ fullName: '', phone: '', street: '', city: '', county: '', zip: '' });
     const [billingAddress, setBillingAddress] = useState<AddressData>({ fullName: '', phone: '', street: '', city: '', county: '', zip: '' });
     const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
@@ -170,22 +177,33 @@ const CheckoutPage: React.FC = () => {
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    // --- STATE PENTRU TOAST (SNACKBAR) ---
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
+    // --- VERIFICARE COȘ GOL ---
+    useEffect(() => {
+        // Dacă coșul e gol și NU suntem în procesul de succes (toast activ) și nu încărcăm, redirectăm
+        if (items.length === 0 && !snackbarOpen && !loading) {
+            navigate('/products');
+        }
+    }, [items, navigate, snackbarOpen, loading]);
+
     // --- CALCULE ---
-    const subtotal = mockCartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const shippingCost = deliveryMethod === 'pickup' ? 0 : (subtotal > 200 ? 0 : 15);
+    const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const shippingCost = deliveryMethod === 'pickup' ? 0 : (subtotal > 200 ? 0 : 20);
     const total = subtotal + shippingCost;
 
     // --- HANDLERS ---
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'delivery' | 'billing') => {
         const { name, value } = e.target;
         let finalValue = value;
-
         if (name === 'phone') {
             const onlyNums = value.replace(/\D/g, '');
             if (onlyNums.length > 10) return;
             finalValue = onlyNums;
         }
-
         if (type === 'delivery') setDeliveryAddress(prev => ({ ...prev, [name]: finalValue }));
         else setBillingAddress(prev => ({ ...prev, [name]: finalValue }));
     };
@@ -193,19 +211,16 @@ const CheckoutPage: React.FC = () => {
     const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         let finalValue = value;
-
         if (name === 'number') {
             const rawValue = value.replace(/\D/g, '');
             if (rawValue.length > 16) return;
             finalValue = rawValue.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
         }
-
         if (name === 'cvv') {
             const rawValue = value.replace(/\D/g, '');
             if (rawValue.length > 3) return;
             finalValue = rawValue;
         }
-
         setCardDetails({ ...cardDetails, [name]: finalValue });
     };
 
@@ -213,45 +228,90 @@ const CheckoutPage: React.FC = () => {
         const parts = cardDetails.expiry.split('/');
         const currentMonth = parts[0] || '';
         const currentYear = parts[1] || '';
-
         let newExpiry = '';
-        if (type === 'month') {
-            newExpiry = `${value}/${currentYear}`;
-        } else {
-            newExpiry = `${currentMonth}/${value}`;
-        }
+        if (type === 'month') newExpiry = `${value}/${currentYear}`;
+        else newExpiry = `${currentMonth}/${value}`;
         setCardDetails({ ...cardDetails, expiry: newExpiry });
     };
 
     const handleInitiateOrder = () => {
+        // Validare simplă
+        if (deliveryMethod === 'courier' && (!deliveryAddress.street || !deliveryAddress.phone)) {
+            setSnackbarMessage("Te rugăm să completezi adresa de livrare.");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            return;
+        }
         setIsConfirmModalOpen(true);
     };
 
+    // --- LOGICA DE TRIMITERE COMANDĂ ---
     const handleConfirmOrder = async () => {
+        // 1. Verificare Auth: Ne asigurăm că avem un user valid
+        if (!user || !user.id) {
+            setSnackbarMessage("Trebuie să fii autentificat ca și CLIENT pentru a plasa o comandă.");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            setIsConfirmModalOpen(false);
+            return;
+        }
+
         setIsConfirmModalOpen(false);
         setLoading(true);
 
-        const orderPayload = {
-            clientId: 1,
-            items: mockCartItems,
-            deliveryMethod,
-            deliveryAddress,
-            billingAddress: billingSameAsDelivery ? deliveryAddress : billingAddress,
-            paymentMethod,
-            cardDetails: paymentMethod === 'card' ? cardDetails : null,
-            totalValue: total,
-            observations
-        };
+        try {
+            console.log("Plasare comandă pentru User ID:", user.id);
 
-        console.log("PAYLOAD:", orderPayload);
+            // 2. Construim payload-ul pentru Backend
+            // Trimitem doar ce acceptă backend-ul acum (clientId, produse)
+            const orderPayload: CreateComandaRequest = {
+                clientId: Number(user.id),
+                comandaProduseList: items.map(item => ({
+                    produsId: Number(item.id),
+                    cantitate: item.quantity,
+                    pretUnitar: item.price
+                }))
+            };
 
-        setTimeout(() => {
+            // 3. Apelăm API-ul
+            await ordersApi.createOrder(orderPayload);
+
+            // 4. Succes
             setLoading(false);
-            alert(tr.successMessage);
-        }, 2000);
+            setSnackbarMessage("Comanda a fost înregistrată cu succes! Vei fi redirecționat...");
+            setSnackbarSeverity("success");
+            setSnackbarOpen(true);
+
+            // 5. Golim coșul
+            clearCart();
+
+            // 6. Redirecționare după 5 secunde
+            setTimeout(() => {
+                navigate('/');
+            }, 5000);
+
+        } catch (error: any) {
+            console.error("Eroare la plasarea comenzii:", error);
+            setLoading(false);
+
+            let errorMsg = "A apărut o eroare la salvarea comenzii.";
+
+            // Încercăm să extragem un mesaj mai clar de la server
+            if (error.response) {
+                if (error.response.status === 404) {
+                    errorMsg = `Eroare: Contul tău (ID: ${user.id}) nu este găsit în baza de date a clienților.`;
+                } else if (error.response.data && typeof error.response.data === 'string') {
+                    errorMsg = `Eroare server: ${error.response.data}`;
+                }
+            }
+
+            setSnackbarMessage(errorMsg);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+        }
     };
 
-    // Helper render adresa
+    // --- Helper Render Address ---
     const renderAddressFields = (data: AddressData, type: 'delivery' | 'billing') => (
         <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -332,98 +392,56 @@ const CheckoutPage: React.FC = () => {
                         <FormControlLabel value="cash" control={<Radio sx={{ color: colors.lightGreen1, '&.Mui-checked': { color: colors.lightGreen1 } }} />} label={tr.paymentMethods.cash} sx={{ color: colors.white1 }} />
                     </RadioGroup>
 
-                    {/* ZONA CARD */}
                     {paymentMethod === 'card' && (
                         <Box sx={{ p: 3, border: `1px dashed ${colors.lightGreen1}`, borderRadius: 2, mb: 4 }}>
                             <Typography variant="subtitle2" sx={{ color: colors.lightGreen1, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <LockIcon fontSize="small"/> {tr.sections.cardDetails}
                             </Typography>
                             <Stack spacing={2}>
-                                {/* RÂNDUL 1: Container separat doar pentru Număr și Nume */}
                                 <Grid container spacing={4}>
                                     <Grid item xs={12} md={6}>
-                                        <CustomTextField
-                                            label={tr.card.number}
-                                            name="number"
-                                            value={cardDetails.number}
-                                            onChange={handleCardInputChange}
-                                            placeholder="0000 0000 0000 0000"
-                                            startIcon={<CreditCardIcon />}
-                                        />
+                                        <CustomTextField label={tr.card.number} name="number" value={cardDetails.number} onChange={handleCardInputChange} placeholder="0000 0000 0000 0000" startIcon={<CreditCardIcon />} />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <CustomTextField
-                                            label={tr.card.name}
-                                            name="name"
-                                            value={cardDetails.name}
-                                            onChange={handleCardInputChange}
-                                        />
+                                        <CustomTextField label={tr.card.name} name="name" value={cardDetails.name} onChange={handleCardInputChange} />
                                     </Grid>
                                 </Grid>
-
-                                {/* RÂNDUL 2: Container separat doar pentru Dată și CVV */}
                                 <Grid container spacing={4}>
                                     <Grid item xs={3}>
-                                        <CustomTextField
-                                            select
-                                            label="Luna"
-                                            name="expiryMonth"
-                                            value={selectedMonth}
-                                            onChange={(e: any) => handleExpiryChange('month', e.target.value)}
-                                        >
+                                        <CustomTextField select label="Luna" name="expiryMonth" value={selectedMonth} onChange={(e: any) => handleExpiryChange('month', e.target.value)}>
                                             {months.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
                                         </CustomTextField>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <CustomTextField
-                                            select
-                                            label="An"
-                                            name="expiryYear"
-                                            value={selectedYear}
-                                            onChange={(e: any) => handleExpiryChange('year', e.target.value)}
-                                        >
+                                        <CustomTextField select label="An" name="expiryYear" value={selectedYear} onChange={(e: any) => handleExpiryChange('year', e.target.value)}>
                                             {years.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
                                         </CustomTextField>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <CustomTextField
-                                            label={tr.card.cvv}
-                                            name="cvv"
-                                            value={cardDetails.cvv}
-                                            onChange={handleCardInputChange}
-                                            type="text"
-                                            maxLength={3}
-                                        />
+                                        <CustomTextField label={tr.card.cvv} name="cvv" value={cardDetails.cvv} onChange={handleCardInputChange} type="text" maxLength={3} />
                                     </Grid>
                                 </Grid>
                             </Stack>
                         </Box>
                     )}
 
-                    <CustomTextField
-                        label={tr.fields.observations} name="observations" value={observations}
-                        onChange={(e: any) => setObservations(e.target.value)}
-                        multiline rows={2}
-                    />
+                    <CustomTextField label={tr.fields.observations} name="observations" value={observations} onChange={(e: any) => setObservations(e.target.value)} multiline rows={2} />
                 </Paper>
 
                 {/* 5. SUMAR */}
                 <Paper sx={{ p: 4, bgcolor: colors.darkGreen2, borderTop: `4px solid ${colors.lightGreen1}`, textAlign: 'center', borderRadius: '0 0 1rem 1rem' }}>
                     <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>{tr.sections.orderSummary}</Typography>
-
                     <Box sx={{ maxWidth: '500px', mx: 'auto', mb: 3 }}>
-                        {mockCartItems.map(item => (
+                        {items.map(item => (
                             <Box key={item.id} sx={{ mb: 2 }}>
-                                {/* Rândul principal: Nume + Total Linie */}
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <Typography variant="body2" color={colors.white1} sx={{ fontWeight: 'bold' }}>
-                                        {item.quantity} x {item.name}
+                                        {item.quantity} x {item.title}
                                     </Typography>
                                     <Typography variant="body2" fontWeight="bold">
                                         {(item.price * item.quantity).toFixed(2)} RON
                                     </Typography>
                                 </Box>
-                                {/* Rândul secundar: Preț per bucată */}
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                                     <Typography variant="caption" sx={{ color: colors.lightGreen1, opacity: 0.8 }}>
                                         ({item.price.toFixed(2)} RON / buc)
@@ -449,7 +467,8 @@ const CheckoutPage: React.FC = () => {
 
                     <Button
                         variant="contained" size="large" fullWidth
-                        disabled={loading} onClick={handleInitiateOrder}
+                        disabled={loading || items.length === 0}
+                        onClick={handleInitiateOrder}
                         sx={{
                             maxWidth: '500px',
                             bgcolor: colors.lightGreen1, color: colors.darkGreen2, fontWeight: 'bold', py: 1.5, fontSize: '1.1rem',
@@ -460,7 +479,6 @@ const CheckoutPage: React.FC = () => {
                         {loading ? "Se procesează..." : tr.button}
                     </Button>
                 </Paper>
-
             </Stack>
 
             <PaymentConfirmationModal
@@ -469,6 +487,23 @@ const CheckoutPage: React.FC = () => {
                 onConfirm={handleConfirmOrder}
                 amount={total.toFixed(2)}
             />
+
+            {/* --- TOAST NOTIFICATION --- */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={5000} // Se închide automat după 5 secunde
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={() => setSnackbarOpen(false)}
+                    severity={snackbarSeverity}
+                    sx={{ width: '100%', fontSize: '1rem', alignItems: 'center' }}
+                    variant="filled"
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
 
         </Container>
     );
