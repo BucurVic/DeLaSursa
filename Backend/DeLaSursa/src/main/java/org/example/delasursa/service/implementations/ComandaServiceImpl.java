@@ -2,6 +2,7 @@ package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.admin.ComandaSummary;
 import org.example.delasursa.common.dto.comanda.ComandaDto;
 import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
 import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
@@ -13,6 +14,8 @@ import org.example.delasursa.model.*;
 import org.example.delasursa.repository.*;
 import org.example.delasursa.repository.ComandaProdusRepository;
 import org.example.delasursa.service.ComandaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -87,6 +90,21 @@ public class ComandaServiceImpl implements ComandaService {
         return comandaRepository.findByClient_Id(userId)
                 .stream().map(comandaMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ComandaSummary> getAllComenziSummary(Pageable pageable){
+        Page<Comanda> comenzi = comandaRepository.findAll(pageable);
+
+        return comenzi.map(c -> ComandaSummary.builder()
+                .id(c.getId())
+                .numeClient(c.getClient().getNume() + " " + c.getClient().getPrenume())
+                .dataEfectuarii(c.getDataEfectuarii())
+                .numarProduse(c.getComandaProduse().size())
+                .valoareTotala(c.getComandaProduse().stream()
+                        .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
+                        .sum())
+                .build());
     }
 
     @Override

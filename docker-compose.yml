@@ -26,8 +26,13 @@ services:
       DB_USER: postgres
       DB_PASS: yourpassword
       JWT_SECRET_KEY: superlongsecretforsupersecureapplication32bytes
+      SPRING_PROFILES_ACTIVE: dev
     ports:
       - "8080:8080"
+    volumes:
+      - ./Backend/DeLaSursa:/app
+      - ~/.gradle:/home/gradle/.gradle
+    restart: unless-stopped
 
 
   # --- Vite React Frontend ---
