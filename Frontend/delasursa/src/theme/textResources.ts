@@ -25,7 +25,8 @@ export const textResources = {
     },
 
     searchBar: {
-        placeholder: "Caută produse...",
+        placeholderProduse: "Caută produse...",
+        placeholderProducatori: "Caută producători...",
     },
     uploader: {
         title: 'Apasă pentru a încărca',
@@ -305,7 +306,7 @@ export const textResources = {
             total: "TOTAL DE PLATĂ",
         },
         deliveryMethods: {
-            courier: "Curier Rapid (15 RON)",
+            courier: "Curier Rapid (20 RON)",
             pickup: "Ridicare personală (Gratuit)",
         },
         card: {
