@@ -16,22 +16,22 @@ import ProducerProductCardSimple from "../components/ProducerProductCardSimple.t
 
 const stats = [
   {
-    icon: Wallet,
+    icon: <Wallet />,
     value: "2.450 LEI",
     label: textResources.producerDashboard.income,
   },
   {
-    icon: PendingActions,
+    icon: <PendingActions />,
     value: "15",
     label: textResources.producerDashboard.pendingOrders,
   },
   {
-    icon: LocalShipping,
+    icon: <LocalShipping />,
     value: "8",
     label: textResources.producerDashboard.deliveredOrders,
   },
   {
-    icon: StarRate,
+    icon: <StarRate />,
     value: "4.8",
     label: textResources.producerDashboard.averageRating,
   },
@@ -130,7 +130,7 @@ export default function ProducerDashboardMain() {
             {products.map((p) => (
               <ProducerProductCardSimple
                 title={p.produsName}
-                produsImagine={p.produsImagine}
+                produsImagine={p.produsImagine || ""}
                 rating={5}
                 reviewCount={30}
                 price={p.pret}

@@ -48,7 +48,10 @@ function App() {
       {/* Acestea au propriul lor stil (ex: formular centrat) */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/inregistrare" element={<SignUpPage />} />
-      <Route path="/resetare-parola" element={<ResetPasswordPage />} />
+      <Route
+        path="/resetare-parola/:passwordToken"
+        element={<ResetPasswordPage />}
+      />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       {/* --- Rute Publice (Cu Layout) --- */}

@@ -8,7 +8,6 @@ import org.example.delasursa.repository.ClientRepository;
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
-
     public ClientServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
