@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { LoginRequest, RegisterRequest } from "../common/types";
 import getValidTokenFromStorage from "../common/utils";
-import {
-  login as loginApi,
-  register as registerApi,
-} from "../common/api/AuthApi";
+import { AuthApi } from "../api/authApi";
 import { jwtDecode } from "jwt-decode";
+
+const loginApi = AuthApi.login;
+const registerApi = AuthApi.register;
 
 type LoginFn = (request: LoginRequest) => void;
 type LogoutFn = () => void;
@@ -171,7 +171,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             "Can not send register request without username/email/password"
           );
         console.log("testet");
-        const { token } = await registerApi({ username, email, password });
+        const response = await registerApi({ username, email, password });
+        const { token } = response.data;
         if (canceled) {
           return;
         }
@@ -219,8 +220,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { email, password } = state;
         if (!email || !password)
           throw Error("Can not send login request without email/password");
-        const { token } = await loginApi({ email, password });
-        const decoded = jwtDecode<DecodedJwt>(token);  // <--- DECODE TOKEN HERE
+        const response = await loginApi({ email, password });
+        const { token } = response.data;
+        const decoded = jwtDecode<DecodedJwt>(token); // <--- DECODE TOKEN HERE
         if (canceled) {
           return;
         }
@@ -228,8 +230,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setState((prev) => ({
           ...prev,
           token,
-            role: decoded.authorities[0],
-            email: decoded.sub,
+          role: decoded.authorities[0],
+          email: decoded.sub,
           pendingAuthentication: false,
           isAuthenticated: true,
           isAuthenticating: false,

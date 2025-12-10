@@ -9,22 +9,22 @@ import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
 import ProducerLayout from "./components/ProducerLayout.tsx";
 import InventoryPage from "./pages/InventoryPage.tsx";
-import AdminOverviewPage from './pages/admin/AdminOverviewPage';
-import AdminOrdersPage from './pages/admin/AdminOrdersPage';
-import AdminProductsPage from './pages/admin/AdminProductsPage';
+import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
 
 // --- Paginile Publice ---
 // (Presupunând că ai fișierele create, chiar dacă sunt goale)
 // Noi am recreat aceste fișiere mai devreme
-import SignUpPage from './pages/auth/SignUpPage.tsx';
-import LoginPage from './pages/auth/LoginPage.tsx';
-import ResetPasswordPage from './pages/auth/ResetPasswordPage.tsx';
-import HomePage from './pages/HomePage';
+import SignUpPage from "./pages/auth/SignUpPage.tsx";
+import LoginPage from "./pages/auth/LoginPage.tsx";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage.tsx";
+import HomePage from "./pages/HomePage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.tsx";
 import ProductListPage from "./pages/ProductListPage.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.tsx";
-import AdminLayout from './pages/admin/AdminLayout';
+import AdminLayout from "./pages/admin/AdminLayout";
 import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 import UserProducerPage from "./pages/UserProducerPage.tsx";
 
@@ -42,7 +42,10 @@ function App() {
       {/* Acestea au propriul lor stil (ex: formular centrat) */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/inregistrare" element={<SignUpPage />} />
-      <Route path="/resetare-parola" element={<ResetPasswordPage />} />
+      <Route
+        path="/resetare-parola/:passwordToken"
+        element={<ResetPasswordPage />}
+      />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       {/* --- Rute Publice (Cu Layout) --- */}
@@ -51,16 +54,15 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
-          <Route path="/become-producer" element={<BecomeProducerPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} />
-
-          {/* Aici vor veni /produse, /despre-noi, etc. */}
-          <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am cosul, e doar de test
-
-          <Route path="/order/:id" element={<ClientOrderPage />} />
-          <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
+        <Route path="/become-producer" element={<BecomeProducerPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/product/:id" element={<ProductDetailsPage />} />
+        {/* Aici vor veni /produse, /despre-noi, etc. */}
+        <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am
+        cosul, e doar de test
+        <Route path="/order/:id" element={<ClientOrderPage />} />
+        <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
         {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>
 
@@ -73,16 +75,18 @@ function App() {
             element={<Navigate to="/dashboard-producator/produse/lista" />}
           />
 
-                {/* pagina cu tab-uri */}
-                <Route path="/dashboard-producator/produse" element={<ProducerProductsPage />}>
-                    <Route path="lista" element={<ProductListPage />} />
-                    <Route path="adauga" element={<ProductForm />} />
-                     <Route path="inventar" element={<InventoryPage />} />
-                    {/* <Route path="promotii" element={<PromotionsPage />} /> */}
-                </Route>
-
-            </Route>
+          {/* pagina cu tab-uri */}
+          <Route
+            path="/dashboard-producator/produse"
+            element={<ProducerProductsPage />}
+          >
+            <Route path="lista" element={<ProductListPage />} />
+            <Route path="adauga" element={<ProductForm />} />
+            <Route path="inventar" element={<InventoryPage />} />
+            {/* <Route path="promotii" element={<PromotionsPage />} /> */}
+          </Route>
         </Route>
+      </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
         <Route element={<AdminLayout />}>

@@ -26,6 +26,8 @@ services:
       DB_USER: postgres
       DB_PASS: yourpassword
       JWT_SECRET_KEY: superlongsecretforsupersecureapplication32bytes
+      CONFIRMATION_URL: http://localhost:5173/verify-email
+      RESET_URL: http://localhost:5173/resetare-parola
     ports:
       - "8080:8080"
 

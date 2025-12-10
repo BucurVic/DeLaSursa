@@ -23,8 +23,6 @@ public class EmailController {
 
     private final MailService mailService;
 
-
-
     @GetMapping("/verify-email")
     public ResponseEntity<VerifyEmailResponse> verifyEmail(@RequestParam("token") String token) {
         return ResponseEntity.status(HttpStatus.OK).body(mailService.verifyEmail(token));

@@ -6,8 +6,14 @@ CREATE TABLE useri (
   status bool,
   data_inregistrare date,
   avatar varchar,
-  is_email_verified boolean,
-  verification_token varchar
+  is_email_verified boolean
+);
+
+CREATE TABLE token(
+    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id integer REFERENCES  useri(id),
+    token varchar(128),
+    type smallint
 );
 
 CREATE TABLE roles (
