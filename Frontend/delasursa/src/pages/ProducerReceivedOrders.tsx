@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,150 +9,54 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { colors, textResources } from "../theme";
+import { AuthContext } from "../context/AuthContext.tsx";
+import { jwtDecode } from "jwt-decode";
+import type { DecodedJwt } from "../common/utils.ts";
+import { ordersApi } from "../api/ordersApi.ts";
+import type { ComandaDto } from "../common/types.ts";
 
-type Address = {
-  name: string;
-  street: string;
-  city: string;
-  region: string;
-  zip: string;
-  phone: string;
+interface Order extends ComandaDto {
+  status: string;
+}
+
+const mapOrdersWithRandomStatus = (orders: ComandaDto[]): Order[] => {
+  const statuses = [
+    "Creată",
+    "În procesare",
+    "Pregatită",
+    "Livrată",
+    "Anulată",
+  ];
+
+  return orders.map((order) => ({
+    ...order,
+    status: statuses[Math.floor(Math.random() * statuses.length)],
+  }));
 };
-
-type ProductInOrder = {
-  id: number;
-  image: string;
-  title: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  supplierRegion: string;
-  supplierLogo?: string;
-  supplier: string;
-  price: number;
-  currency?: string;
-  rating: number;
-  reviewCount: number;
-};
-
-type Order = {
-  id: number;
-  date: Date;
-  status: "Creată" | "În procesare" | "Pregatită" | "Livrată" | "Anulată";
-  products: ProductInOrder[];
-  deliveryAddress: Address;
-  billingAddress: Address;
-  deliveryMethod: string;
-  paymentMethod: string;
-  clientEmail?: string;
-  shippingCost?: number;
-  trackingNumber?: string;
-};
-
-const mockProducts: ProductInOrder[] = [
-  {
-    id: 1,
-    image: "../../public/images/pea.jpg",
-    title: "Mazare",
-    category: "Legume",
-    quantity: 10,
-    unit: "kg",
-    supplierRegion: "Cluj-Napoca",
-    supplier: "FreshFruits SRL",
-    price: 4.5,
-    currency: "LEI",
-    rating: 5.0,
-    reviewCount: 38,
-  },
-  {
-    id: 2,
-    image: "../../public/images/cheese.jpg",
-    title: "Branza",
-    category: "Lactate",
-    quantity: 25,
-    unit: "kg",
-    supplierRegion: "Salaj",
-    supplier: "AgroPol",
-    price: 1.7,
-    currency: "LEI",
-    rating: 4.7,
-    reviewCount: 20,
-  },
-  {
-    id: 3,
-    image: "../../public/images/cheese2.jpg",
-    title: "Alta branza",
-    category: "Lactate",
-    quantity: 12,
-    unit: "kg",
-    supplierRegion: "Alba",
-    supplier: "Supplier",
-    price: 2.8,
-    currency: "LEI",
-    rating: 4.9,
-    reviewCount: 57,
-  },
-];
-
-const mockOrders: Order[] = [
-  {
-    id: 1001,
-    date: new Date("2024-02-10"),
-    status: "Livrată",
-    deliveryMethod: "Curier rapid",
-    paymentMethod: "Card online",
-    clientEmail: "ion.popescu@example.com",
-    trackingNumber: "FNC-123456789",
-    shippingCost: 15,
-    deliveryAddress: {
-      name: "Ion Popescu",
-      street: "Str. Zorilor 15",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400123",
-      phone: "0745 123 456",
-    },
-    billingAddress: {
-      name: "Ion Popescu",
-      street: "Str. Observatorului 20",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400456",
-      phone: "0745 123 456",
-    },
-    products: [mockProducts[0], mockProducts[1]],
-  },
-  {
-    id: 1002,
-    date: new Date("2024-03-01"),
-    status: "În procesare",
-    deliveryMethod: "Ridicare personală",
-    paymentMethod: "Numerar",
-    clientEmail: "andreeaion@example.com",
-    trackingNumber: "FNC-123456678",
-    shippingCost: 15,
-    deliveryAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    billingAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    products: [mockProducts[2]],
-  },
-];
 
 const ProducerReceivedOrders: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const { token } = useContext(AuthContext);
+
+  useEffect(() => {
+    const loadOrder = async () => {
+      try {
+        if (!token) return;
+
+        const decoded = jwtDecode<DecodedJwt>(token);
+        const prodId = Number(decoded.id);
+
+        const allOrders = await ordersApi.getAllForProducator(prodId);
+
+        const ordersWithStatus = mapOrdersWithRandomStatus(allOrders);
+        setOrders(ordersWithStatus);
+      } catch (error) {
+        console.error("Eroare la incarcarea comenzii:", error);
+      }
+    };
+
+    loadOrder();
+  }, [token]);
 
   const navigate = useNavigate();
 
@@ -182,18 +86,17 @@ const ProducerReceivedOrders: React.FC = () => {
 
               <Typography>
                 <strong>{textResources.orders.date}</strong>
-                {order.date.toLocaleDateString()}
+                {order.dataEfectuarii}
               </Typography>
 
-              <Typography sx={{ mt: 1 }}>
-                <strong>{textResources.orders.status}</strong> {order.status}
-              </Typography>
+              {/*<Typography sx={{ mt: 1 }}>*/}
+              {/*  <strong>{textResources.orders.status}</strong> {order.status}*/}
+              {/*</Typography>*/}
 
               <Button
                 variant="outlined"
                 sx={{ mt: 2, textTransform: "none" }}
                 onClick={() => {
-                  //navigate(`/dashboard-producator/comenzi-primite/3`); am testat cu o comanda catre producatorul cu id 13
                   navigate(`/dashboard-producator/comenzi-primite/${order.id}`);
                 }}
               >
