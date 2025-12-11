@@ -168,6 +168,7 @@ const MyOrdersPage: React.FC = () => {
                 boxShadow: "none",
               }}
               onClick={() => {
+                //navigate(`/my-orders/1`); am testat pt o comanda a clientului cu id 2
                 navigate(`/my-orders/${order.id}`);
               }}
             >

@@ -193,6 +193,7 @@ const ProducerReceivedOrders: React.FC = () => {
                 variant="outlined"
                 sx={{ mt: 2, textTransform: "none" }}
                 onClick={() => {
+                  //navigate(`/dashboard-producator/comenzi-primite/3`); am testat cu o comanda catre producatorul cu id 13
                   navigate(`/dashboard-producator/comenzi-primite/${order.id}`);
                 }}
               >
