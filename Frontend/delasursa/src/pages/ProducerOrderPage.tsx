@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { colors, textResources } from "../theme";
 import ProducerOrderViewProductCard from "../components/ProducerOrderViewProductCard";
@@ -7,6 +7,11 @@ import Box from "@mui/material/Box";
 import { Card, CardContent, Step, StepLabel, Stepper } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Dropdown from "../components/Dropdown.tsx";
+import { AuthContext } from "../context/AuthContext.tsx";
+import { jwtDecode } from "jwt-decode";
+import { ordersApi } from "../api/ordersApi.ts";
+import type { ComandaDto } from "../common/types.ts";
+import type { DecodedJwt } from "../common/utils.ts";
 
 type Address = {
   name: string;
@@ -47,108 +52,6 @@ type Order = {
   trackingNumber?: string;
 };
 
-const mockProducts: ProductInOrder[] = [
-  {
-    id: 1,
-    image: "../../public/images/pea.jpg",
-    title: "Mazare",
-    category: "Legume",
-    quantity: 10,
-    unit: "kg",
-    supplierRegion: "Cluj-Napoca",
-    supplier: "FreshFruits SRL",
-    price: 4.5,
-    currency: "LEI",
-    rating: 5.0,
-    reviewCount: 38,
-  },
-  {
-    id: 2,
-    image: "../../public/images/cheese.jpg",
-    title: "Branza",
-    category: "Lactate",
-    quantity: 25,
-    unit: "kg",
-    supplierRegion: "Salaj",
-    supplier: "AgroPol",
-    price: 1.7,
-    currency: "LEI",
-    rating: 4.7,
-    reviewCount: 20,
-  },
-  {
-    id: 3,
-    image: "../../public/images/cheese2.jpg",
-    title: "Alta branza",
-    category: "Lactate",
-    quantity: 12,
-    unit: "kg",
-    supplierRegion: "Alba",
-    supplier: "Supplier",
-    price: 2.8,
-    currency: "LEI",
-    rating: 4.9,
-    reviewCount: 57,
-  },
-];
-
-const mockOrders: Order[] = [
-  {
-    id: 1001,
-    date: new Date("2024-02-10"),
-    status: "Livrată",
-    deliveryMethod: "Curier rapid",
-    paymentMethod: "Card online",
-    clientEmail: "ion.popescu@example.com",
-    trackingNumber: "FNC-123456789",
-    shippingCost: 15,
-    deliveryAddress: {
-      name: "Ion Popescu",
-      street: "Str. Zorilor 15",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400123",
-      phone: "0745 123 456",
-    },
-    billingAddress: {
-      name: "Ion Popescu",
-      street: "Str. Observatorului 20",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400456",
-      phone: "0745 123 456",
-    },
-    products: [mockProducts[0], mockProducts[1]],
-  },
-  {
-    id: 1002,
-    date: new Date("2024-03-01"),
-    status: "În procesare",
-    deliveryMethod: "Ridicare personală",
-    paymentMethod: "Numerar",
-    clientEmail: "andreeaion@example.com",
-    trackingNumber: "FNC-123456678",
-    shippingCost: 15,
-    deliveryAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    billingAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    products: [mockProducts[2]],
-  },
-];
-
 const orderStatusOptions = [
   { value: "Creată", label: textResources.orders.created },
   { value: "În procesare", label: textResources.orders.processing },
@@ -157,19 +60,76 @@ const orderStatusOptions = [
   { value: "Anulată", label: textResources.orders.canceled },
 ];
 
+const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
+  id: c.id,
+  date: new Date(c.dataEfectuarii),
+  status: "Creată",
+  products: c.comandaProduse.map((cp) => ({
+    id: cp.id,
+    title: cp.produs.numeProdus,
+    category: cp.produs.categorie,
+    supplierRegion: "Cluj",
+    supplier: cp.produs.numeProducator,
+    quantity: cp.cantitate,
+    unit: cp.produs.unitateDeMasura,
+    price: cp.pretUnitar,
+    currency: "LEI",
+    image: cp.produs.imagineProdus || "",
+    rating: 4.9,
+    reviewCount: 29,
+  })),
+  deliveryAddress: {
+    name: `${c.client.nume} ${c.client.prenume}`,
+    street: "Str. Horea 12",
+    city: "Cluj-Napoca",
+    region: "Cluj",
+    zip: "510789",
+    phone: "0723 456 789",
+  },
+  billingAddress: {
+    name: `${c.client.nume} ${c.client.prenume}`,
+    street: "Str. Horea 12",
+    city: "Cluj-Napoca",
+    region: "Cluj",
+    zip: "510789",
+    phone: "0723 456 789",
+  },
+  deliveryMethod: "Curier",
+  paymentMethod: "Card",
+  clientEmail: `${c.client.nume}${c.client.prenume}`,
+  shippingCost: 15,
+  trackingNumber: "AWB1234",
+});
+
 export default function ProducerOrderPage() {
   const { id } = useParams();
+  const { token } = useContext(AuthContext);
   const [order, setOrder] = useState<Order>();
 
   const tr = textResources.orders;
 
   useEffect(() => {
-    const load = async () => {
-      // aici ai apela API-ul: comenziApi.getByIdForProducer(parseInt(id))
-      const res = mockOrders.find((o) => o.id === Number(id));
-      setOrder(res);
+    const loadOrder = async () => {
+      try {
+        if (!token) return;
+
+        const decoded = jwtDecode<DecodedJwt>(token);
+        const producerId = Number(decoded.id);
+
+        const allOrders = await ordersApi.getAllForProducator(producerId);
+
+        const currentOrderDto = allOrders.find((o) => o.id === Number(id));
+        if (!currentOrderDto) return;
+
+        const mappedOrder: Order = mapComandaDtoToOrder(currentOrderDto);
+
+        setOrder(mappedOrder);
+      } catch (error) {
+        console.error("Eroare la incarcarea comenzii:", error);
+      }
     };
-    load();
+
+    loadOrder();
   }, [id]);
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
