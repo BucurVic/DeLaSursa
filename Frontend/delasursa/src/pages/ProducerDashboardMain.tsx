@@ -1,5 +1,5 @@
 import { Box, Card, CardContent } from "@mui/material";
-import { colors, textResources, textResources as tr } from "../theme";
+import { colors, textResources as tr } from "../theme";
 import {
   LocalShipping,
   PendingActions,
@@ -7,36 +7,34 @@ import {
   Wallet,
 } from "@mui/icons-material";
 import IconComponent from "../components/IconComponent.tsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { Produs } from "../types/Produs.ts";
 import { produseApi } from "../api/produseApi.ts";
 import Typography from "@mui/material/Typography";
 import IncomeChart from "../components/IncomeChart.tsx";
 import ProducerProductCardSimple from "../components/ProducerProductCardSimple.tsx";
+import { AuthContext } from "../context/AuthContext.tsx";
+import { jwtDecode } from "jwt-decode";
+import type { DecodedJwt } from "../common/utils.ts";
+import { ordersApi } from "../api/ordersApi.ts";
+import type { ComandaDto } from "../common/types.ts";
 
-const stats = [
-  {
-    icon: <Wallet />,
-    value: "2.450 LEI",
-    label: textResources.producerDashboard.income,
-  },
-  {
-    icon: <PendingActions />,
-    value: "15",
-    label: textResources.producerDashboard.pendingOrders,
-  },
-  {
-    icon: <LocalShipping />,
-    value: "8",
-    label: textResources.producerDashboard.deliveredOrders,
-  },
-  {
-    icon: <StarRate />,
-    value: "4.8",
-    label: textResources.producerDashboard.averageRating,
-  },
-];
+const mapOrdersWithRandomStatus = <T extends object>(orders: T[]) => {
+  const statuses = [
+    "Creată",
+    "În procesare",
+    "Pregatită",
+    "Livrată",
+    "Anulată",
+  ];
 
+  return orders.map((order) => ({
+    ...order,
+    status: statuses[Math.floor(Math.random() * statuses.length)],
+  }));
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const incomeData = [
   { date: "2025-01-10", income: 220 },
   { date: "2025-01-11", income: 180 },
@@ -71,8 +69,41 @@ export const incomeData = [
 ];
 
 export default function ProducerDashboardMain() {
+  const { token } = useContext(AuthContext);
+
+  const [orders, setOrders] = useState<ComandaDto[]>([]);
+  const [pendingOrders, setPendingOrders] = useState<number>(0);
+  const [deliveredOrders, setDeliveredOrders] = useState<number>(0);
   const [products, setProducts] = useState<Produs[]>([]);
 
+  useEffect(() => {
+    const loadOrder = async () => {
+      try {
+        if (!token) return;
+
+        const decoded = jwtDecode<DecodedJwt>(token);
+        const producerId = Number(decoded.id);
+
+        const allOrders = await ordersApi.getAllForProducator(producerId);
+        const ordersWithStatus = mapOrdersWithRandomStatus(allOrders);
+        setOrders(ordersWithStatus);
+
+        const pending = ordersWithStatus.filter(
+          (o) => o.status === "În procesare",
+        ).length;
+        const delivered = ordersWithStatus.filter(
+          (o) => o.status === "Livrată",
+        ).length;
+
+        setPendingOrders(pending);
+        setDeliveredOrders(delivered);
+      } catch (error) {
+        console.error("Eroare la incarcarea comenzii:", error);
+      }
+    };
+
+    loadOrder();
+  }, [token]);
   useEffect(() => {
     produseApi
       .getAllProducator()
@@ -84,6 +115,29 @@ export default function ProducerDashboardMain() {
         console.error("Eroare la incarcarea produselor: ", err);
       });
   }, []);
+
+  const stats = [
+    {
+      icon: <Wallet />,
+      value: "2.450 LEI",
+      label: tr.producerDashboard.income,
+    },
+    {
+      icon: <PendingActions />,
+      value: 3,
+      label: tr.producerDashboard.pendingOrders,
+    },
+    {
+      icon: <LocalShipping />,
+      value: 23,
+      label: tr.producerDashboard.deliveredOrders,
+    },
+    {
+      icon: <StarRate />,
+      value: "4.8",
+      label: tr.producerDashboard.averageRating,
+    },
+  ];
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -104,7 +158,7 @@ export default function ProducerDashboardMain() {
             {stats.map((item) => (
               <IconComponent
                 icon={item.icon}
-                value={item.value}
+                value={item.value.toString()}
                 label={item.label}
                 sx={{ flex: 1 }}
               />
@@ -130,7 +184,7 @@ export default function ProducerDashboardMain() {
             {products.map((p) => (
               <ProducerProductCardSimple
                 title={p.produsName}
-                produsImagine={p.produsImagine || ""}
+                produsImagine={p.produsImagine ?? ""}
                 rating={5}
                 reviewCount={30}
                 price={p.pret}

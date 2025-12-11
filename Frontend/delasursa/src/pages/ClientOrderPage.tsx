@@ -1,11 +1,16 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { colors, textResources } from "../theme";
 import ClientOrderViewProductCard from "../components/ClientOrderViewProductCard.tsx";
 import Box from "@mui/material/Box";
 import { Card, CardContent, Step, StepLabel, Stepper } from "@mui/material";
 import Divider from "@mui/material/Divider";
+import { AuthContext } from "../context/AuthContext.tsx";
+import { jwtDecode } from "jwt-decode";
+import type { DecodedJwt } from "../common/utils.ts";
+import { ordersApi } from "../api/ordersApi.ts";
+import type { ComandaDto } from "../common/types.ts";
 
 type Address = {
   name: string;
@@ -43,116 +48,72 @@ type Order = {
   transportCost: number;
 };
 
-const mockProducts: ProductInOrder[] = [
-  {
-    id: 1,
-    image: "../../public/images/pea.jpg",
-    title: "Mazare",
-    category: "Legume",
-    quantity: 10,
-    unit: "kg",
-    supplierRegion: "Cluj-Napoca",
-    supplier: "FreshFruits SRL",
-    price: 4.5,
+const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
+  id: c.id,
+  date: new Date(c.dataEfectuarii),
+  status: "Creată",
+  products: c.comandaProduse.map((cp) => ({
+    id: cp.id,
+    image: cp.produs.imagineProdus || "",
+    title: cp.produs.numeProdus,
+    category: cp.produs.categorie,
+    quantity: cp.cantitate,
+    unit: cp.produs.unitateDeMasura,
+    supplierRegion: "Cluj",
+    supplier: cp.produs.numeProducator,
+    price: cp.pretUnitar,
     currency: "LEI",
-    onAddReview: () => console.log("Review added for 1"),
+    onAddReview: () => console.log("Review added"),
+  })),
+  deliveryAddress: {
+    name: `${c.client.nume} ${c.client.prenume}`,
+    street: "Str. Horea 12",
+    city: "Cluj-Napoca",
+    region: "Cluj",
+    zip: "510789",
+    phone: "0723 456 789",
   },
-  {
-    id: 2,
-    image: "../../public/images/cheese.jpg",
-    title: "Branza",
-    category: "Lactate",
-    quantity: 25,
-    unit: "kg",
-    supplierRegion: "Salaj",
-    supplier: "AgroPol",
-    price: 1.7,
-    currency: "LEI",
-    onAddReview: () => console.log("Review added for 2"),
+  billingAddress: {
+    name: `${c.client.nume} ${c.client.prenume}`,
+    street: "Str. Horea 12",
+    city: "Cluj-Napoca",
+    region: "Cluj",
+    zip: "510789",
+    phone: "0723 456 789",
   },
-  {
-    id: 3,
-    image: "../../public/images/cheese2.jpg",
-    title: "Alta branza",
-    category: "Lactate",
-    quantity: 12,
-    unit: "kg",
-    supplierRegion: "Alba",
-    supplier: "Supplier",
-    price: 2.8,
-    currency: "LEI",
-    onAddReview: () => console.log("Review added for 3"),
-  },
-];
-
-const mockOrders: Order[] = [
-  {
-    id: 1001,
-    date: new Date("2024-02-10"),
-    status: "Livrată",
-    deliveryMethod: "Curier rapid",
-    paymentMethod: "Card online",
-    transportCost: 19.99,
-    deliveryAddress: {
-      name: "Ion Popescu",
-      street: "Str. Zorilor 15",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400123",
-      phone: "0745 123 456",
-    },
-    billingAddress: {
-      name: "Ion Popescu",
-      street: "Str. Observatorului 20",
-      city: "Cluj-Napoca",
-      region: "Cluj",
-      zip: "400456",
-      phone: "0745 123 456",
-    },
-    products: [mockProducts[0], mockProducts[1]],
-  },
-  {
-    id: 1002,
-    date: new Date("2024-03-01"),
-    status: "În procesare",
-    deliveryMethod: "Ridicare personală",
-    paymentMethod: "Numerar",
-    transportCost: 15,
-    deliveryAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    billingAddress: {
-      name: "Andreea Ionescu",
-      street: "Str. Horea 12",
-      city: "Alba Iulia",
-      region: "Alba",
-      zip: "510789",
-      phone: "0723 456 789",
-    },
-    products: [mockProducts[2]],
-  },
-];
-
-// select * from comenzi where id_client=?
-// select * from comanda_produs where id_comanda=?
+  deliveryMethod: "Curier",
+  paymentMethod: "Card",
+  transportCost: 15,
+});
 
 export default function ClientOrderPage() {
   const { id } = useParams();
+  const { token } = useContext(AuthContext);
   const [order, setOrder] = useState<Order>();
   const tr = textResources.orders;
 
   useEffect(() => {
-    const load = async () => {
-      //const res = await comenziApi.getById(parseInt(id));
-      const res = mockOrders.find((o) => o.id === Number(id));
-      setOrder(res);
+    const loadOrder = async () => {
+      try {
+        if (!token) return;
+
+        const decoded = jwtDecode<DecodedJwt>(token);
+        const userId = Number(decoded.id);
+
+        const allOrders = await ordersApi.getAllForUser(userId);
+
+        const currentOrderDto = allOrders.find((o) => o.id === Number(id));
+        if (!currentOrderDto) return;
+
+        const mappedOrder: Order = mapComandaDtoToOrder(currentOrderDto);
+
+        setOrder(mappedOrder);
+      } catch (error) {
+        console.error("Eroare la incarcarea comenzii:", error);
+      }
     };
-    load();
+
+    loadOrder();
   }, [id]);
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
