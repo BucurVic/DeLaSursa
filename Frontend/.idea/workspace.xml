@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="add to cart button, cart page, product details page, cart context">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BecomeProducerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BecomeProducerPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/admin/AdminUsersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/admin/AdminUsersPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/auth/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/LoginPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +64,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/Producers-endpoints",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Semestrul 5/PC/DeLaSursa/Backend",
     "node.js.detected.package.eslint": "true",
@@ -71,6 +72,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.updates",
     "ts.external.directory.path": "/Users/victorbucur/FACC/ANUL3/SEM1/PC/Frontend/delasursa/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }

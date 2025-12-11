@@ -5,35 +5,26 @@ import {
     Paper,
     Chip,
     Button,
-    Avatar
+    Avatar,
+    Tooltip,
+    IconButton
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SecurityIcon from '@mui/icons-material/Security';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Iconita pentru aprobare
 
 import { colors, textResources } from '../../theme';
 import EditUserModal, { type UserData } from '../../components/EditUserModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 
-// --- IMPORTĂM BUTOANELE TALE PERSONALIZATE ---
 import EditButton from '../../components/buttonsProductView/EditButton';
 import DeactivateButton from '../../components/buttonsProductView/DeactivateButton';
 import DeleteButton from '../../components/buttonsProductView/DeleteButton';
-import type {User} from "../../types/User.ts";
 import {adminApi} from "../../api/adminApi.ts";
 
-// --- DATE SIMULATE ---
 const CURRENT_ADMIN_ID = 1;
-
-const mockUsers = [
-    { id: 1, fullName: 'Victor Bucur', email: 'victor@admin.com', role: 'ADMIN', status: true, joinDate: '2023-10-15', avatar: 'https://i.pravatar.cc/150?u=1' },
-    { id: 2, fullName: 'Ion Popescu', email: 'ion.pop@email.com', role: 'PRODUCATOR', status: true, joinDate: '2023-11-02', avatar: 'https://i.pravatar.cc/150?u=2' },
-    { id: 3, fullName: 'Maria Ionescu', email: 'maria.i@email.com', role: 'CLIENT', status: true, joinDate: '2023-12-10', avatar: 'https://i.pravatar.cc/150?u=3' },
-    { id: 4, fullName: 'Andrei Rusu', email: 'andrei.spam@bad.com', role: 'CLIENT', status: false, joinDate: '2024-01-05', avatar: 'https://i.pravatar.cc/150?u=4' },
-    { id: 5, fullName: 'Elena Dumitrescu', email: 'elena.d@email.com', role: 'CLIENT', status: true, joinDate: '2024-02-20', avatar: 'https://i.pravatar.cc/150?u=5' },
-    { id: 6, fullName: 'George Enescu', email: 'george@music.ro', role: 'CLIENT', status: true, joinDate: '2024-02-20', avatar: 'https://i.pravatar.cc/150?u=6' },
-];
 
 const AdminUsersPage: React.FC = () => {
     const [rows, setRows] = useState<any[]>([]);
@@ -53,18 +44,25 @@ const AdminUsersPage: React.FC = () => {
     const TCommon = TR.productCard;
 
     useEffect(() => {
-        adminApi.getUsers(page,pageSize).then(response => {
+        adminApi.getUsers(page, pageSize).then(response => {
             const data = response.data;
 
-            const mapped = data.content.map( u => ({
-                id: u.id,
-                fullName: `${u.userDetails?.nume ?? ""} ${u.userDetails?.prenume ?? ""}`.trim(),
-                email: u.email,
-                role: u.roles.length > 0 ? u.roles[0].toUpperCase() : "UNKNOWN",
-                status: u.status ?? true,
-                joinDate: u.registrationDate,
-                avatar: u.avatar
-            }));
+            const mapped = data.content.map((u: any) => {
+                // --- LOGICĂ SIMULATĂ: Determinam cine are cerere depusa ---
+                // In productie, asta vine din backend (ex: u.requestedRole === 'PRODUCATOR')
+                const isPending = u.userDetails?.nume === "Rusu" || u.id === 4;
+
+                return {
+                    id: u.id,
+                    fullName: `${u.userDetails?.nume ?? ""} ${u.userDetails?.prenume ?? ""}`.trim(),
+                    email: u.email,
+                    role: u.roles.length > 0 ? u.roles[0].toUpperCase() : "UNKNOWN",
+                    status: u.status ?? true,
+                    joinDate: u.registrationDate,
+                    avatar: u.avatar,
+                    isPendingProducer: isPending && !u.roles.includes('PRODUCATOR')
+                };
+            });
 
             setRows(mapped);
             setRowCount(data.totalElements);
@@ -91,6 +89,19 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
+    // --- HANDLER APROBARE ---
+    const handleApproveProducer = (id: number) => {
+        console.log(`User ID ${id} aprobat ca producător.`);
+        // Call API here...
+
+        // Update local
+        setRows(rows.map(row =>
+            row.id === id
+                ? { ...row, role: 'PRODUCATOR', isPendingProducer: false }
+                : row
+        ));
+    };
+
     const handleSaveUser = (userData: UserData) => {
         if (userData.id === 0) {
             const newUser = {
@@ -100,7 +111,8 @@ const AdminUsersPage: React.FC = () => {
                 role: userData.role,
                 status: true,
                 joinDate: new Date().toISOString().split('T')[0],
-                avatar: `https://i.pravatar.cc/150?u=${Math.random()}`
+                avatar: `https://i.pravatar.cc/150?u=${Math.random()}`,
+                isPendingProducer: false
             };
             setRows([...rows, newUser]);
         } else {
@@ -141,11 +153,12 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
+    // --- CULORI ORIGINALE ---
     const getRoleColor = (role: string) => {
         switch (role) {
-            case 'ADMIN': return 'error';
-            case 'PRODUCATOR': return 'warning';
-            case 'CLIENT': return 'info';
+            case 'ADMIN': return 'error';     // Roșu
+            case 'PRODUCATOR': return 'warning'; // Portocaliu
+            case 'CLIENT': return 'info';     // Albastru
             default: return 'default';
         }
     };
@@ -183,19 +196,44 @@ const AdminUsersPage: React.FC = () => {
         {
             field: 'role',
             headerName: TUsers.columns.role,
-            width: 130,
-            renderCell: (params: GridRenderCellParams) => (
-                <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-                    <Chip
-                        icon={params.value === 'ADMIN' ? <SecurityIcon fontSize="small" /> : undefined}
-                        label={params.value}
-                        color={getRoleColor(params.value)}
-                        size="small"
-                        variant="outlined"
-                        sx={{ fontWeight: 'bold' }}
-                    />
-                </Box>
-            )
+            width: 200, // Am mărit lățimea pentru a încăpea și bifa
+            renderCell: (params: GridRenderCellParams) => {
+                const isPending = params.row.isPendingProducer;
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', gap: 1 }}>
+                        {/* Chip-ul cu rolul curent (ex: CLIENT - Albastru) */}
+                        <Chip
+                            icon={params.value === 'ADMIN' ? <SecurityIcon fontSize="small" /> : undefined}
+                            label={params.value}
+                            color={getRoleColor(params.value)}
+                            size="small"
+                            variant="outlined"
+                            sx={{ fontWeight: 'bold' }}
+                        />
+
+                        {/* Bifa de aprobare apare doar dacă e solicitare */}
+                        {isPending && (
+                            <Tooltip title="Aprobă cerere producător">
+                                <IconButton
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Previne selectarea rândului
+                                        handleApproveProducer(params.row.id);
+                                    }}
+                                    size="small"
+                                    sx={{
+                                        color: colors.darkGreen2,
+                                        bgcolor: colors.lightGreen1,
+                                        '&:hover': { bgcolor: colors.lightGreen2 },
+                                        width: 28, height: 28
+                                    }}
+                                >
+                                    <CheckCircleIcon sx={{ fontSize: '1.2rem' }} />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                    </Box>
+                );
+            }
         },
         {
             field: 'joinDate',
@@ -247,11 +285,7 @@ const AdminUsersPage: React.FC = () => {
             sortable: false,
             renderCell: (params: GridRenderCellParams) => {
                 const isMyAccount = params.row.id === CURRENT_ADMIN_ID;
-
-                const disabledStyle = isMyAccount ? {
-                    opacity: 0.4,
-                    pointerEvents: 'none' as const, // Previne click-ul
-                } : {};
+                const disabledStyle = isMyAccount ? { opacity: 0.4, pointerEvents: 'none' as const } : {};
 
                 return (
                     <Box
@@ -264,7 +298,7 @@ const AdminUsersPage: React.FC = () => {
                             width: '100%'
                         }}
                     >
-                        {/* 1. BUTON EDITARE - Activ mereu (te poți edita pe tine) */}
+                        {/* 1. EDIT BUTTON */}
                         <Box sx={{ width: "6rem" }}>
                             <EditButton
                                 fullWidth={false}
@@ -272,7 +306,7 @@ const AdminUsersPage: React.FC = () => {
                             />
                         </Box>
 
-                        {/* 2. BUTON DEZACTIVARE / ACTIVARE - Blurat dacă e contul meu */}
+                        {/* 2. DEACTIVATE BUTTON */}
                         <Box sx={disabledStyle}>
                             <DeactivateButton
                                 onClick={() => handleToggleStatus(params.row.id, params.row.status)}
@@ -285,7 +319,7 @@ const AdminUsersPage: React.FC = () => {
                             </DeactivateButton>
                         </Box>
 
-                        {/* 3. BUTON ȘTERGERE - Blurat dacă e contul meu */}
+                        {/* 3. DELETE BUTTON */}
                         <Box sx={{ width: "6rem", ...disabledStyle }}>
                             <DeleteButton
                                 fullWidth={false}
