@@ -7,21 +7,21 @@ import {
     Button,
     Avatar,
     Tooltip,
-    IconButton
+    IconButton,
+    Switch // Importat pentru toggle
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SecurityIcon from '@mui/icons-material/Security';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'; // Iconita pentru aprobare
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; 
+// --- ICONITE NOI ---
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { colors, textResources } from '../../theme';
 import EditUserModal, { type UserData } from '../../components/EditUserModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
-
-import EditButton from '../../components/buttonsProductView/EditButton';
-import DeactivateButton from '../../components/buttonsProductView/DeactivateButton';
-import DeleteButton from '../../components/buttonsProductView/DeleteButton';
 import {adminApi} from "../../api/adminApi.ts";
 
 const CURRENT_ADMIN_ID = 1;
@@ -48,8 +48,6 @@ const AdminUsersPage: React.FC = () => {
             const data = response.data;
 
             const mapped = data.content.map((u: any) => {
-                // --- LOGICĂ SIMULATĂ: Determinam cine are cerere depusa ---
-                // In productie, asta vine din backend (ex: u.requestedRole === 'PRODUCATOR')
                 const isPending = u.userDetails?.nume === "Rusu" || u.id === 4;
 
                 return {
@@ -89,12 +87,8 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
-    // --- HANDLER APROBARE ---
     const handleApproveProducer = (id: number) => {
         console.log(`User ID ${id} aprobat ca producător.`);
-        // Call API here...
-
-        // Update local
         setRows(rows.map(row =>
             row.id === id
                 ? { ...row, role: 'PRODUCATOR', isPendingProducer: false }
@@ -153,12 +147,11 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
-    // --- CULORI ORIGINALE ---
     const getRoleColor = (role: string) => {
         switch (role) {
-            case 'ADMIN': return 'error';     // Roșu
-            case 'PRODUCATOR': return 'warning'; // Portocaliu
-            case 'CLIENT': return 'info';     // Albastru
+            case 'ADMIN': return 'error';
+            case 'PRODUCATOR': return 'warning';
+            case 'CLIENT': return 'info';
             default: return 'default';
         }
     };
@@ -196,12 +189,11 @@ const AdminUsersPage: React.FC = () => {
         {
             field: 'role',
             headerName: TUsers.columns.role,
-            width: 200, // Am mărit lățimea pentru a încăpea și bifa
+            width: 200,
             renderCell: (params: GridRenderCellParams) => {
                 const isPending = params.row.isPendingProducer;
                 return (
                     <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', gap: 1 }}>
-                        {/* Chip-ul cu rolul curent (ex: CLIENT - Albastru) */}
                         <Chip
                             icon={params.value === 'ADMIN' ? <SecurityIcon fontSize="small" /> : undefined}
                             label={params.value}
@@ -210,13 +202,11 @@ const AdminUsersPage: React.FC = () => {
                             variant="outlined"
                             sx={{ fontWeight: 'bold' }}
                         />
-
-                        {/* Bifa de aprobare apare doar dacă e solicitare */}
                         {isPending && (
                             <Tooltip title="Aprobă cerere producător">
                                 <IconButton
                                     onClick={(e) => {
-                                        e.stopPropagation(); // Previne selectarea rândului
+                                        e.stopPropagation();
                                         handleApproveProducer(params.row.id);
                                     }}
                                     size="small"
@@ -251,41 +241,25 @@ const AdminUsersPage: React.FC = () => {
             width: 120,
             renderCell: (params: GridRenderCellParams) => (
                 <Box sx={{ display: 'flex', alignItems: 'center', height: '100%'}}>
-                    <Box
-                        sx={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            px: "0.7rem",
-                            py: "0.3rem",
-                            borderRadius: "0.75rem",
-                            backgroundColor: params.value
-                                ? colors.lightGreen1Transparent
-                                : colors.redTransparent,
-                            color: params.value
-                                ? colors.lightGreen1
-                                : colors.red1,
-                            fontSize: "0.8rem",
-                            minWidth: "5rem",
-                            maxWidth: "5rem",
-                            maxHeight: "2rem",
-                            fontWeight: "bold"
-                        }}
-                    >
-                        {params.value ? TCommon.status.active : TUsers.status.suspended}
-                    </Box>
+                    <Chip 
+                        label={params.value ? TCommon.status.active : TUsers.status.suspended} 
+                        color={params.value ? "success" : "error"} 
+                        size="small" 
+                        variant="outlined" 
+                        sx={{ fontWeight: 'bold' }}
+                    />
                 </Box>
             )
         },
+        // --- MODIFICAREA PRINCIPALĂ AICI ---
         {
             field: 'actions',
             headerName: TCommon.columns.actions,
-            minWidth: 350,
-            flex: 0.7,
+            minWidth: 180, // Redus lățimea pentru că iconițele ocupă mai puțin loc
+            flex: 0.5,
             sortable: false,
             renderCell: (params: GridRenderCellParams) => {
                 const isMyAccount = params.row.id === CURRENT_ADMIN_ID;
-                const disabledStyle = isMyAccount ? { opacity: 0.4, pointerEvents: 'none' as const } : {};
 
                 return (
                     <Box
@@ -293,39 +267,44 @@ const AdminUsersPage: React.FC = () => {
                             display: "flex",
                             justifyContent: "flex-start",
                             alignItems: "center",
-                            gap: "1rem",
+                            gap: 1, // Spațiu mic între iconițe
                             height: '100%',
                             width: '100%'
                         }}
                     >
-                        {/* 1. EDIT BUTTON */}
-                        <Box sx={{ width: "6rem" }}>
-                            <EditButton
-                                fullWidth={false}
-                                onClick={() => handleEdit(params.row.id)}
-                            />
-                        </Box>
-
-                        {/* 2. DEACTIVATE BUTTON */}
-                        <Box sx={disabledStyle}>
-                            <DeactivateButton
-                                onClick={() => handleToggleStatus(params.row.id, params.row.status)}
-                                fullWidth={false}
+                        {/* 1. EDIT ICON (CREION) */}
+                        <Tooltip title="Editează">
+                            <IconButton 
+                                onClick={() => handleEdit(params.row.id)} 
+                                sx={{ color: colors.lightGreen1 }}
                             >
-                                {params.row.status
-                                    ? TR.productCard.buttons.deactivate
-                                    : TR.productCard.buttons.activate
-                                }
-                            </DeactivateButton>
-                        </Box>
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
 
-                        {/* 3. DELETE BUTTON */}
-                        <Box sx={{ width: "6rem", ...disabledStyle }}>
-                            <DeleteButton
-                                fullWidth={false}
-                                onClick={() => handleDeleteClick(params.row.id)}
+                        {/* 2. SWITCH (ACTIV/INACTIV) */}
+                        <Tooltip title={params.row.status ? "Dezactivează" : "Activează"}>
+                            <Switch 
+                                checked={params.row.status} 
+                                onChange={() => handleToggleStatus(params.row.id, params.row.status)} 
+                                color="success" 
+                                size="small"
+                                disabled={isMyAccount} 
                             />
-                        </Box>
+                        </Tooltip>
+
+                        {/* 3. DELETE ICON (COȘ) */}
+                        <Tooltip title="Șterge">
+                            <span> {/* Span necesar pentru Tooltip pe buton dezactivat */}
+                                <IconButton 
+                                    onClick={() => handleDeleteClick(params.row.id)} 
+                                    sx={{ color: '#ff5252' }}
+                                    disabled={isMyAccount}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
                     </Box>
                 );
             },
