@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "produse", schema = "public")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
-@ToString(exclude = {"comandaProduse","pachetProduse", "produsProducatori",})
+@ToString(exclude = {"produsProducatori",})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Produs {
     @Id
@@ -25,12 +25,6 @@ public class Produs {
     @Column(name = "categorie", length = Integer.MAX_VALUE)
     private String categorie;
 
-
-    @OneToMany(mappedBy = "produs")
-    private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "produs")
-    private Set<PachetProdus> pachetProduse = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "produs")
     private Set<ProdusProducator> produsProducatori = new LinkedHashSet<>();

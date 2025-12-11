@@ -50,6 +50,20 @@ function App() {
       <Route path="/resetare-parola" element={<ResetPasswordPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
+      {/* --- RUTE COMUNE (Accesibile oricărui utilizator logat) --- */}
+      <Route element={<ProtectedRoute allowedRoles={["CLIENT", "PRODUCATOR", "ADMIN"]} />}>
+        <Route element={<MainLayout />}>
+           {/* Aici punem paginile de profil, setări, etc. */}
+           <Route path="/contul-meu" element={<MyAccountPage />} />
+           <Route path="/edit-account" element={<EditAccountPage />} />
+           
+           {/* Alte pagini comune viitoare (ex: Istoric comenzi detaliat) */}
+           <Route path="/comenzile-mele" element={<div>Pagina Comenzi (WIP)</div>} />
+        </Route>
+      </Route>
+
+
+
       {/* --- Rute Publice (Cu Layout) --- */}
       {/* Paginile pe care oricine le vede, dar care au Header/Footer/Sidebar */}
       {/* Folosim MainLayout pentru a înveli pagina Home */}
@@ -68,10 +82,6 @@ function App() {
           <Route path="/order/:id" element={<ClientOrderPage />} />
           <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
 
-          <Route path="/contul-meu" element={<MyAccountPage />} />
-
-          <Route path="/my-orders" element={<MyOrdersPage />} />
-          <Route path="/edit-account" element={<EditAccountPage />} />
 
           {/* Aici vor veni /produse, /despre-noi, etc. */}
       </Route>

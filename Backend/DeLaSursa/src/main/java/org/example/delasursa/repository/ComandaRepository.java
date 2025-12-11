@@ -13,4 +13,7 @@ public interface ComandaRepository extends JpaRepository<Comanda, Integer> {
     List<Comanda> findByClient_Id(Integer id);
     List<Comanda> findByComandaProduse_Produs(ProdusProducator produsProducator);
     Integer countByDataEfectuariiAfter(LocalDate dataEfectuariiAfter);
+    List<Comanda> findByClient_User_Email(String email);
+    List<Comanda> findByClient_User_Username(String username);
+
 }

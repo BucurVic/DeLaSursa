@@ -17,6 +17,9 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.example.delasursa.common.dto.ClientDto;
+import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
+import org.example.delasursa.model.Comanda;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -126,4 +129,40 @@ public class ComandaServiceImpl implements ComandaService {
     public Double getVenitTotal() {
         return comandaProdusRepository.getVenitTotal();
     }
+
+    @Override
+    public List<ComandaDto> getComenziIstoric(String emailOrUsername) {
+        List<Comanda> comenzi = comandaRepository.findByClient_User_Username(emailOrUsername);
+        return comenzi.stream()
+                .map(cmd -> ComandaDto.builder()
+                        .id(cmd.getId()) 
+                        .dataEfectuarii(cmd.getDataEfectuarii())
+                        .client(ClientDto.builder()
+                                .nume(cmd.getClient().getNume())
+                                .prenume(cmd.getClient().getPrenume())
+                                .telefon(cmd.getClient().getTelefon())
+                                .build())
+                        .comandaProduse(cmd.getComandaProduse().stream()
+                                .map(cp -> ComandaProdusDto.builder()
+                                        .id(cp.getId() != null ? cp.getId().intValue() : null)
+                                        .cantitate(cp.getCantitate())
+                                        .pretUnitar(cp.getPretUnitar())
+                                        .produs(ComandaProdusDto.ProdusComandaProdusDto.builder()
+                                        
+                                                .numeProdus(cp.getProdus().getProdus().getNume()) 
+                                                
+                                                .categorie(cp.getProdus().getProdus().getCategorie())
+
+                                                .pret(cp.getPretUnitar()) 
+                                                
+                                                .produsProducatorId(cp.getProdus().getId() != null ? cp.getProdus().getId().intValue() : null)
+                                                
+                                                
+                                                .build())
+                                        .build())
+                                .collect(Collectors.toSet()))
+                        .build())
+                .toList();
+    }
+
 }
