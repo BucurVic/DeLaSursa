@@ -69,7 +69,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     // --- LISTA DE PROFIL CU LINK-URI ---
     const profileMenuItems = [
         { label: textResources.navbar.myAccount, path: "/contul-meu" },
-        { label: textResources.navbar.myOrders, path: "/comenzile-mele" },
+        { label: textResources.navbar.myOrders, path: "/my-orders" },
         { label: textResources.navbar.myReviews, path: "/recenzii" },
         { label: textResources.navbar.deliveryAddresses, path: "/adrese" },
         { label: textResources.navbar.mySubscriptions, path: "/abonamentele-mele" },
