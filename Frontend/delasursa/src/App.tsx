@@ -33,10 +33,10 @@ import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 import ClientOrderPage from "./pages/ClientOrderPage.tsx";
 import ProducerOrderPage from "./pages/ProducerOrderPage.tsx";
 import MyAccountPage from "./pages/MyAccountPage.tsx";
-import MyOrdersPage from "./pages/MyOrdersPage.tsx";
 import EditAccountPage from "./pages/EditAccountPage.tsx";
 import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
 import ProducerDashboardMain from "./pages/ProducerDashboardMain.tsx";
+import MyOrdersPage from "./pages/MyOrdersPage.tsx";
 
 function App() {
   return (
@@ -52,11 +52,14 @@ function App() {
 
       {/* --- RUTE COMUNE PROTEJATE (Accesibile oricărui utilizator logat) --- */}
       {/* Aici sunt Contul Meu și Editarea, mutate corect sub protecție */}
-      <Route element={<ProtectedRoute allowedRoles={["CLIENT", "PRODUCATOR", "ADMIN"]} />}>
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={["CLIENT", "PRODUCATOR", "ADMIN"]} />
+        }
+      >
         <Route element={<MainLayout />}>
-           <Route path="/contul-meu" element={<MyAccountPage />} />
-           <Route path="/edit-account" element={<EditAccountPage />} />
-           <Route path="/comenzile-mele" element={<div>Pagina Comenzi (WIP)</div>} />
+          <Route path="/contul-meu" element={<MyAccountPage />} />
+          <Route path="/edit-account" element={<EditAccountPage />} />
         </Route>
       </Route>
 
@@ -65,17 +68,15 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/producers" element={<ProducersPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
-        
         <Route path="/become-producer" element={<BecomeProducerPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
-
         {/* Checkout și Comenzi */}
-        <Route path="/checkout" element={<CheckoutPage />} /> {/* schimb cand am cosul, e doar de test */}
-
-        <Route path="/order/:id" element={<ClientOrderPage />} />
-        <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />{" "}
+        {/* schimb cand am cosul, e doar de test */}
+        <Route path="/my-orders/:id" element={<ClientOrderPage />} />
+        <Route path="/my-orders" element={<MyOrdersPage />} />
       </Route>
 
       {/* --- Rute Protejate PRODUCĂTOR --- */}
@@ -85,6 +86,7 @@ function App() {
             path="/dashboard-producator"
             element={<ProducerDashboardMain />}
           />
+          <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
 
           <Route
             path="/dashboard-producator/produse"
