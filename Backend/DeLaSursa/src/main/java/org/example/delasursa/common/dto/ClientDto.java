@@ -11,4 +11,6 @@ public class ClientDto {
     String nume;
     String telefon;
     String prenume;
+    String email;
+
 }

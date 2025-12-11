@@ -15,5 +15,6 @@ public interface ComandaService {
     List<ComandaDto> getAllCommandsByProducatorId(Integer id);
     Integer getTotalComenziUltimulAn();
     Double getVenitTotal();
+    List<ComandaDto> getComenziIstoric(String email);
     Page<ComandaSummary> getAllComenziSummary(Pageable pageable);
 }

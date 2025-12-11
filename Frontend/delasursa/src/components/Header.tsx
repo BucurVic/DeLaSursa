@@ -21,13 +21,13 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@mui/material";
 
 import { colors } from "../theme/colors.ts";
 import { textResources } from "../theme/textResources";
 import { AuthContext } from "../context/AuthContext.tsx";
 import logoSrc from '../assets/logo.png';
 import { useCart } from "../context/CartContext.tsx";
-import { Badge } from "@mui/material";
 
 export interface Props {
     variant?: "full" | "compact";
@@ -37,23 +37,19 @@ export interface Props {
 const Header: React.FC<Props> = ({ variant = "full", className }) => {
     const { isAuthenticated, role, logout } = useContext(AuthContext);
     const navigate = useNavigate();
-
+  
     const theme = useTheme();
     const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [drawerOpen, setDrawerOpen] = React.useState(false);
-    const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(
-        null
-    );
+    const [profileAnchor, setProfileAnchor] = React.useState<null | HTMLElement>(null);
     const [scrollbarGap, setScrollbarGap] = React.useState<number>(0);
+  
     const { items } = useCart();
     const total = items.reduce((acc, item) => acc + item.quantity, 0);
 
     React.useEffect(() => {
         const updateGap = () => {
-            const gap = Math.max(
-                0,
-                window.innerWidth - document.documentElement.clientWidth
-            );
+            const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
             setScrollbarGap(gap);
         };
         updateGap();
@@ -61,33 +57,32 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
         return () => window.removeEventListener("resize", updateGap);
     }, []);
 
-    // --- MODIFICARE: Am scos coșul din această listă ---
     const navLinks = [
-        { text: textResources.navbar.home, path: "./pages/HomePage" },
+        { text: textResources.navbar.home, path: "/" },
         { text: textResources.navbar.products, path: "/products" },
         { text: textResources.navbar.producers, path: "/producers" },
         { text: textResources.navbar.subscriptions, path: "/abonamente" },
         { text: textResources.navbar.support, path: "/suport" },
+        { type: "cart", path: "/cart" }, // Coșul e aici pentru logică, dar îl tratăm separat vizual
     ];
 
+    // --- LISTA DE PROFIL CU LINK-URI ---
     const profileMenuItems = [
-        textResources.navbar.myOrders,
-        textResources.navbar.myAccount,
-        textResources.navbar.myReviews,
-        textResources.navbar.deliveryAddresses,
-        textResources.navbar.mySubscriptions,
+        { label: textResources.navbar.myAccount, path: "/contul-meu" },
+        { label: textResources.navbar.myOrders, path: "/comenzile-mele" },
+        { label: textResources.navbar.myReviews, path: "/recenzii" },
+        { label: textResources.navbar.deliveryAddresses, path: "/adrese" },
+        { label: textResources.navbar.mySubscriptions, path: "/abonamentele-mele" },
     ];
 
     const showPanelButton = role === "PRODUCATOR" || role === "ADMIN";
-    const panelLabel =
-        role === "PRODUCATOR"
-            ? textResources.navbar.producerPanel
-            : textResources.navbar.adminPanel;
+    const panelLabel = role === "PRODUCATOR"
+        ? textResources.navbar.producerPanel
+        : textResources.navbar.adminPanel;
 
     const logoSizeXs = "2.125rem";
     const logoSizeSm = "2.5rem";
-    const toolbarPy: any =
-        variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
+    const toolbarPy: any = variant === "compact" ? "1.25rem" : { xs: "1.25rem", md: "1.25rem" };
     const navGap = { md: "1rem", lg: "1.5rem" };
     const smallGap = "0.5rem";
     const drawerTop = { xs: "3.5rem", md: "4rem" };
@@ -95,17 +90,13 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
     const btnTypography: any = "body2";
 
     const handleDrawerOpen = () => {
-        const gap = Math.max(
-            0,
-            window.innerWidth - document.documentElement.clientWidth
-        );
+        const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
         setScrollbarGap(gap);
         setDrawerOpen(true);
     };
     const handleDrawerClose = () => setDrawerOpen(false);
 
-    const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) =>
-        setProfileAnchor(e.currentTarget);
+    const handleProfileOpen = (e: React.MouseEvent<HTMLElement>) => setProfileAnchor(e.currentTarget);
     const handleProfileClose = () => setProfileAnchor(null);
 
     const handleLogout = () => {
@@ -119,7 +110,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
         navigate(path);
     };
 
-    // Componenta reutilizabilă pentru butonul de coș (pentru a evita duplicarea codului lung)
+    // Componenta reutilizabilă pentru butonul de coș
     const CartButton = () => (
         <IconButton
             color="inherit"
@@ -128,7 +119,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             sx={{ color: colors.white1 }}
             onClick={() => navigateTo("/cart")}
         >
-            <Badge
+             <Badge
                 badgeContent={total}
                 color="success"
                 overlap="circular"
@@ -171,10 +162,10 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                         px: 0,
                     }}
                 >
-                    {/* Logo Section */}
-                    <Box
+                    {/* LOGO */}
+                    <Box 
                         sx={{ display: "flex", alignItems: "center", gap: smallGap, minWidth: 0, cursor: 'pointer' }}
-                        onClick={() => navigateTo('/')}
+                        onClick={() => navigateTo('/')} 
                     >
                         <Box
                             component="img"
@@ -184,77 +175,66 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                 width: { xs: logoSizeXs, sm: logoSizeSm },
                                 height: { xs: logoSizeXs, sm: logoSizeSm },
                                 flexShrink: 0,
-                                mr: 1,
+                                mr: 1, 
                             }}
                         />
-                        <Typography
-                            variant="h6"
-                            component="span"
-                            noWrap
-                            sx={{ color: colors.white1 }}
-                        >
+                        <Typography variant="h6" component="span" noWrap sx={{ color: colors.white1 }}>
                             {textResources.brand.name}
                         </Typography>
                     </Box>
 
-                    {/* Desktop Nav Links (fără coș) */}
+                    {/* MENIU DESKTOP */}
                     {isMdUp && variant === "full" ? (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                gap: navGap,
-                                alignItems: "center",
-                                flex: 1,
-                                justifyContent: "center",
-                            }}
-                        >
+                        <Box sx={{ display: "flex", gap: navGap, alignItems: "center", flex: 1, justifyContent: "center" }}>
                             {navLinks.map((link, idx) => (
-                                <Button
-                                    key={link.text ?? `nav-${idx}`}
-                                    color="inherit"
-                                    disableRipple
-                                    sx={{
-                                        textTransform: "none",
-                                        color: colors.white1,
-                                        px: "0.25rem",
-                                        minWidth: "auto",
-                                        opacity: 0.9,
-                                        typography: btnTypography
-                                    }}
-                                    onClick={() => navigateTo(link.path)}
-                                >
-                                    {link.text}
-                                </Button>
+                                <React.Fragment key={link.text ?? `nav-${idx}`}>
+                                    {link.type === "cart" ? (
+                                       /* Coșul e tratat separat în dreapta, deci îl ignorăm aici în lista centrală */
+                                       null
+                                    ) : (
+                                        <Button
+                                            color="inherit"
+                                            disableRipple
+                                            sx={{
+                                                textTransform: "none",
+                                                color: colors.white1,
+                                                px: "0.25rem",
+                                                minWidth: "auto",
+                                                opacity: 0.9,
+                                                typography: btnTypography
+                                            }}
+                                            onClick={() => navigateTo(link.path)}
+                                        >
+                                            {link.text}
+                                        </Button>
+                                    )}
+                                </React.Fragment>
                             ))}
                         </Box>
                     ) : (
                         <Box sx={{ flex: 1 }} />
                     )}
 
-                    {/* Right Side Icons & Buttons */}
+                    {/* BUTOANE DREAPTA (Login/Profil/Coș) */}
                     <Box sx={{ display: "flex", gap: smallGap, alignItems: "center" }}>
                         {isMdUp ? (
                             <>
                                 {!isAuthenticated ? (
                                     <>
-                                        <Button
+                                        <Button 
                                             sx={{ color: colors.white2, typography: btnTypography }}
-                                            onClick={() => navigateTo('/login')}
+                                            onClick={() => navigateTo('/login')} 
                                         >
                                             {textResources.navbar.login}
                                         </Button>
                                         <Button
                                             variant="contained"
-                                            sx={{
-                                                bgcolor: colors.lightGreen2,
-                                                color: colors.darkGreen1,
-                                            }}
-                                            onClick={() => navigateTo('/inregistrare')}
+                                            sx={{ bgcolor: colors.lightGreen2, color: colors.darkGreen1 }}
+                                            onClick={() => navigateTo('/inregistrare')} 
                                         >
                                             {textResources.navbar.register}
                                         </Button>
-
-                                        {/* --- MODIFICARE: Coșul apare aici când nu ești logat (după Înregistrare) --- */}
+                                        {/* Coșul apare și când nu ești logat */}
                                         <CartButton />
                                     </>
                                 ) : (
@@ -269,38 +249,22 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                     ml: "0.5rem",
                                                     typography: btnTypography,
                                                 }}
-                                                onClick={() =>
-                                                    navigateTo(
-                                                        role === "PRODUCATOR"
-                                                            ? "/dashboard-producator"
-                                                            : "/admin"
-                                                    )
-                                                }
+                                                onClick={() => navigateTo(role === "PRODUCATOR" ? "/dashboard-producator" : "/admin")}
                                             >
                                                 {panelLabel}
                                             </Button>
                                         )}
-                                        <IconButton
-                                            color="inherit"
-                                            aria-label="profile"
-                                            size="large"
-                                            onClick={handleProfileOpen}
-                                        >
+                                        <IconButton color="inherit" aria-label="profile" size="large" onClick={handleProfileOpen}>
                                             <PersonOutline fontSize="small" />
                                         </IconButton>
-                                        <IconButton
-                                            color="inherit"
-                                            aria-label="favorites"
-                                            size="large"
-                                            sx={{ color: colors.white1 }}
-                                        >
+                                        <IconButton color="inherit" aria-label="favorites" size="large" sx={{ color: colors.white1 }}>
                                             <FavoriteBorderIcon fontSize="small" />
                                         </IconButton>
-
-                                        {/* --- MODIFICARE: Coșul apare aici când ești logat (după Favorite) --- */}
+                                        
+                                        {/* Coșul când ești logat */}
                                         <CartButton />
 
-
+                                        {/* MENIU PROFIL DESKTOP */}
                                         <Menu
                                             anchorEl={profileAnchor}
                                             open={Boolean(profileAnchor)}
@@ -311,25 +275,24 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                     color: colors.white1,
                                                     mt: "0.25rem",
                                                     minWidth: menuMinWidth,
-                                                    "& .MuiMenuItem-root": {
-                                                        color: colors.white1,
-                                                        typography: btnTypography,
-                                                    },
+                                                    "& .MuiMenuItem-root": { color: colors.white1, typography: btnTypography },
                                                 },
                                             }}
                                         >
-                                            {profileMenuItems.map((mi) => (
-                                                <MenuItem key={mi} onClick={handleProfileClose}>
-                                                    {mi}
+                                            {profileMenuItems.map((item) => (
+                                                <MenuItem 
+                                                    key={item.label} 
+                                                    onClick={() => {
+                                                        handleProfileClose();
+                                                        navigateTo(item.path);
+                                                    }}
+                                                >
+                                                    {item.label}
                                                 </MenuItem>
                                             ))}
                                             <MenuItem
-                                                sx={{
-                                                    borderTop: `1px solid ${colors.lightGreen1Transparent}`,
-                                                    pt: 2,
-                                                    mt: 1,
-                                                }}
-                                                onClick={handleLogout}
+                                                sx={{ borderTop: `1px solid ${colors.lightGreen1Transparent}`, pt: 2, mt: 1 }}
+                                                onClick={handleLogout} 
                                             >
                                                 {textResources.navbar.logout}
                                             </MenuItem>
@@ -338,15 +301,9 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                 )}
                             </>
                         ) : (
-                            // --- MOBILE VIEW ---
+                            // MENIU MOBIL (Hamburger)
                             <>
-                                <IconButton
-                                    edge="end"
-                                    color="inherit"
-                                    aria-label="menu"
-                                    onClick={handleDrawerOpen}
-                                    size="large"
-                                >
+                                <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleDrawerOpen} size="large">
                                     <MenuIcon fontSize="small" />
                                 </IconButton>
                                 <Drawer
@@ -377,27 +334,11 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                     }}
                                 >
                                     <Container maxWidth="lg" sx={{ px: 0 }}>
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                                p: "1rem",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                width: "100%",
-                                                boxSizing: "border-box",
-                                            }}
-                                        >
-                                            <List
-                                                sx={{
-                                                    width: "100%",
-                                                    display: "flex",
-                                                    flexDirection: "column",
-                                                    gap: 1,
-                                                    alignItems: "center",
-                                                }}
-                                            >
-                                                {/* --- MODIFICARE: Adăugăm manual Coșul pe mobil pentru că l-am scos din navLinks --- */}
+                                        <Box sx={{ display: "flex", flexDirection: "column", p: "1rem", alignItems: "center", justifyContent: "center", width: "100%", boxSizing: "border-box" }}>
+                                            
+                                            <List sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 1, alignItems: "center" }}>
+                                                
+                                                {/* Coșul pe mobil */}
                                                 <ListItem disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
                                                     <ListItemButton
                                                         onClick={() => navigateTo("/cart")}
@@ -405,36 +346,26 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                     >
                                                         <ListItemText
                                                             primary={`Coș de cumpărături (${total})`}
-                                                            primaryTypographyProps={{
-                                                                sx: { color: colors.white1, typography: btnTypography, textAlign: "center", width: "100%", fontWeight: "bold" },
-                                                            }}
+                                                            primaryTypographyProps={{ sx: { color: colors.white1, typography: btnTypography, textAlign: "center", width: "100%", fontWeight: "bold" } }}
                                                         />
                                                     </ListItemButton>
                                                 </ListItem>
 
                                                 {navLinks.map((link, idx) => (
+                                                    // Sărim peste coș aici pt că l-am pus manual mai sus
+                                                    link.type !== 'cart' && (
                                                     <ListItem key={link.text ?? `nav-mobile-${idx}`} disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
                                                         <ListItemButton
                                                             onClick={() => navigateTo(link.path)}
-                                                            sx={{
-                                                                py: "0.25rem",
-                                                                width: "100%",
-                                                                justifyContent: "center",
-                                                            }}
+                                                            sx={{ py: "0.25rem", width: "100%", justifyContent: "center" }}
                                                         >
                                                             <ListItemText
                                                                 primary={link.text}
-                                                                primaryTypographyProps={{
-                                                                    sx: {
-                                                                        color: colors.white1,
-                                                                        typography: btnTypography,
-                                                                        textAlign: "center",
-                                                                        width: "100%",
-                                                                    },
-                                                                }}
+                                                                primaryTypographyProps={{ sx: { color: colors.white1, typography: btnTypography, textAlign: "center", width: "100%" } }}
                                                             />
                                                         </ListItemButton>
                                                     </ListItem>
+                                                    )
                                                 ))}
 
                                                 {showPanelButton && (
@@ -443,22 +374,8 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                             <Button
                                                                 variant="contained"
                                                                 fullWidth
-                                                                onClick={() =>
-                                                                    navigateTo(
-                                                                        role === "PRODUCATOR"
-                                                                            ? "/dashboard-producator"
-                                                                            : "/admin"
-                                                                    )
-                                                                }
-                                                                sx={{
-                                                                    textTransform: "none",
-                                                                    bgcolor: colors.lightGreen2,
-                                                                    color: colors.darkGreen1,
-                                                                    justifyContent: "center",
-                                                                    px: 0,
-                                                                    typography: btnTypography,
-                                                                    borderRadius: "0.5rem",
-                                                                }}
+                                                                onClick={() => navigateTo(role === "PRODUCATOR" ? "/dashboard-producator" : "/admin")}
+                                                                sx={{ textTransform: "none", bgcolor: colors.lightGreen2, color: colors.darkGreen1, justifyContent: "center", px: 0, typography: btnTypography, borderRadius: "0.5rem" }}
                                                             >
                                                                 {panelLabel}
                                                             </Button>
@@ -467,103 +384,37 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                 )}
                                             </List>
 
-                                            <Divider
-                                                sx={{
-                                                    borderColor: colors.lightGreen1Transparent,
-                                                    my: "0.5rem",
-                                                    width: "100%",
-                                                }}
-                                            />
+                                            <Divider sx={{ borderColor: colors.lightGreen1Transparent, my: "0.5rem", width: "100%" }} />
 
                                             {!isAuthenticated ? (
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: "0.5rem",
-                                                        width: "100%",
-                                                        px: "0.5rem",
-                                                    }}
-                                                >
-                                                    <Button
-                                                        onClick={() => navigateTo("/login")}
-                                                        fullWidth
-                                                        sx={{
-                                                            textTransform: "none",
-                                                            color: colors.white2,
-                                                            justifyContent: "center",
-                                                            px: 0,
-                                                            typography: btnTypography,
-                                                        }}
-                                                    >
+                                                <Box sx={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%", px: "0.5rem" }}>
+                                                    <Button onClick={() => navigateTo("/login")} fullWidth sx={{ textTransform: "none", color: colors.white2, justifyContent: "center", px: 0, typography: btnTypography }}>
                                                         {textResources.navbar.login}
                                                     </Button>
-
-                                                    <Button
-                                                        onClick={() => navigateTo("/inregistrare")}
-                                                        variant="contained"
-                                                        fullWidth
-                                                        sx={{
-                                                            bgcolor: colors.lightGreen2,
-                                                            color: colors.darkGreen1,
-                                                            textTransform: "none",
-                                                            borderRadius: "0.5rem",
-                                                            py: "0.75rem",
-                                                            typography: btnTypography,
-                                                        }}
-                                                    >
+                                                    <Button onClick={() => navigateTo("/inregistrare")} variant="contained" fullWidth sx={{ bgcolor: colors.lightGreen2, color: colors.darkGreen1, textTransform: "none", borderRadius: "0.5rem", py: "0.75rem", typography: btnTypography }}>
                                                         {textResources.navbar.register}
                                                     </Button>
                                                 </Box>
                                             ) : (
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: "0.5rem",
-                                                        width: "100%",
-                                                        px: "0.5rem",
-                                                    }}
-                                                >
-                                                    {profileMenuItems.map((mi) => (
+                                                <Box sx={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%", px: "0.5rem" }}>
+                                                    {/* MENIU PROFIL MOBIL */}
+                                                    {profileMenuItems.map((item) => (
                                                         <Button
-                                                            key={mi}
-                                                            onClick={handleDrawerClose}
-                                                            fullWidth
-                                                            sx={{
-                                                                textTransform: "none",
-                                                                color: colors.white1,
-                                                                justifyContent: "center",
-                                                                px: 0,
-                                                                typography: btnTypography,
+                                                            key={item.label}
+                                                            onClick={() => {
+                                                                handleDrawerClose();
+                                                                navigateTo(item.path);
                                                             }}
+                                                            fullWidth
+                                                            sx={{ textTransform: "none", color: colors.white1, justifyContent: "center", px: 0, typography: btnTypography }}
                                                         >
-                                                            {mi}
+                                                            {item.label}
                                                         </Button>
                                                     ))}
 
-                                                    <Divider
-                                                        sx={{
-                                                            borderColor: colors.lightGreen1Transparent,
-                                                            my: "0.5rem",
-                                                            width: "100%",
-                                                        }}
-                                                    />
+                                                    <Divider sx={{ borderColor: colors.lightGreen1Transparent, my: "0.5rem", width: "100%" }} />
 
-                                                    <Button
-                                                        onClick={handleLogout}
-                                                        variant="contained"
-                                                        fullWidth
-                                                        sx={{
-                                                            textTransform: "none",
-                                                            bgcolor: colors.lightGreen2,
-                                                            color: colors.darkGreen1,
-                                                            justifyContent: "center",
-                                                            px: 0,
-                                                            typography: btnTypography,
-                                                            borderRadius: "0.5rem",
-                                                        }}
-                                                    >
+                                                    <Button onClick={handleLogout} variant="contained" fullWidth sx={{ textTransform: "none", bgcolor: colors.lightGreen2, color: colors.darkGreen1, justifyContent: "center", px: 0, typography: btnTypography, borderRadius: "0.5rem" }}>
                                                         {textResources.navbar.logout}
                                                     </Button>
                                                 </Box>

@@ -28,5 +28,4 @@ public class Produs {
     @OneToMany(mappedBy = "produs")
     private Set<ProdusProducator> produsProducatori = new LinkedHashSet<>();
 
-
 }
