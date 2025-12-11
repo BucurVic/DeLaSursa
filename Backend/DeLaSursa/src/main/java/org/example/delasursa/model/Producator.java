@@ -42,9 +42,9 @@ public class Producator {
     private String regiune;
 
     @OneToMany(mappedBy = "producator")
-    private Set<Pachet> pachete = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "producator")
     private Set<ProdusProducator> produsProducatori = new LinkedHashSet<>();
+
+     @OneToMany(mappedBy = "producator")
+    private Set<Pachet> pachete = new LinkedHashSet<>();
 
 }

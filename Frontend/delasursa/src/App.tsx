@@ -2,8 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 // --- Componentele de Layout și Securitate ---
-import MainLayout from "./components/MainLayout"; // Layout-ul cu Header/Sidebar/Footer
-import ProtectedRoute from "./components/ProtectedRoute"; // Paznicul de rută
+import MainLayout from "./components/MainLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import ProductsPage from "./pages/ProductsPage.tsx";
 import ProducerProductsPage from "./pages/ProducerPage.tsx";
 import ProductForm from "./components/AddProductForm.tsx";
@@ -14,8 +14,6 @@ import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
 
 // --- Paginile Publice ---
-// (Presupunând că ai fișierele create, chiar dacă sunt goale)
-// Noi am recreat aceste fișiere mai devreme
 import SignUpPage from "./pages/auth/SignUpPage.tsx";
 import LoginPage from "./pages/auth/LoginPage.tsx";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage.tsx";
@@ -29,8 +27,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage.tsx";
 import UserProducerPage from "./pages/UserProducerPage.tsx";
 import ProducersPage from "./pages/ProducersPage.tsx";
 
-// --- Pagini Placeholder (pentru test) ---
-// Acestea vor fi paginile reale ale aplicației tale
+// --- Pagini Placeholder / Reale ---
 import CheckoutPage from "./pages/CheckoutPage";
 import BecomeProducerPage from "./pages/BecomeProducerPage.tsx";
 import ClientOrderPage from "./pages/ClientOrderPage.tsx";
@@ -45,7 +42,6 @@ function App() {
   return (
     <Routes>
       {/* --- Rute Publice (Fără Layout) --- */}
-      {/* Acestea au propriul lor stil (ex: formular centrat) */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/inregistrare" element={<SignUpPage />} />
       <Route
@@ -54,29 +50,35 @@ function App() {
       />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
+      {/* --- RUTE COMUNE PROTEJATE (Accesibile oricărui utilizator logat) --- */}
+      {/* Aici sunt Contul Meu și Editarea, mutate corect sub protecție */}
+      <Route element={<ProtectedRoute allowedRoles={["CLIENT", "PRODUCATOR", "ADMIN"]} />}>
+        <Route element={<MainLayout />}>
+           <Route path="/contul-meu" element={<MyAccountPage />} />
+           <Route path="/edit-account" element={<EditAccountPage />} />
+           <Route path="/comenzile-mele" element={<div>Pagina Comenzi (WIP)</div>} />
+        </Route>
+      </Route>
+
       {/* --- Rute Publice (Cu Layout) --- */}
-      {/* Paginile pe care oricine le vede, dar care au Header/Footer/Sidebar */}
-      {/* Folosim MainLayout pentru a înveli pagina Home */}
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/producers" element={<ProducersPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
+        
         <Route path="/become-producer" element={<BecomeProducerPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
-        {/* Aici vor veni /produse, /despre-noi, etc. */}
-        <Route path="/checkout" element={<CheckoutPage />} /> // schimb cand am
-        cosul, e doar de test
-        <Route path="/my-orders/:id" element={<ClientOrderPage />} />
-        <Route path="/contul-meu" element={<MyAccountPage />} />
-        <Route path="/my-orders" element={<MyOrdersPage />} />
-        <Route path="/edit-account" element={<EditAccountPage />} />
-        {/* Aici vor veni /produse, /despre-noi, etc. */}
+
+        {/* Checkout și Comenzi */}
+        <Route path="/checkout" element={<CheckoutPage />} /> {/* schimb cand am cosul, e doar de test */}
+
+        <Route path="/order/:id" element={<ClientOrderPage />} />
+        <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
       </Route>
 
-      {/* --- Rute Protejate (Cu Layout) --- */}
-      {/* Aceste rute sunt învelite ȘI în Layout, ȘI în Paznic */}
+      {/* --- Rute Protejate PRODUCĂTOR --- */}
       <Route element={<ProtectedRoute allowedRoles={["PRODUCATOR"]} />}>
         <Route element={<ProducerLayout />}>
           <Route
@@ -84,7 +86,6 @@ function App() {
             element={<ProducerDashboardMain />}
           />
 
-          {/* pagina cu tab-uri */}
           <Route
             path="/dashboard-producator/produse"
             element={<ProducerProductsPage />}
@@ -93,7 +94,6 @@ function App() {
             <Route path="lista" element={<ProductListPage />} />
             <Route path="adauga" element={<ProductForm />} />
             <Route path="inventar" element={<InventoryPage />} />
-            {/* <Route path="promotii" element={<PromotionsPage />} /> */}
           </Route>
 
           <Route
@@ -108,6 +108,7 @@ function App() {
         </Route>
       </Route>
 
+      {/* --- Rute Protejate ADMIN --- */}
       <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminOverviewPage />} />
@@ -117,7 +118,7 @@ function App() {
         </Route>
       </Route>
 
-      {/* --- Orice alt URL care nu se potrivește --- */}
+      {/* --- Catch-all --- */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
