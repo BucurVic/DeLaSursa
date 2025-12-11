@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react'; // 1. Am adaugat useContext
+import { Link, useLocation } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -27,8 +27,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { colors, textResources, typography } from '../theme';
 
-// --- SIMULARE AUTH ---
-const IS_USER_LOGGED_IN = false;
+// 2. IMPORTĂM CONTEXTUL DE AUTH (Verifică dacă calea e corectă pt proiectul tău)
+// De obicei, dacă theme e la '../theme', contextul e la '../context/AuthContext'
+import { AuthContext } from '../context/AuthContext';
 
 // --- DATE ---
 const regions = [
@@ -57,9 +58,8 @@ const textFieldStyles = (disabled: boolean = false) => ({
         },
         "&.Mui-focused": { borderColor: colors.lightGreen1 },
 
-        // --- CORECȚIE AICI: Stilurile pentru iconițe ---
         "& .MuiSvgIcon-root": {
-            color: colors.lightGreen1, // <--- ERA white2, ACUM E lightGreen1
+            color: colors.lightGreen1,
             mr: 1
         },
         "& .MuiSelect-select": { display: 'flex', alignItems: 'center' },
@@ -141,6 +141,10 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
 
 const BecomeProducerPage: React.FC = () => {
     const tr = textResources.becomeProducer;
+    const location = useLocation();
+
+    // 3. FOLOSIM CONTEXTUL REAL
+    const { isAuthenticated } = useContext(AuthContext);
 
     // --- STATE ---
     const [formData, setFormData] = useState({
@@ -157,16 +161,12 @@ const BecomeProducerPage: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(false);
-
-    // State pentru vizibilitate parole
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // --- HANDLERS ---
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-
-        // VALIDARE TELEFON
         if (name === 'phone') {
             const numericValue = value.replace(/\D/g, '');
             if (numericValue.length <= 10) {
@@ -174,13 +174,14 @@ const BecomeProducerPage: React.FC = () => {
             }
             return;
         }
-
         setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = () => {
         setLoading(true);
-        console.log("Trimite date:", formData);
+        // Aici vei trimite datele
+        // Dacă isAuthenticated e true, trimiți doar detaliile fermei către un endpoint care atașează ferma la userul curent.
+        console.log("Trimite date (User Logat: " + isAuthenticated + ")", formData);
 
         setTimeout(() => {
             setLoading(false);
@@ -212,8 +213,8 @@ const BecomeProducerPage: React.FC = () => {
             >
                 <Stack spacing={4}>
 
-                    {/* --- 1. DATE CONT --- */}
-                    {!IS_USER_LOGGED_IN && (
+                    {/* --- 1. DATE CONT (Se afișează DOAR dacă NU ești logat) --- */}
+                    {!isAuthenticated && (
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                                 <PersonIcon sx={{ color: colors.lightGreen1 }} />
@@ -221,7 +222,6 @@ const BecomeProducerPage: React.FC = () => {
                             </Box>
 
                             <Stack spacing={3}>
-                                {/* RÂND 1: Nume + Prenume */}
                                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                                     <Box sx={{ flex: 1 }}>
                                         <CustomTextField
@@ -237,7 +237,6 @@ const BecomeProducerPage: React.FC = () => {
                                     </Box>
                                 </Stack>
 
-                                {/* RÂND 2: Email */}
                                 <Box sx={{ width: '100%' }}>
                                     <CustomTextField
                                         label={tr.fields.email} name="email" value={formData.email} onChange={handleChange}
@@ -245,7 +244,6 @@ const BecomeProducerPage: React.FC = () => {
                                     />
                                 </Box>
 
-                                {/* RÂND 3: Parola + Confirmare (CU OCHI VERZI) */}
                                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                                     <Box sx={{ flex: 1 }}>
                                         <CustomTextField
@@ -280,7 +278,7 @@ const BecomeProducerPage: React.FC = () => {
                                 </Stack>
                             </Stack>
 
-                            {/* Alerta Centrată */}
+                            {/* Link către LOGIN */}
                             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                                 <Alert
                                     severity="info"
@@ -297,6 +295,7 @@ const BecomeProducerPage: React.FC = () => {
                                     {tr.loginQuestion}{' '}
                                     <Link
                                         to="/login"
+                                        state={{ from: location }}
                                         style={{
                                             color: colors.lightGreen1,
                                             textDecoration: 'underline',
@@ -313,7 +312,7 @@ const BecomeProducerPage: React.FC = () => {
                         </Box>
                     )}
 
-                    {/* --- 2. DETALII PRODUCĂTOR --- */}
+                    {/* --- 2. DETALII PRODUCĂTOR (Vizibil mereu) --- */}
                     <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                             <AgricultureIcon sx={{ color: colors.lightGreen1 }} />
@@ -321,7 +320,6 @@ const BecomeProducerPage: React.FC = () => {
                         </Box>
 
                         <Stack spacing={3}>
-                            {/* RÂND 1: Cele 4 câmpuri */}
                             <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2} sx={{ width: '100%' }}>
                                 <Box sx={{ flex: 1 }}>
                                     <CustomTextField
@@ -354,7 +352,6 @@ const BecomeProducerPage: React.FC = () => {
                                 </Box>
                             </Stack>
 
-                            {/* RÂND 2: Descriere */}
                             <Box sx={{ width: '100%' }}>
                                 <CustomTextField
                                     multiline rows={5}
