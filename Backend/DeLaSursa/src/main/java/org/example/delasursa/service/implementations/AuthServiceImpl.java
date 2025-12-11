@@ -2,12 +2,19 @@ package org.example.delasursa.service.implementations;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.ConfirmNewPasswordRequest;
 import org.example.delasursa.common.dto.auth.*;
+import org.example.delasursa.common.dto.enums.TokenType;
+import org.example.delasursa.common.exceptions.TokenException;
 import org.example.delasursa.common.exceptions.UserAlreadyExistsException;
+import org.example.delasursa.common.exceptions.UserNotFoundException;
 import org.example.delasursa.common.exceptions.UserSaveFailedException;
+import org.example.delasursa.common.util.TokenUtil;
 import org.example.delasursa.jwt.JwtTokenProvider;
 import org.example.delasursa.model.Role;
+import org.example.delasursa.model.Token;
 import org.example.delasursa.model.User;
+import org.example.delasursa.repository.TokenRepository;
 import org.example.delasursa.repository.UserRepository;
 import org.example.delasursa.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -33,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-
+    private final TokenRepository tokenRepository;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
@@ -84,13 +91,19 @@ public class AuthServiceImpl implements AuthService {
         user.setEmailVerified(false);
 
         String verificationToken = UUID.randomUUID().toString();
-        user.setVerificationToken(verificationToken);
+
         user =  Optional.ofNullable(userRepository.save(user)).orElseThrow(() ->{
             log.error("An unexpected error occurred while saving user");
             return new UserSaveFailedException("An unexpected error occurred while saving user", HttpStatus.INTERNAL_SERVER_ERROR);
         });
 
         log.info("User {} saved successfully", user.getEmail());
+
+        Token token = new Token();
+        token.setToken(verificationToken);
+        token.setType(TokenType.EMAIL_VERIFICATION);
+        token.setUser(user);
+        this.tokenRepository.save(token);
 
         mailService.sendMailToConfirm(signupRequest.getEmail(), verificationToken);
         LoginRequest loginRequest = new LoginRequest(signupRequest.getEmail(), signupRequest.getPassword());
@@ -104,5 +117,24 @@ public class AuthServiceImpl implements AuthService {
     public void resetPassword(PasswordRessetRequest request) {
         String email = request.getEmail();
         mailService.sendResetPasswordMail(email);
+    }
+
+    @Override
+    public void confirmNewPassword(ConfirmNewPasswordRequest confirmNewPasswordRequest) {
+        String hashedTokenFromRequest = TokenUtil.hashToken(confirmNewPasswordRequest.getToken());
+
+        Token token = tokenRepository.findByToken(hashedTokenFromRequest);
+
+        if(!token.getToken().equals(hashedTokenFromRequest)) {
+            log.warn("New Password Confirmation Token does not match old Password Token");
+            throw new TokenException("Invalid reset password token", HttpStatus.BAD_REQUEST);
+        }
+
+        String newHashedPassword = passwordEncoder.encode(confirmNewPasswordRequest.getPassword());
+
+        User user = token.getUser();
+        user.setParola(newHashedPassword);
+        this.mailService.sendPasswordChangedMail(user.getEmail());
+        userRepository.save(user);
     }
 }

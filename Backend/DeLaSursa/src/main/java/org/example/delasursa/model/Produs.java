@@ -25,9 +25,7 @@ public class Produs {
     @Column(name = "categorie", length = Integer.MAX_VALUE)
     private String categorie;
 
-
     @OneToMany(mappedBy = "produs")
     private Set<ProdusProducator> produsProducatori = new LinkedHashSet<>();
-
 
 }

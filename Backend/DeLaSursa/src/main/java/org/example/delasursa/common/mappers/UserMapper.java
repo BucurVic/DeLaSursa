@@ -21,7 +21,11 @@ public class UserMapper {
                 .id(user.getId())
                 .email(user.getEmail())
                 .roles(roles)
-                .avatar(null)
+                .avatar(
+                        user.getAvatar() != null
+                        ? baseUrl + user.getAvatar()
+                        : null
+                )
                 .status(true)
                 .userDetails(userDetailsDTO)
                 .registrationDate(user.getDataInregistrare())

@@ -6,18 +6,98 @@ import {
     IconButton,
     Grid,
     Button,
+    Select,
+    MenuItem,
     type SelectChangeEvent
 } from "@mui/material";
 import SearchBar from "../components/SearchBar";
-import Dropdown from "../components/Dropdown";
 import FilterChip from "../components/FilterChip";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { colors } from "../theme/colors";
-import { textResources } from "../theme/textResources"
+import { textResources } from "../theme/textResources";
 import GridViewUserProducerCard from "../components/GridViewUserProducerCard";
 import ListViewUserProducerCard from "../components/ListViewUserProducerCard";
 
+// --- STILURI PRELUATE DIN ProductsPage ---
+const filterInputStyles = {
+    backgroundColor: colors.darkGreen1,
+    color: colors.white1,
+    borderRadius: "1rem",
+    border: `1px solid ${colors.lightGreen1Transparent}`,
+    fontSize: "1rem",
+    "& .MuiSelect-select": {
+        padding: "0.75rem 1rem",
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: "1.5rem",
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        border: "none",
+    },
+    "&:hover": {
+        border: `1px solid ${colors.lightGreen1}`,
+    },
+    "&.Mui-focused": {
+        border: `1px solid ${colors.lightGreen1}`,
+    },
+    "& .MuiSvgIcon-root": {
+        color: colors.lightGreen1,
+        right: "0.5rem"
+    }
+};
+
+const labelStyles = {
+    color: colors.white2,
+    mb: "0.5rem",
+    fontSize: "1rem",
+    fontWeight: 500,
+    textAlign: "left",
+    ml: 1
+};
+
+// --- COMPONENTA FILTRU REUTILIZABILĂ ---
+interface FilterSelectProps {
+    label: string;
+    value: string;
+    options: { value: string; label: string }[];
+    onChange: (event: SelectChangeEvent<string>) => void;
+}
+
+const FilterSelect: React.FC<FilterSelectProps> = ({ label, value, options, onChange }) => (
+    <Box sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" }, minWidth: 150 }}>
+        <Typography sx={labelStyles}>{label}</Typography>
+        <Select
+            fullWidth
+            value={value}
+            onChange={onChange}
+            displayEmpty
+            sx={filterInputStyles}
+            MenuProps={{
+                PaperProps: {
+                    sx: {
+                        bgcolor: colors.darkGreen2,
+                        color: colors.white1,
+                        borderRadius: "1rem",
+                        mt: 1,
+                        "& .MuiMenuItem-root": {
+                            "&:hover": { bgcolor: colors.lightGreen1Transparent },
+                            "&.Mui-selected": { bgcolor: colors.darkGreen1, "&:hover": { bgcolor: colors.lightGreen1Transparent } }
+                        }
+                    }
+                }
+            }}
+        >
+            {options.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                    {opt.label === "-" ? <span style={{ opacity: 0.5 }}>-</span> : opt.label}
+                </MenuItem>
+            ))}
+        </Select>
+    </Box>
+);
+
+// --- TIPURI SI DATE MOCK ---
 type Producer = {
     producerId: string;
     coverImage: string;
@@ -30,7 +110,6 @@ type Producer = {
     description: string;
 };
 
-// mock data - replace with actual API call
 const mockProducers = [
     {
         producerId: '1',
@@ -188,12 +267,12 @@ export default function ProducersPage() {
     const [selectedRegion, setSelectedRegion] = useState("");
     const [selectedRating, setSelectedRating] = useState("");
     const [selectedSort, setSelectedSort] = useState("");
-    const [producers, setProducers] = useState<Producer[]>();
+    // Folosim mock data direct pentru moment
+    const [producers] = useState<Producer[]>(mockProducers);
     const [viewType, setViewType] = useState<"grid" | "list">("grid");
 
-    useEffect(() => {
-        setProducers(mockProducers);
-    }, []);
+    // Nu e nevoie de useEffect pentru mock data static in acest exemplu simplificat,
+    // dar daca ai face fetch, aici ar fi locul.
 
     const handleDropdownChange = (label: string, event: SelectChangeEvent<string>) => {
         const value = event.target.value;
@@ -231,7 +310,7 @@ export default function ProducersPage() {
 
         if (selectedRating) {
             list.push({
-                label: `${selectedRating}+`,
+                label: `${selectedRating}+ ⭐`,
                 onRemove: () => setSelectedRating(""),
             });
         }
@@ -244,9 +323,8 @@ export default function ProducersPage() {
         selectedSort,
     ]);
 
-    // mock filtering logic - replace with actual API call with filters
     const filteredProducers = useMemo(() => {
-        let result = mockProducers.slice();
+        let result = producers.slice();
 
         if (search.trim() !== "") {
             const q = search.toLowerCase();
@@ -287,6 +365,7 @@ export default function ProducersPage() {
 
         return result;
     }, [
+        producers, // adăugat la dependency
         search,
         selectedCategory,
         selectedRegion,
@@ -296,21 +375,13 @@ export default function ProducersPage() {
 
     return (
         <>
-            <Typography
-                variant="h2"
-                align="center"
-                pt={5}
-                pb={2}
-            >
+            <Typography variant="h2" align="center" pt={5} pb={2}>
                 {textResources.producers.addText.localProducts}
             </Typography>
-            <Typography
-                variant="h6"
-                align="center"
-                pb={5}
-            >
+            <Typography variant="h6" align="center" pb={5}>
                 {textResources.producers.addText.discoverProducers}
             </Typography>
+
             <Card
                 sx={{
                     width: "100%",
@@ -318,7 +389,7 @@ export default function ProducersPage() {
                     boxSizing: "border-box",
                     display: "flex",
                     flexDirection: "column",
-                    gap: 4
+                    gap: 4,
                 }}
             >
                 <Box
@@ -326,11 +397,11 @@ export default function ProducersPage() {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        width: "100%"
+                        width: "100%",
                     }}
                 >
                     <SearchBar
-                        placeholder={textResources.searchBar.placeholder}
+                        placeholder={textResources.searchBar.placeholderProducatori}
                         value={search}
                         onChange={setSearch}
                     />
@@ -339,58 +410,46 @@ export default function ProducersPage() {
                     sx={{
                         display: "flex",
                         justifyContent: "center",
-                        alignItems: "center",
-                        gap: 2
+                        alignItems: "flex-end", // Aliniere la bază pt label-uri, la fel ca ProductsPage
+                        gap: 2,
+                        flexWrap: "wrap"
                     }}
                 >
-                    <Dropdown
+                    <FilterSelect
                         label={textResources.producers.filters.category}
                         value={selectedCategory}
                         options={categoryOptions}
-                        onChange={(value) =>
-                            handleDropdownChange(textResources.producers.filters.category, value)
+                        onChange={(e) =>
+                            handleDropdownChange(textResources.producers.filters.category, e)
                         }
-                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
-
                     />
-                    <Dropdown
+                    <FilterSelect
                         label={textResources.producers.filters.region}
                         value={selectedRegion}
                         options={regionOptions}
-                        onChange={(value) =>
-                            handleDropdownChange(textResources.producers.filters.region, value)
+                        onChange={(e) =>
+                            handleDropdownChange(textResources.producers.filters.region, e)
                         }
-                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
-                    <Dropdown
+                    <FilterSelect
                         label={textResources.producers.filters.rating}
                         value={selectedRating}
                         options={ratingOptions}
-                        onChange={(value) =>
-                            handleDropdownChange(textResources.producers.filters.rating, value)
+                        onChange={(e) =>
+                            handleDropdownChange(textResources.producers.filters.rating, e)
                         }
-                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
-                    <Dropdown
+                    <FilterSelect
                         label={textResources.producers.filters.sort}
                         value={selectedSort}
                         options={sortOptions}
-                        onChange={(value) =>
-                            handleDropdownChange(textResources.producers.filters.sort, value)
+                        onChange={(e) =>
+                            handleDropdownChange(textResources.producers.filters.sort, e)
                         }
-                        sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" } }}
                     />
                 </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 2
-                    }}
-                >
-                </Box>
             </Card>
+
             <Box
                 sx={{
                     mt: 2,
@@ -401,7 +460,7 @@ export default function ProducersPage() {
                     alignItems: "center",
                     justifyContent: "space-between",
                     flexWrap: "wrap",
-                    gap: 1
+                    gap: 1,
                 }}
             >
                 <Box
@@ -409,7 +468,7 @@ export default function ProducersPage() {
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
-                        flexWrap: "wrap"
+                        flexWrap: "wrap",
                     }}
                 >
                     {activeFilters.length > 0 && (
@@ -420,19 +479,15 @@ export default function ProducersPage() {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 1,
-                                flexWrap: "wrap"
+                                flexWrap: "wrap",
                             }}
                         >
-                            <Typography
-                                variant="h6"
-                                sx={{
-                                    mr: 1
-                                }}
-                            >
+                            <Typography variant="h6" sx={{ mr: 1 }}>
                                 {textResources.producers.activeFiltersLabel}
                             </Typography>
                             {activeFilters.map((af) => (
                                 <FilterChip
+                                    key={af.label}
                                     label={af.label}
                                     onRemove={af.onRemove}
                                 />
@@ -452,13 +507,7 @@ export default function ProducersPage() {
                         </Box>
                     )}
                 </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1
-                    }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <IconButton
                         onClick={() => setViewType("grid")}
                         sx={{
@@ -471,7 +520,7 @@ export default function ProducersPage() {
                             height: 40,
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center"
+                            justifyContent: "center",
                         }}
                     >
                         <GridViewIcon />
@@ -489,42 +538,23 @@ export default function ProducersPage() {
                             height: 40,
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "center"
+                            justifyContent: "center",
                         }}
                     >
                         <ViewListIcon />
                     </IconButton>
                 </Box>
             </Box>
-            <Box
-                sx={{
-                    mt: 4,
-                    mb: 4,
-                    px: 2,
-                    maxWidth: "1160px",
-                    mx: "auto"
-                }}
-            >
+
+            <Box sx={{ mt: 4, mb: 4, px: 2, maxWidth: "1160px", mx: "auto" }}>
                 {filteredProducers.length === 0 ? (
-                    <Typography
-                        align="center"
-                    >
+                    <Typography align="center" sx={{ color: colors.white2 }}>
                         {textResources.producers.noResults}
                     </Typography>
                 ) : viewType === "grid" ? (
-                    <Grid
-                        container
-                        spacing={2}
-                    >
+                    <Grid container spacing={2} justifyContent="center">
                         {filteredProducers.map((producer) => (
-                            <Grid
-                                item
-                                xs={12}
-                                sm={6}
-                                md={4}
-                                lg={3}
-                                key={producer.producerId}
-                            >
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={producer.producerId}>
                                 <GridViewUserProducerCard
                                     key={producer.producerId}
                                     producerId={producer.producerId}
@@ -541,21 +571,9 @@ export default function ProducersPage() {
                         ))}
                     </Grid>
                 ) : (
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 2
-                        }}
-                    >
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center"}}>
                         {filteredProducers.map((producer) => (
-                            <Box
-                                key={producer.producerId}
-                                sx={{
-                                    minWidth: 300,
-                                    flexShrink: 0
-                                }}
-                            >
+                            <Box key={producer.producerId} sx={{ minWidth: 300, flexShrink: 0 }}>
                                 <ListViewUserProducerCard
                                     key={producer.producerId}
                                     producerId={producer.producerId}

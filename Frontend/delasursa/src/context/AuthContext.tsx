@@ -1,15 +1,22 @@
 import React, { useCallback, useEffect, useState } from "react";
 import type { LoginRequest, RegisterRequest } from "../common/types";
 import getValidTokenFromStorage from "../common/utils";
-import {
-  login as loginApi,
-  register as registerApi,
-} from "../common/api/AuthApi";
+import { AuthApi } from "../api/authApi";
 import { jwtDecode } from "jwt-decode";
+import type { DecodedJwt } from "../common/utils";
+const loginApi = AuthApi.login;
+const registerApi = AuthApi.register;
 
 type LoginFn = (request: LoginRequest) => void;
 type LogoutFn = () => void;
 type RegisterFn = (request: RegisterRequest) => void;
+
+// --- 1. DEFINIM O INTERFAȚĂ PENTRU USER ---
+export interface User {
+  id: string;
+  email: string;
+  role: string;
+}
 
 export interface AuthState {
   authenticationError: Error | null;
@@ -19,17 +26,23 @@ export interface AuthState {
   login?: LoginFn;
   register?: RegisterFn;
   logout?: LogoutFn;
+
+  // Date raw
   username?: string;
   email?: string;
   password?: string;
+
   pendingAuthentication?: boolean;
   pendingRegistration?: boolean;
   token: string | null;
   role: string | null;
+
+  // --- 2. ADAUGĂM OBIECTUL USER ÎN STATE ---
+  user: User | null;
 }
 
 const initialState: AuthState = {
-  isAuthenticated: getValidTokenFromStorage() ? true : false,
+  isAuthenticated: !!getValidTokenFromStorage(),
   isAuthenticating: false,
   authenticationError: null,
   pendingAuthentication: false,
@@ -37,15 +50,8 @@ const initialState: AuthState = {
   isRegistering: false,
   token: getValidTokenFromStorage(),
   role: null,
+  user: null, // Inițial null
 };
-
-interface DecodedJwt {
-  sub: string;
-  id: string;
-  authorities: string[];
-  iat: number;
-  exp: number;
-}
 
 export const AuthContext = React.createContext<AuthState>(initialState);
 
@@ -65,16 +71,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isRegistering,
     token,
     role,
+    user, // Extragem user din state
   } = state;
+
   const login = useCallback<LoginFn>(loginCallback, []);
   const register = useCallback<RegisterFn>(registerCallback, []);
+
   useEffect(authenticationEffect, [pendingAuthentication]);
   useEffect(registrationEffect, [pendingRegistration]);
+
+  // --- 3. EFECT PENTRU REFRESH PAGINĂ (Initializează User-ul) ---
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
+    const storedToken = localStorage.getItem("jwt");
+    if (storedToken) {
       try {
-        const decodedToken = jwtDecode<DecodedJwt>(token);
+        const decodedToken = jwtDecode<DecodedJwt>(storedToken);
 
         if (decodedToken.exp * 1000 < Date.now()) {
           localStorage.removeItem("jwt");
@@ -83,14 +94,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             token: null,
             email: undefined,
             role: null,
+            user: null,
             isAuthenticated: false,
           });
         } else {
+          // AICI POPULĂM OBIECTUL USER
           setState({
             ...state,
-            token: token,
+            token: storedToken,
             email: decodedToken.sub,
             role: decodedToken.authorities[0],
+            user: {
+              id: decodedToken.id,
+              email: decodedToken.sub,
+              role: decodedToken.authorities[0],
+            },
             isAuthenticated: true,
           });
         }
@@ -102,11 +120,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           token: null,
           email: undefined,
           role: null,
+          user: null,
           isAuthenticated: false,
         });
       }
     }
   }, []);
+
   const value = {
     isAuthenticated,
     login,
@@ -117,7 +137,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isRegistering,
     token,
     role,
+    user, // --- 4. EXPUNEM USER CĂTRE COMPONENTE (CheckoutPage) ---
   };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 
   function loginCallback(request: LoginRequest): void {
@@ -146,18 +168,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setState((prev) => ({
       ...prev,
       isAuthenticated: false,
-      token: "",
+      token: null,
+      role: null,
+      user: null, // Resetăm user
     }));
   }
 
   function registrationEffect() {
     let canceled = false;
-    register();
+    doRegister(); // Am redenumit funcția internă să nu fie confuzie
     return () => {
       canceled = true;
     };
 
-    async function register() {
+    async function doRegister() {
       if (!pendingRegistration) return;
 
       try {
@@ -170,16 +194,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           throw Error(
             "Can not send register request without username/email/password"
           );
-        console.log("testet");
-        const { token } = await registerApi({ username, email, password });
-        if (canceled) {
-          return;
-        }
-        console.log("JWT U II: ", token);
+
+        const { data } = await registerApi({ username, email, password });
+        const token = data.token;
+        if (canceled) return;
+
+        // Decodăm token-ul și la înregistrare!
+        const decoded = jwtDecode<DecodedJwt>(token);
+
         localStorage.setItem("jwt", token);
+
         setState((prev) => ({
           ...prev,
           token,
+          // Setăm User-ul și la Register
+          user: {
+            id: decoded.id,
+            email: decoded.sub,
+            role: decoded.authorities[0],
+          },
+          role: decoded.authorities[0],
           pendingAuthentication: false,
           isAuthenticated: true,
           isAuthenticating: false,
@@ -187,9 +221,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isRegistering: false,
         }));
       } catch (error) {
-        if (canceled) {
-          return;
-        }
+        if (canceled) return;
         setState((prev) => ({
           ...prev,
           authenticationError: error as Error,
@@ -208,9 +240,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     async function authenticate() {
-      if (!pendingAuthentication) {
-        return;
-      }
+      if (!pendingAuthentication) return;
+
       try {
         setState((prev) => ({
           ...prev,
@@ -219,25 +250,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { email, password } = state;
         if (!email || !password)
           throw Error("Can not send login request without email/password");
-        const { token } = await loginApi({ email, password });
-        const decoded = jwtDecode<DecodedJwt>(token);  // <--- DECODE TOKEN HERE
-        if (canceled) {
-          return;
-        }
+
+        const { data } = await loginApi({ email, password });
+        const token = data.token;
+        // --- DECODARE ---
+        const decoded = jwtDecode<DecodedJwt>(token);
+
+        if (canceled) return;
+
         localStorage.setItem("jwt", token);
+
         setState((prev) => ({
           ...prev,
           token,
-            role: decoded.authorities[0],
+          role: decoded.authorities[0],
+          email: decoded.sub,
+          // --- SETARE USER ---
+          user: {
+            id: decoded.id,
             email: decoded.sub,
+            role: decoded.authorities[0],
+          },
           pendingAuthentication: false,
           isAuthenticated: true,
           isAuthenticating: false,
         }));
       } catch (error) {
-        if (canceled) {
-          return;
-        }
+        if (canceled) return;
         setState((prev) => ({
           ...prev,
           authenticationError: error as Error,
