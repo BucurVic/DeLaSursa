@@ -4,7 +4,8 @@ import { Box, Typography, Button } from "@mui/material";
 import { produseApi } from "../api/produseApi";
 import { colors } from "../theme/colors";
 import { useCart } from "../context/CartContext";
-import {textResources} from "../theme";
+import { textResources } from "../theme";
+
 const reviews = [
     {
         id: 1,
@@ -36,8 +37,10 @@ const ProductDetailsPage = () => {
 
     useEffect(() => {
         const load = async () => {
-            const res = await produseApi.getById(parseInt(id));
-            setProduct(res.data);
+            if (id) {
+                const res = await produseApi.getById(parseInt(id));
+                setProduct(res.data);
+            }
         };
         load();
     }, [id]);
@@ -54,103 +57,127 @@ const ProductDetailsPage = () => {
                 py: { xs: "1.5rem", md: "3rem" },
             }}
         >
+            {/* --- SECȚIUNEA DE SUS --- */}
             <Box
                 sx={{
                     display: "flex",
                     flexDirection: { xs: "column", md: "row" },
                     gap: { xs: "1.5rem", sm: "2rem", md: "3rem" },
-                    alignItems: { xs: "center", md: "flex-start" },
+                    // Păstrăm stretch pentru ca textul să se alinieze frumos cu imaginea
+                    alignItems: { xs: "center", md: "stretch" },
                 }}
             >
-                {/* IMAGINEA */}
+                {/* IMAGINEA STANDARDIZATĂ */}
                 <Box
                     component="img"
-                    src={product.image}
+                    src={product.produsImagine || "/images/default.jpg"}
+                    alt={product.produsName}
                     sx={{
-                        width: { xs: "100%", sm: "80%", md: "420px" },
+                        // 1. DIMENSIUNI FIXE
+                        width: { xs: "100%", sm: "80%", md: "275px" },
+                        height: { xs: "275px", md: "275px" },
+
+                        // 2. MAGIC PROPERTIES pentru uniformitate
+                        objectFit: "cover",    // Umple tot spațiul, taie excesul, NU deformează
+                        objectPosition: "center", // Centrează imaginea în cadru
+
                         borderRadius: "1rem",
-                        objectFit: "cover",
                         boxShadow: "0 0 18px rgba(0,0,0,0.25)",
+                        // Eliminăm minHeight variabil ca să forțăm dimensiunea fixă
                     }}
                 />
 
-                {/* DETALII */}
-                <Box sx={{ flex: 1, textAlign: { xs: "center", md: "left" } }}>
-                    <Typography
-                        variant="h4"
-                        sx={{
-                            fontWeight: 700,
-                            mb: { xs: 1, md: 2 },
-                            fontSize: { xs: "1.8rem", sm: "2rem" },
-                        }}
-                    >
-                        {product.produsName}
-                    </Typography>
-
-                    <Typography sx={{ opacity: 0.8, mb: 2 }}>
-                        {product.categorie} • {product.unitate_masura}
-                    </Typography>
-
-                    <Typography
-                        variant="h4"
-                        sx={{
-                            color: colors.lightGreen2,
-                            fontWeight: 600,
-                            mb: { xs: 2, md: 3 },
-                            fontSize: { xs: "1.8rem", sm: "2rem" },
-                        }}
-                    >
-                        {product.pret} lei
-                    </Typography>
-
-                    <Typography variant="body1" sx={{ mb: 2 }}>
-                        Producător: <b>{product.producatorName}</b>
-                    </Typography>
-
-                    {product.descriere && (
+                {/* DETALII PRODUS */}
+                <Box
+                    sx={{
+                        flex: 1,
+                        textAlign: { xs: "center", md: "left" },
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between"
+                    }}
+                >
+                    <Box>
                         <Typography
+                            variant="h4"
                             sx={{
-                                opacity: 0.9,
-                                lineHeight: "1.6",
-                                mb: { xs: 3, md: 4 },
-                                fontSize: { xs: "0.9rem", sm: "1rem" },
+                                fontWeight: 700,
+                                mb: { xs: 1, md: 2 },
+                                fontSize: { xs: "1.8rem", sm: "2rem" },
                             }}
                         >
-                            {product.descriere}
+                            {product.produsName}
                         </Typography>
-                    )}
 
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: colors.lightGreen2,
-                            color: colors.darkGreen1,
-                            fontWeight: 600,
-                            px: { xs: 3, md: 4 },
-                            py: 1.2,
-                            fontSize: "1rem",
-                            textTransform: "none",
-                            borderRadius: "0.7rem",
-                            "&:hover": {
-                                backgroundColor: colors.lightGreen1,
-                            },
-                        }}
-                        onClick={() =>
-                            addItem({
-                                id: product.id.toString(),
-                                title: product.produsName,
-                                price: product.pret,
-                                image: product.produsImagine ?? "/images/default.jpg",
-                                quantity: 1,
-                            })
-                        }
-                    >
-                        {textResources.productDetailsPage.addToCartButton}
-                    </Button>
+                        <Typography sx={{ opacity: 0.8, mb: 2 }}>
+                            {product.categorie} • {product.unitate_masura}
+                        </Typography>
+
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                color: colors.lightGreen2,
+                                fontWeight: 600,
+                                mb: { xs: 2, md: 3 },
+                                fontSize: { xs: "1.8rem", sm: "2rem" },
+                            }}
+                        >
+                            {product.pret} lei
+                        </Typography>
+
+                        <Typography variant="body1" sx={{ mb: 2 }}>
+                            Producător: <b>{product.producatorName}</b>
+                        </Typography>
+
+                        {product.descriere && (
+                            <Typography
+                                sx={{
+                                    opacity: 0.9,
+                                    lineHeight: "1.6",
+                                    mb: { xs: 3, md: 4 },
+                                    fontSize: { xs: "0.9rem", sm: "1rem" },
+                                }}
+                            >
+                                {product.descriere}
+                            </Typography>
+                        )}
+                    </Box>
+
+                    <Box>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: colors.lightGreen2,
+                                color: colors.darkGreen1,
+                                fontWeight: 600,
+                                px: { xs: 3, md: 4 },
+                                py: 1.2,
+                                fontSize: "1rem",
+                                textTransform: "none",
+                                borderRadius: "0.7rem",
+                                width: "fit-content",
+                                "&:hover": {
+                                    backgroundColor: colors.lightGreen1,
+                                },
+                            }}
+                            onClick={() =>
+                                addItem({
+                                    id: product.id.toString(),
+                                    title: product.produsName,
+                                    price: product.pret,
+                                    image: product.produsImagine ?? "/images/default.jpg",
+                                    quantity: 1,
+                                })
+                            }
+                        >
+                            {textResources.productDetailsPage.addToCartButton}
+                        </Button>
+                    </Box>
                 </Box>
             </Box>
-            {/* SECTION: REVIEWS */}
-            <Box sx={{ mt: "4rem", maxWidth: "1200px", mx: "auto", px: "1rem" }}>
+
+            {/* --- SECȚIUNEA: REVIEWS --- */}
+            <Box sx={{ mt: "4rem" }}>
                 <Typography
                     variant="h5"
                     sx={{ fontWeight: 700, mb: "1.5rem", textAlign: { xs: "center", md: "left" } }}
@@ -169,7 +196,6 @@ const ProductDetailsPage = () => {
                                 border: `1px solid ${colors.lightGreen1Transparent}`,
                             }}
                         >
-                            {/* HEADER: user + rating + date */}
                             <Box
                                 sx={{
                                     display: "flex",
@@ -188,23 +214,17 @@ const ProductDetailsPage = () => {
                                 </Typography>
                             </Box>
 
-                            {/* RATING */}
                             <Box sx={{ mb: "0.8rem" }}>
                                 {"★".repeat(r.rating)}
                                 {"☆".repeat(5 - r.rating)}
                             </Box>
 
-                            {/* COMMENT */}
                             <Typography sx={{ lineHeight: 1.6 }}>{r.comment}</Typography>
                         </Box>
                     ))}
                 </Box>
             </Box>
-
         </Box>
-
-
-
     );
 };
 

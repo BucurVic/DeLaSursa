@@ -71,7 +71,7 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
     city: "Cluj-Napoca",
     region: "Cluj",
     zip: "510789",
-    phone: "0723 456 789",
+    phone: "0701 111 111",
   },
   billingAddress: {
     name: `${c.client.nume} ${c.client.prenume}`,
@@ -79,11 +79,11 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
     city: "Cluj-Napoca",
     region: "Cluj",
     zip: "510789",
-    phone: "0723 456 789",
+    phone: "0701 111 111",
   },
   deliveryMethod: "Curier",
   paymentMethod: "Card",
-  transportCost: 15,
+  transportCost: 20,
 });
 
 export default function ClientOrderPage() {
