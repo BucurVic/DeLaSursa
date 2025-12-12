@@ -1,12 +1,46 @@
-import React from "react";
-import { Box, Typography, Button } from "@mui/material";
-import { colors } from "../../theme/colors";
+import React, { useContext, useState } from "react"; // 1. Importam hook-urile necesare
+import { Box, Typography } from "@mui/material";
+import { colors } from "../../theme";
 import PrimaryButton from "../../components/buttons/PrimaryButton";
 import SecondaryButton from "../../components/buttons/SecondaryButton";
 import { useNavigate } from "react-router-dom";
 
+// 2. Importăm AuthContext și Modalul
+import { AuthContext } from "../../context/AuthContext";
+import { RoleWarningModal } from "../../components/RoleWarningModal";
+
 const CTASection: React.FC = () => {
     const navigate = useNavigate();
+
+    // 3. Extragem datele utilizatorului
+    const { isAuthenticated, user } = useContext(AuthContext);
+
+    // 4. State pentru modal
+    const [isWarningOpen, setIsWarningOpen] = useState(false);
+    const [detectedRole, setDetectedRole] = useState<string | null>(null);
+
+    // 5. Handler-ul inteligent
+    const handleBecomeProducerClick = () => {
+        if (isAuthenticated && user) {
+            // Normalizăm rolurile (poate fi string sau array, depinde de backend)
+            const userRoles = Array.isArray(user.role) ? user.role : [user.role];
+
+            if (userRoles.includes('ADMIN')) {
+                setDetectedRole('Admin');
+                setIsWarningOpen(true);
+                return;
+            }
+
+            if (userRoles.includes('PRODUCATOR')) {
+                setDetectedRole('Producător');
+                setIsWarningOpen(true);
+                return;
+            }
+        }
+
+        // Dacă nu sunt restricții, navigăm la pagina de formular
+        navigate("/become-producer");
+    };
 
     return (
         <Box
@@ -61,10 +95,23 @@ const CTASection: React.FC = () => {
                         justifyContent: "center",
                     }}
                 >
-                    <PrimaryButton text="DEVINO PRODUCĂTOR" onClick={() => { navigate("/become-producer"); }} />
-                    <SecondaryButton text="PRODUCĂTORII NOȘTRI" onClick={() => { navigate("/producers"); }} />
+                    <PrimaryButton
+                        text="DEVINO PRODUCĂTOR"
+                        onClick={handleBecomeProducerClick}
+                    />
+
+                    <SecondaryButton
+                        text="PRODUCĂTORII NOȘTRI"
+                        onClick={() => { navigate("/producers"); }}
+                    />
                 </Box>
             </Box>
+
+            <RoleWarningModal
+                open={isWarningOpen}
+                onClose={() => setIsWarningOpen(false)}
+                roleName={detectedRole}
+            />
         </Box>
     );
 };
