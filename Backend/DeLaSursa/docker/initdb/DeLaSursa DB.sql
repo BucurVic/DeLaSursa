@@ -64,9 +64,7 @@ CREATE TABLE pachete (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   id_producator integer NOT NULL references producatori(id),
   nume varchar,
-  categorie varchar,
-  cantitate integer,
-  pret float
+  imagine varchar
 );
 
 CREATE TABLE subscriptii (

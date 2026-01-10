@@ -116,17 +116,17 @@ INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masu
 -- ========================================================
 -- STEP 6: Inserăm pachete
 -- ========================================================
-INSERT INTO pachete (id_producator, nume, categorie, cantitate, pret) VALUES
-    (12, 'Pachet Fructe 1', 'Fructe', 10, 25),
-    (13, 'Pachet Fructe 2', 'Fructe', 15, 30),
-    (14, 'Pachet Legume', 'Legume', 12, 28),
-    (15, 'Pachet Lactate', 'Lactate', 8, 35),
-    (16, 'Pachet Mixt 1', 'Mixt', 20, 50),
-    (17, 'Pachet Mixt 2', 'Mixt', 25, 60),
-    (18, 'Pachet Panificatie', 'Panificatie', 18, 20),
-    (19, 'Pachet Bauturi', 'Bauturi', 12, 40),
-    (20, 'Pachet Alimentar', 'Alimentar', 16, 32),
-    (12, 'Pachet Premium', 'Deluxe', 10, 75);
+INSERT INTO pachete (id_producator, nume, imagine) VALUES
+    (12, 'Pachet Fructe 1',' '),
+    (13, 'Pachet Fructe 2',' '),
+    (14, 'Pachet Legume',' '),
+    (15, 'Pachet Lactate',' '),
+    (16, 'Pachet Mixt 1',' '),
+    (17, 'Pachet Mixt 2',' '),
+    (18, 'Pachet Panificatie',' '),
+    (19, 'Pachet Bauturi',' '),
+    (20, 'Pachet Alimentar',' '),
+    (12, 'Pachet Premium',' ');
 
 -- ========================================================
 -- STEP 7: Inserăm pachet_produs

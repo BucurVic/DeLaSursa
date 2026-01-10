@@ -26,14 +26,8 @@ public class Pachet {
     @Column(name = "nume", length = Integer.MAX_VALUE)
     private String nume;
 
-    @Column(name = "categorie", length = Integer.MAX_VALUE)
-    private String categorie;
-
-    @Column(name = "cantitate")
-    private Integer cantitate;
-
-    @Column(name = "pret")
-    private Double pret;
+    @Column(name = "imagine", length = Integer.MAX_VALUE)
+    private String imagine;
 
     @OneToMany(mappedBy = "pachet")
     private Set<PachetProdus> pachetProduse = new LinkedHashSet<>();

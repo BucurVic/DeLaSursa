@@ -2,6 +2,7 @@ package org.example.delasursa.service.implementations;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.enums.ImageCategory;
 import org.example.delasursa.common.exceptions.ImageStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,16 +26,16 @@ public class ImageStoreService {
     @Value("${app.upload.uri:/uploads/}")
     private String baseUploadUri;
 
-    public  String saveImage(MultipartFile file, Integer producatorId) {
+    public  String saveImage(MultipartFile file, Integer ownerId, ImageCategory category) {
         if (file == null || file.isEmpty()) {
-            throw new ImageStorageException("Imaginea este goală sau lipsă pentru producătorul cu ID: " + producatorId);
+            throw new ImageStorageException("Imaginea este goală sau lipsă");
         }
 
         String originalFilename = Path.of(file.getOriginalFilename()).getFileName().toString();
         String extension = getExtension(originalFilename);
         String uniqueName = UUID.randomUUID() + (extension.isEmpty() ? "" : "." + extension);
 
-        Path uploadDir = Paths.get(baseUploadDir, String.valueOf(producatorId));
+        Path uploadDir = Paths.get(baseUploadDir, category.getFolderName(),String.valueOf(ownerId));
 
         try {
             if (!Files.exists(uploadDir)) {
@@ -45,11 +46,12 @@ public class ImageStoreService {
             Path destination = uploadDir.resolve(uniqueName);
             Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-            log.info("💾 Saved image for producătorul {} at: {}", producatorId, destination.toAbsolutePath());
-            return baseUploadUri + "/" +  producatorId + "/" +  uniqueName;
+            log.info("💾 Saved {} image for owner {} at: {}",category.getFolderName(), ownerId, destination.toAbsolutePath());
+            return baseUploadUri + (baseUploadUri.endsWith("/") ? "" : "/") +
+                    category.getFolderName() + "/" + ownerId + "/" + uniqueName;
 
         } catch (IOException e) {
-            throw new ImageStorageException("Eroare la salvarea imaginii pentru producătorul cu ID: " + producatorId, e);
+            throw new ImageStorageException("Eroare la salvarea imaginii (" + category + ") pentru ID: " + ownerId, e);
         }
     }
 
@@ -59,22 +61,25 @@ public class ImageStoreService {
         }
 
         try {
-            boolean deleted = Files.deleteIfExists(Paths.get(imagePath));
-            if (!deleted) {
-                throw new ImageStorageException("Imaginea nu a fost găsită pentru ștergere: " + imagePath);
+
+            String relativePath = imagePath.replace(baseUploadUri, "");
+            if(relativePath.startsWith("/")) relativePath = relativePath.substring(1);
+
+            Path fullPath = Paths.get(baseUploadDir, relativePath);
+
+            boolean deleted = Files.deleteIfExists(fullPath);
+            if (deleted) {
+                log.info("🗑️ Deleted image: {}", fullPath);
+            } else {
+                log.warn("⚠️ Image not found for deletion: {}", fullPath);
             }
         } catch (IOException e) {
             throw new ImageStorageException("Eroare la ștergerea imaginii: " + imagePath, e);
         }
     }
 
-    public  String replaceImage(MultipartFile newFile, String oldImagePath, Integer producatorId) {
+    public  String replaceImage(MultipartFile newFile, String oldImagePath, Integer ownerId, ImageCategory category) {
         if (newFile == null || newFile.isEmpty()) {
-            throw new ImageStorageException("Fișierul de imagine nou este gol.");
-        }
-
-        String originalFilename = Path.of(newFile.getOriginalFilename()).getFileName().toString();
-        if (oldImagePath != null && oldImagePath.endsWith(originalFilename)) {
             return oldImagePath;
         }
 
@@ -82,7 +87,7 @@ public class ImageStoreService {
             deleteImage(oldImagePath);
         }
 
-        return saveImage(newFile, producatorId);
+        return saveImage(newFile, ownerId,category);
     }
 
 
