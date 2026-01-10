@@ -33,35 +33,35 @@ export const textResources = {
     submitButton: "Trimite",
   },
 
-    searchBar: {
-        placeholder: "Caută produse...",
-        placeholderProduse: "Caută produse...",
-        placeholderProducatori: "Caută producători...",
-    },
+  searchBar: {
+    placeholder: "Caută produse...",
+    placeholderProduse: "Caută produse...",
+    placeholderProducatori: "Caută producători...",
+  },
 
-    uploader: {
-        title: "Apasă pentru a încărca",
-        acceptedFiles: "Fișiere acceptate: ",
-    },
+  uploader: {
+    title: "Apasă pentru a încărca",
+    acceptedFiles: "Fișiere acceptate: ",
+  },
 
-    pages: {
-        uploadFormTitle: "Formular de Upload",
-    },
+  pages: {
+    uploadFormTitle: "Formular de Upload",
+  },
 
-    buttons: {
-        submit: "Salvează",
-        cancel: "Anulează",
-        edit: "Editează",
-        deactivate: "Dezactivează",
-        delete: "Șterge",
-        save: "Salvează modificările",
-    },
+  buttons: {
+    submit: "Salvează",
+    cancel: "Anulează",
+    edit: "Editează",
+    deactivate: "Dezactivează",
+    delete: "Șterge",
+    save: "Salvează modificările",
+  },
 
-    deleteModal: {
-        title: "Confirmare ștergere",
-        message:
-            "Ești sigur că vrei să ștergi produsul {productName}? Această acțiune nu poate fi anulată.",
-    },
+  deleteModal: {
+    title: "Confirmare ștergere",
+    message:
+      "Ești sigur că vrei să ștergi produsul {productName}? Această acțiune nu poate fi anulată.",
+  },
 
   editModal: {
     title: "Editează produs",
@@ -267,6 +267,11 @@ export const textResources = {
       inventory: "Stoc / Inventar",
       promotions: "Promoții & Campanii",
     },
+  },
+  subscriptions: {
+    subscription: "Abonament",
+    mySubscriptions: "Abonamentele mele",
+    noSubscriptions: "Niciun abonament găsit",
   },
   producerDashboard: {
     title: "Dashboard",

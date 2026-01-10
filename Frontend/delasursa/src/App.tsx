@@ -37,6 +37,7 @@ import EditAccountPage from "./pages/EditAccountPage.tsx";
 import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
 import ProducerDashboardMain from "./pages/ProducerDashboardMain.tsx";
 import MyOrdersPage from "./pages/MyOrdersPage.tsx";
+import MySubscriptionsPage from "./pages/MySubscriptionsPage.tsx";
 
 function App() {
   return (
@@ -60,6 +61,9 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/contul-meu" element={<MyAccountPage />} />
           <Route path="/edit-account" element={<EditAccountPage />} />
+          <Route path="/my-orders" element={<MyOrdersPage />} />
+          <Route path="/abonamentele-mele" element={<MySubscriptionsPage />} />
+          <Route path="/my-orders/:id" element={<ClientOrderPage />} />
         </Route>
       </Route>
 
@@ -75,8 +79,6 @@ function App() {
         {/* Checkout și Comenzi */}
         <Route path="/checkout" element={<CheckoutPage />} />{" "}
         {/* schimb cand am cosul, e doar de test */}
-        <Route path="/my-orders/:id" element={<ClientOrderPage />} />
-        <Route path="/my-orders" element={<MyOrdersPage />} />
       </Route>
 
       {/* --- Rute Protejate PRODUCĂTOR --- */}
