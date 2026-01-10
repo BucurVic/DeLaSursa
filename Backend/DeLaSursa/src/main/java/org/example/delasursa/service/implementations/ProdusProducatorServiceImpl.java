@@ -1,6 +1,7 @@
 package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
+import org.example.delasursa.common.dto.enums.ImageCategory;
 import org.example.delasursa.common.dto.produs.CreateProdusRequest;
 import org.example.delasursa.common.dto.produs.ProdusDTO;
 import org.example.delasursa.common.dto.produs.UpdateProdusRequest;
@@ -114,7 +115,10 @@ public class ProdusProducatorServiceImpl implements ProdusProducatorService {
                 throw new OperationFailedException("Producer already sells this product");
             }
 
-            String imagine = imageStoreService.saveImage(request.getImagine(),producator.getId());
+            String imagine = imageStoreService.saveImage(
+                    request.getImagine(),
+                    producator.getId(),
+                    ImageCategory.PRODUS);
 
             String denumirePersonalizata = (request.getNume() != null &&
                     !request.getNume().isBlank())
@@ -155,7 +159,8 @@ public class ProdusProducatorServiceImpl implements ProdusProducatorService {
                 String newImagine = imageStoreService.replaceImage(
                         request.getImagine(),
                         produsProducator.getImagine(),
-                        produsProducator.getId()
+                        produsProducator.getProducator().getId(),
+                        ImageCategory.PRODUS
                 );
                 produsProducator.setImagine(newImagine);
             }
