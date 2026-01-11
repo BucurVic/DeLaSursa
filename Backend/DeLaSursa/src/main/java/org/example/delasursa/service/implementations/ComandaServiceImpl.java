@@ -27,6 +27,7 @@ import org.example.delasursa.model.Comanda;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,17 +36,25 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ComandaServiceImpl implements ComandaService {
 
-    private final ProdusRepository produsRepository;
     private final ClientRepository clientRepository;
     private final ComandaRepository comandaRepository;
     private final ProducatorRepository producatorRepository;
     private final ComandaMapper comandaMapper;
     private final ProdusProducatorRepository produsProducatorRepository;
     private final ComandaProdusRepository comandaProdusRepository;
+    private final MetodaLivrarePretRepository metodaLivrarePretRepository;
+    private final AdresaRepository adresaRepository;
 
     @Override
     @Transactional
     public CreateComandaResponse createComanda(CreateComandaRequest request) {
+
+        MetodaLivrarePret metodaLivrarePret = metodaLivrarePretRepository.findByMetodaLivrare(request.getMetodaLivrare()).orElseThrow(() -> {
+            log.warn("Metoda livrare {} not found!", request.getMetodaLivrare());
+            return new ProdusException("Metoda livrare not found!", HttpStatus.NOT_FOUND);
+        });
+
+
         //finding the products based of the id from the request
         //Map Entry format   <Produs, Pair<PretUnitar,Cantitate>>
         Map<ProdusProducator, Pair<Double, Double>> produse = request.getComandaProduseList()
@@ -71,7 +80,30 @@ public class ComandaServiceImpl implements ComandaService {
         //preparing the comanda
         Comanda comanda = new  Comanda();
         comanda.setClient(client);
+        comanda.setMetodaLivrare(metodaLivrarePret);
+        comanda.setMetodaPlata(request.getMetodaPlata());
         comanda.setDataEfectuarii(LocalDate.now());
+        comanda.setObservatii(request.getObservatii());
+
+        Adresa adresaLivrare = request.getAdresaLivrare();
+        if(adresaRepository.findByAdresa(adresaLivrare).isEmpty()) {
+            adresaLivrare = adresaRepository.save(adresaLivrare);
+        }
+
+        comanda.setAdresaLivrare(adresaLivrare);
+
+
+        if(request.getAdresaFacturare() == null) {
+            comanda.setAdresaFacturare(adresaLivrare);
+        }
+
+        else {
+            Adresa adresaFacturare = request.getAdresaFacturare();
+            if(adresaRepository.findByAdresa(adresaFacturare).isEmpty()) {
+                adresaFacturare = adresaRepository.save(adresaFacturare);
+            }
+            comanda.setAdresaFacturare(adresaFacturare);
+        }
 
         //seting comanda for comanda produse with
         Set<ComandaProdus> comandaProuse = produse.entrySet().stream()
