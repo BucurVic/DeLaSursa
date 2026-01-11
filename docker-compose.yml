@@ -15,7 +15,7 @@ services:
 
   # --- Spring Boot Backend ---
   backend:
-    build:a
+    build:
     context: ./Backend/DeLaSursa
     container_name: spring-app
     depends_on:
@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
 
 
-  # --- Vite React Frontend ---
+  # ---a Vite React Frontend ---
   frontend:
     build:
       context: ./Frontend/delasursa
