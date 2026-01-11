@@ -109,7 +109,7 @@ export default function HeroSection() {
                             <Box sx={{ display: "flex", gap: { xs: 1, sm: 2 }, mt: { xs: 1.5, md: 2 } }}>
                                 <PrimaryButton
                                     text={hero.ctaPrimary}
-                                    onClick={() => navigate("/products")}
+                                    onClick={() => navigate("/produse")}
                                 />
 
                                 {/* 6. MODIFICAT: Folosim handler-ul nostru în loc de navigate direct */}

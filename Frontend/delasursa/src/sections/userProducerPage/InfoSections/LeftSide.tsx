@@ -1,10 +1,14 @@
-import React from "react";
-import { Box, Typography, Tabs, Tab, IconButton, useMediaQuery, useTheme } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {Box, IconButton, Tab, Tabs, Typography, useMediaQuery, useTheme} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { colors } from "../../../theme/colors";
+import {colors} from "../../../theme";
 import GridViewUserProductCard from "../../../components/GridViewUserProductCard";
 import ReviewCard from "../../../components/ReviewCard";
+import BundleCard from "../../../components/BundleCard.tsx";
+import { useCart } from "../../../context/CartContext.tsx";
+
+import { pacheteApi  } from "../../../api/pacheteApi";
 
 interface Product {
     productId: string;
@@ -27,6 +31,7 @@ interface Review {
     date: string;
     text: string;
     avatar: string;
+    productImage?: string;
 }
 
 interface GalleryImage {
@@ -36,12 +41,24 @@ interface GalleryImage {
 }
 
 interface LeftSideProps {
-    producerName: string;
+    producerName: string; // Folosim acest nume pentru a filtra pachetele (daca nu avem ID)
+    producerId?: number;  // Ideal ar fi să avem ID-ul
     description: string;
 }
 
+// --- Definim tipul intern pentru Bundle (similar cu SubscriptionPage) ---
+interface BundleData {
+    id: string;
+    title: string;
+    price: number;
+    currency: string;
+    image: string;
+    images?: string[];
+    items: { name: string; quantity: string }[];
+    producer: string;
+}
 
-// Mock data
+// Mock data (produse)
 const MOCK_PRODUCTS: Product[] = [
     {
         productId: "1",
@@ -249,12 +266,12 @@ interface CarouselSectionProps {
 }
 
 const CarouselSection: React.FC<CarouselSectionProps> = ({
-    items,
-    renderItem,
-    desktopVisibleItems,
-    tabletVisibleItems,
-    mobileVisibleItems,
-}) => {
+                                                             items,
+                                                             renderItem,
+                                                             desktopVisibleItems,
+                                                             tabletVisibleItems,
+                                                             mobileVisibleItems,
+                                                         }) => {
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
     const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -281,16 +298,19 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
 
     const visibleItemsList = items.slice(currentIndex, currentIndex + visibleItems);
 
+    if (items.length === 0) {
+        return <Typography sx={{color: colors.white2, fontStyle: 'italic'}}>Nu există elemente de afișat.</Typography>;
+    }
+
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            {/* Carousel Grid */}
+        <Box sx={{display: "flex", flexDirection: "column", gap: "1.5rem"}}>
             <Box
                 sx={{
                     display: "flex",
                     gap: "1.5rem",
                     width: "100%",
                     justifyContent: "flex-start",
-                    alignItems: "start",
+                    alignItems: "stretch",
                     overflowX: "hidden",
                 }}
             >
@@ -309,7 +329,6 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
                 ))}
             </Box>
 
-            {/* Navigation buttons - under carousel */}
             {items.length > visibleItems && (
                 <Box
                     sx={{
@@ -319,50 +338,11 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
                         mt: "2rem",
                     }}
                 >
-                    <IconButton
-                        onClick={handlePrev}
-                        disabled={currentIndex === 0}
-                        sx={{
-                            width: "2.5rem",
-                            height: "2.5rem",
-                            borderRadius: "50%",
-                            border: `1px solid ${colors.lightGreen1Transparent}`,
-                            color: colors.lightGreen1,
-                            transition: "all 0.2s ease",
-                            "&:hover:not(:disabled)": {
-                                borderColor: colors.lightGreen1,
-                                backgroundColor: `${colors.lightGreen1}15`,
-                            },
-                            "&:disabled": {
-                                opacity: 0.5,
-                                cursor: "not-allowed",
-                            },
-                        }}
-                    >
-                        <ArrowBackIcon />
+                    <IconButton onClick={handlePrev} disabled={currentIndex === 0} sx={{ /* ... stiluri butoane ... */ border: `1px solid ${colors.lightGreen1}`, color: colors.lightGreen1 }}>
+                        <ArrowBackIcon/>
                     </IconButton>
-
-                    <IconButton
-                        onClick={handleNext}
-                        disabled={currentIndex === maxIndex}
-                        sx={{
-                            width: "2.5rem",
-                            height: "2.5rem",
-                            borderRadius: "50%",
-                            border: `1px solid ${colors.lightGreen1Transparent}`,
-                            color: colors.lightGreen1,
-                            transition: "all 0.2s ease",
-                            "&:hover:not(:disabled)": {
-                                borderColor: colors.lightGreen1,
-                                backgroundColor: `${colors.lightGreen1}15`,
-                            },
-                            "&:disabled": {
-                                opacity: 0.5,
-                                cursor: "not-allowed",
-                            },
-                        }}
-                    >
-                        <ArrowForwardIcon />
+                    <IconButton onClick={handleNext} disabled={currentIndex === maxIndex} sx={{ /* ... stiluri butoane ... */ border: `1px solid ${colors.lightGreen1}`, color: colors.lightGreen1 }}>
+                        <ArrowForwardIcon/>
                     </IconButton>
                 </Box>
             )}
@@ -371,83 +351,91 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
 };
 
 const LeftSide: React.FC<LeftSideProps> = ({
-    producerName,
-    description,
-}) => {
+                                               producerName,
+                                               producerId, // Am adăugat opțional ID-ul dacă îl ai
+                                               description,
+                                           }) => {
+    const { addItem } = useCart();
     const [tabValue, setTabValue] = React.useState(0);
+
+    // State pentru Abonamente Reale
+    const [bundles, setBundles] = useState<BundleData[]>([]);
+    const [loadingBundles, setLoadingBundles] = useState(false);
+
+    // FETCH PACHETE DE LA BACKEND
+    useEffect(() => {
+        const fetchBundles = async () => {
+            try {
+                setLoadingBundles(true);
+                let response;
+
+                if (producerId) {
+                    // Dacă avem ID, folosim endpoint-ul dedicat
+                    response = await pacheteApi.getByProducator(producerId);
+                } else {
+                    // Fallback: Luăm toate și filtrăm după nume (nu e ideal, dar merge temporar)
+                    response = await pacheteApi.getAll();
+                }
+
+                const allBundles = response.data.content.map(mapBackendToFrontend);
+
+                // Filtrare client-side suplimentară dacă nu am folosit endpoint-ul byProducator
+                const producerBundles = producerId
+                    ? allBundles
+                    : allBundles.filter(b => b.producer.toLowerCase().includes(producerName.toLowerCase()));
+
+                setBundles(producerBundles);
+            } catch (error) {
+                console.error("Eroare la încărcarea pachetelor producătorului:", error);
+            } finally {
+                setLoadingBundles(false);
+            }
+        };
+
+        fetchBundles();
+    }, [producerName, producerId]); // Se re-execută dacă se schimbă producătorul
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
+    const handleAddToCard = (id: string) => {
+        // Căutăm în lista reală 'bundles' nu în MOCK
+        const bundle = bundles.find((b) => b.id === id);
+
+        if (bundle) {
+            addItem({
+                id: Number(bundle.id) + 50000,
+                title: bundle.title,
+                price: bundle.price,
+                image: bundle.image,
+                quantity: 1,
+            });
+            console.log("Abonament adăugat în coș:", bundle.title);
+        }
+    };
+
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "2rem",
-            }}
-        >
-            {/* Title */}
-            <Typography
-                variant="h3"
-                sx={{
-                    color: colors.white1,
-                }}
-            >
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <Typography variant="h3" sx={{ color: colors.white1 }}>
                 DESPRE {producerName.toUpperCase()}
             </Typography>
 
-            {/* Description box */}
-            <Box
-                sx={{
-                    backgroundColor: colors.darkGreen2,
-                    border: `1px solid ${colors.lightGreen1Transparent}`,
-                    borderRadius: "1rem",
-                    padding: "1.5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1rem",
-                }}
-            >
-                <Typography
-                    variant="body1"
-                    sx={{
-                        color: colors.white2,
-                    }}
-                >
+            <Box sx={{ backgroundColor: colors.darkGreen2, border: `1px solid ${colors.lightGreen1Transparent}`, borderRadius: "1rem", padding: "1.5rem" }}>
+                <Typography variant="body1" sx={{ color: colors.white2 }}>
                     {description}
                 </Typography>
             </Box>
 
-            {/* Tabs */}
-            <Box
-                sx={{
-                    borderBottom: `1px solid ${colors.lightGreen1Transparent}`,
-                }}
-            >
-                <Tabs
-                    value={tabValue}
-                    onChange={handleTabChange}
-                    sx={{
-                        "& .MuiTab-root": {
-                            color: colors.white2,
-                            textTransform: "none",
-                            borderBottom: `1px solid transparent`,
-                            "&.Mui-selected": {
-                                color: colors.lightGreen1,
-                                borderBottomColor: colors.lightGreen1,
-                            },
-                        },
-                    }}
-                >
-                    <Tab label={`Produse (${MOCK_PRODUCTS.length})`} />
-                    <Tab label={`Recenzii (${MOCK_REVIEWS.length})`} />
-                    <Tab label={`Galerie (${MOCK_GALLERY.length})`} />
+            <Box sx={{ borderBottom: `1px solid ${colors.lightGreen1Transparent}` }}>
+                <Tabs value={tabValue} onChange={handleTabChange} sx={{ "& .MuiTab-root": { color: colors.white2, "&.Mui-selected": { color: colors.lightGreen1 } } }}>
+                    <Tab label={`Produse (${MOCK_PRODUCTS.length})`}/>
+                    <Tab label={`Pachete (${bundles.length})`}/> {/* Contor real */}
+                    <Tab label={`Recenzii (${MOCK_REVIEWS.length})`}/>
+                    <Tab label={`Galerie (${MOCK_GALLERY.length})`}/>
                 </Tabs>
             </Box>
 
-            {/* Tab 0: Produse */}
             {tabValue === 0 && (
                 <CarouselSection
                     items={MOCK_PRODUCTS}
@@ -466,64 +454,72 @@ const LeftSide: React.FC<LeftSideProps> = ({
                             reviewCount={product.reviewCount}
                             price={product.price}
                             currency="lei"
-                            onAddToCart={() => console.log("Added to cart:", product.name)}
+                            onAddToCart={() => addItem({
+                                id: String(product.productId),
+                                title: product.name,
+                                price: product.price,
+                                image: product.image,
+                                quantity: 1
+                            })}
                         />
                     )}
                 />
             )}
 
-            {/* Tab 1: Recenzii */}
+            {/* Tab 2: Pachete  */}
             {tabValue === 1 && (
+                loadingBundles ? (
+                    <Typography sx={{ color: colors.white2 }}>Se încarcă pachetele...</Typography>
+                ) : (
+                    <CarouselSection
+                        items={bundles} // Folosim state-ul 'bundles' populat din API
+                        desktopVisibleItems={3}
+                        tabletVisibleItems={2}
+                        mobileVisibleItems={1}
+                        renderItem={(bundle: BundleData) => (
+                            <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', p: 1 }}>
+                                <BundleCard
+                                    id={bundle.id}
+                                    title={bundle.title}
+                                    price={bundle.price}
+                                    currency={bundle.currency}
+                                    image={bundle.image}
+                                    items={bundle.items}
+                                    onAddToCart={handleAddToCard}
+                                />
+                            </Box>
+                        )}
+                    />
+                )
+            )}
+
+            {tabValue === 2 && (
                 <CarouselSection
                     items={MOCK_REVIEWS}
                     desktopVisibleItems={2}
                     tabletVisibleItems={1}
                     mobileVisibleItems={1}
                     renderItem={(review: Review) => (
-                        <ReviewCard
-                            author={review.author}
-                            rating={review.rating}
-                            date={review.date}
-                            text={review.text}
-                            avatar={review.avatar}
-                            productImage={review.productImage}
-                        />
+                        <ReviewCard {...review} />
                     )}
                 />
             )}
 
-            {/* Tab 2: Galerie */}
-            {tabValue === 2 && (
+            {tabValue === 3 && (
                 <CarouselSection
                     items={MOCK_GALLERY}
                     desktopVisibleItems={3}
                     tabletVisibleItems={2}
                     mobileVisibleItems={1}
                     renderItem={(image: GalleryImage) => (
-                        <Box
-                            sx={{
-                                width: "100%",
-                                height: "220px",
-                                borderRadius: "1rem",
-                                overflow: "hidden",
-                                border: `1px solid ${colors.lightGreen1Transparent}`,
-                                cursor: "pointer",
-                            }}
-                        >
-                            <Box
-                                component="img"
-                                src={image.url}
-                                alt={image.title}
-                                sx={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                }}
-                            />
+                        <Box sx={{ width: "100%", height: "220px", borderRadius: "1rem", overflow: "hidden" }}>
+                            <Box component="img" src={image.url} alt={image.title} sx={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </Box>
                     )}
                 />
             )}
+
+
         </Box>
     );
 };

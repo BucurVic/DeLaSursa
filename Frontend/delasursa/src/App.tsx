@@ -38,6 +38,8 @@ import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
 import ProducerDashboardMain from "./pages/ProducerDashboardMain.tsx";
 import MyOrdersPage from "./pages/MyOrdersPage.tsx";
 import MySubscriptionsPage from "./pages/MySubscriptionsPage.tsx";
+import SubscriptionPage from "./pages/BundlesPage.tsx";
+import BundleDetailsPage from "./pages/BundleDetailsPage.tsx";
 
 function App() {
   return (
@@ -69,13 +71,15 @@ function App() {
 
       {/* --- Rute Publice (Cu Layout) --- */}
       <Route element={<MainLayout />}>
-        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/produse" element={<ProductsPage />} />
+          <Route path="/pachete" element={<SubscriptionPage/>}/>
+          <Route path="/pachete/:id" element={<BundleDetailsPage />} />
         <Route path="/producers" element={<ProducersPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
         <Route path="/become-producer" element={<BecomeProducerPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/product/:id" element={<ProductDetailsPage />} />
+        <Route path="/cos-de-cumparaturi" element={<CartPage />} />
+        <Route path="/produse/:id" element={<ProductDetailsPage />} />
         {/* Checkout și Comenzi */}
         <Route path="/checkout" element={<CheckoutPage />} />{" "}
         {/* schimb cand am cosul, e doar de test */}

@@ -48,7 +48,7 @@ const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
     return (
         <Card
             onClick={() =>
-                navigate(`/product/${productId}`)}
+                navigate(`/produse/${productId}`)}
 
             sx={{
                 height: "13rem",
@@ -251,7 +251,7 @@ const ListViewUserProductCard: React.FC<ListViewUserProductCardProps> = ({
                             }
                         }}
                     >
-                        ADAUGĂ ÎN COȘ
+                        Adaugă în coș
                     </Button>
 
                 </Box>

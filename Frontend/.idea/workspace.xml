@@ -4,11 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="add to cart button, cart page, product details page, cart context">
+    <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="Refactor the logic of the bundles, added a specific section in the navbar and in also for the producers. &#10;&#10;Page for all the bundles, with filters available in the frontend&#10;&#10;Page for  bundle details&#10;&#10;Add bundles to cart">
+      <change afterPath="$PROJECT_DIR$/delasursa/src/api/pacheteApi.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/delasursa/src/pages/BundlesPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BecomeProducerPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BecomeProducerPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/admin/AdminUsersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/admin/AdminUsersPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/auth/LoginPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/auth/LoginPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/ClientOrderViewProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/ClientOrderViewProductCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/GridViewUserProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/GridViewUserProductCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/ListViewUserProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/ListViewUserProductCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/SubscriptionCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/SubscriptionCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/SunscriptionBundleCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/BundleCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/context/CartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/context/CartContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/CartPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/CartPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/CheckoutPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/CheckoutPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProductDetailsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProductDetailsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/SunscriptionPage.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/sections/homepage/HeroSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/sections/homepage/HeroSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/sections/homepage/PopularProductsSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/sections/homepage/PopularProductsSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/sections/userProducerPage/BundleSection.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/sections/userProducerPage/InfoSections/LeftSide.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/sections/userProducerPage/InfoSections/LeftSide.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +37,8 @@
       <list>
         <option value="JSX File" />
         <option value="JavaScript File" />
-        <option value="TypeScript File" />
         <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -64,7 +81,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/Producers-endpoints",
+    "git-widget-placeholder": "feature/subscriptions-oana",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Semestrul 5/PC/DeLaSursa/Backend",
     "node.js.detected.package.eslint": "true",
@@ -73,7 +90,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.updates",
-    "ts.external.directory.path": "/Users/victorbucur/FACC/ANUL3/SEM1/PC/Frontend/delasursa/node_modules/typescript/lib",
+    "ts.external.directory.path": "D:\\Semestrul 5\\PC\\DeLaSursa\\Frontend\\delasursa\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -112,6 +129,7 @@
       <workItem from="1762861675645" duration="685000" />
       <workItem from="1762862386716" duration="7021000" />
       <workItem from="1763983296002" duration="14000" />
+      <workItem from="1768130950448" duration="12687000" />
     </task>
     <task id="LOCAL-00001" summary="dropdpwn, file uploader and add product form">
       <option name="closed" value="true" />
@@ -175,6 +193,8 @@
     <MESSAGE value="producer dashboard skeleton" />
     <MESSAGE value="fix" />
     <MESSAGE value="add to cart button, cart page, product details page, cart context" />
-    <option name="LAST_COMMIT_MESSAGE" value="add to cart button, cart page, product details page, cart context" />
+    <MESSAGE value="subscriptions for a producer, in navbar, subscriptions details page" />
+    <MESSAGE value="Refactor the logic of the bundles, added a specific section in the navbar and in also for the producers. &#10;&#10;Page for all the bundles, with filters available in the frontend&#10;&#10;Page for  bundle details&#10;&#10;Add bundles to cart" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor the logic of the bundles, added a specific section in the navbar and in also for the producers. &#10;&#10;Page for all the bundles, with filters available in the frontend&#10;&#10;Page for  bundle details&#10;&#10;Add bundles to cart" />
   </component>
 </project>
