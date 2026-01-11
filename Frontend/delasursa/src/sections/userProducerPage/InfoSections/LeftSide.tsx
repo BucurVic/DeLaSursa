@@ -1,10 +1,14 @@
 import React from "react";
-import { Box, Typography, Tabs, Tab, IconButton, useMediaQuery, useTheme } from "@mui/material";
+import {Box, IconButton, Tab, Tabs, Typography, useMediaQuery, useTheme} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { colors } from "../../../theme/colors";
+import {colors} from "../../../theme/colors";
 import GridViewUserProductCard from "../../../components/GridViewUserProductCard";
 import ReviewCard from "../../../components/ReviewCard";
+import {MOCK_BUNDLES} from "../BundleSection.tsx";
+import SubscriptionBundleCard from "../../../components/SunscriptionBundleCard.tsx";
+// 1. IMPORTĂM CONTEXTUL
+import { useCart } from "../../../context/CartContext.tsx";
 
 interface Product {
     productId: string;
@@ -27,6 +31,7 @@ interface Review {
     date: string;
     text: string;
     avatar: string;
+    productImage?: string; // corectat tipul
 }
 
 interface GalleryImage {
@@ -41,7 +46,7 @@ interface LeftSideProps {
 }
 
 
-// Mock data
+// Mock data (produse)
 const MOCK_PRODUCTS: Product[] = [
     {
         productId: "1",
@@ -249,12 +254,12 @@ interface CarouselSectionProps {
 }
 
 const CarouselSection: React.FC<CarouselSectionProps> = ({
-    items,
-    renderItem,
-    desktopVisibleItems,
-    tabletVisibleItems,
-    mobileVisibleItems,
-}) => {
+                                                             items,
+                                                             renderItem,
+                                                             desktopVisibleItems,
+                                                             tabletVisibleItems,
+                                                             mobileVisibleItems,
+                                                         }) => {
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
     const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -282,7 +287,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
     const visibleItemsList = items.slice(currentIndex, currentIndex + visibleItems);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <Box sx={{display: "flex", flexDirection: "column", gap: "1.5rem"}}>
             {/* Carousel Grid */}
             <Box
                 sx={{
@@ -290,7 +295,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
                     gap: "1.5rem",
                     width: "100%",
                     justifyContent: "flex-start",
-                    alignItems: "start",
+                    alignItems: "stretch", // <--- MODIFICARE: Era 'start', pune 'stretch'
                     overflowX: "hidden",
                 }}
             >
@@ -339,7 +344,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
                             },
                         }}
                     >
-                        <ArrowBackIcon />
+                        <ArrowBackIcon/>
                     </IconButton>
 
                     <IconButton
@@ -362,7 +367,7 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
                             },
                         }}
                     >
-                        <ArrowForwardIcon />
+                        <ArrowForwardIcon/>
                     </IconButton>
                 </Box>
             )}
@@ -371,13 +376,34 @@ const CarouselSection: React.FC<CarouselSectionProps> = ({
 };
 
 const LeftSide: React.FC<LeftSideProps> = ({
-    producerName,
-    description,
-}) => {
+                                               producerName,
+                                               description,
+                                           }) => {
+    // 2. EXTRAGEM addItem
+    const { addItem } = useCart();
+
     const [tabValue, setTabValue] = React.useState(0);
 
     const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
+    };
+
+    // 3. LOGICA DE ADĂUGARE PENTRU ABONAMENTE
+    const handleSubscribe = (id: string) => {
+        // Găsim pachetul în lista de mock
+        const bundle = MOCK_BUNDLES.find((b: any) => b.id === id);
+
+        if (bundle) {
+            addItem({
+                id: Number(bundle.id) + 50000, // ID unic offset
+                title: bundle.title,
+                price: bundle.price,
+                // Luăm prima imagine din array-ul de imagini, dacă există
+                image: Array.isArray(bundle.images) ? bundle.images[0] : bundle.image,
+                quantity: 1,
+            });
+            console.log("Abonament adăugat în coș:", bundle.title);
+        }
     };
 
     return (
@@ -441,9 +467,10 @@ const LeftSide: React.FC<LeftSideProps> = ({
                         },
                     }}
                 >
-                    <Tab label={`Produse (${MOCK_PRODUCTS.length})`} />
-                    <Tab label={`Recenzii (${MOCK_REVIEWS.length})`} />
-                    <Tab label={`Galerie (${MOCK_GALLERY.length})`} />
+                    <Tab label={`Produse (${MOCK_PRODUCTS.length})`}/>
+                    <Tab label={`Recenzii (${MOCK_REVIEWS.length})`}/>
+                    <Tab label={`Galerie (${MOCK_GALLERY.length})`}/>
+                    <Tab label={`Abonamente (${MOCK_BUNDLES.length})`}/>
                 </Tabs>
             </Box>
 
@@ -466,7 +493,14 @@ const LeftSide: React.FC<LeftSideProps> = ({
                             reviewCount={product.reviewCount}
                             price={product.price}
                             currency="lei"
-                            onAddToCart={() => console.log("Added to cart:", product.name)}
+                            // LOGICA ADĂUGARE PRODUSE NORMALE
+                            onAddToCart={() => addItem({
+                                id: String(product.productId),
+                                title: product.name,
+                                price: product.price,
+                                image: product.image,
+                                quantity: 1
+                            })}
                         />
                     )}
                 />
@@ -519,6 +553,36 @@ const LeftSide: React.FC<LeftSideProps> = ({
                                     height: "100%",
                                     objectFit: "cover",
                                 }}
+                            />
+                        </Box>
+                    )}
+                />
+            )}
+
+            {/* Tab 3: Abonamente */}
+            {tabValue === 3 && (
+                <CarouselSection
+                    items={MOCK_BUNDLES}
+                    desktopVisibleItems={3}
+                    tabletVisibleItems={2}
+                    mobileVisibleItems={1}
+                    renderItem={(bundle: any) => (
+                        <Box sx={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            p: 1
+                        }}>
+                            <SubscriptionBundleCard
+                                id={bundle.id}
+                                title={bundle.title}
+                                price={bundle.price}
+                                currency={bundle.currency}
+                                frequency={bundle.frequency}
+                                image={Array.isArray(bundle.images) ? bundle.images[0] : bundle.image}
+                                items={bundle.items}
+                                onSubscribe={handleSubscribe} // Aici se apelează funcția care adaugă în coș
                             />
                         </Box>
                     )}

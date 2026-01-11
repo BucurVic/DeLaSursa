@@ -38,6 +38,8 @@ import ProducerReceivedOrders from "./pages/ProducerReceivedOrders.tsx";
 import ProducerDashboardMain from "./pages/ProducerDashboardMain.tsx";
 import MyOrdersPage from "./pages/MyOrdersPage.tsx";
 import MySubscriptionsPage from "./pages/MySubscriptionsPage.tsx";
+import SubscriptionPage from "./pages/SunscriptionPage.tsx";
+import SubscriptionDetailsPage from "./pages/BundleDetailsPage.tsx";
 
 function App() {
   return (
@@ -70,6 +72,8 @@ function App() {
       {/* --- Rute Publice (Cu Layout) --- */}
       <Route element={<MainLayout />}>
         <Route path="/products" element={<ProductsPage />} />
+          <Route path="/abonamente" element={<SubscriptionPage/>}/>
+          <Route path="/abonamente/:id" element={<SubscriptionDetailsPage />} />
         <Route path="/producers" element={<ProducersPage />} />
         <Route path="/producer/:producerId" element={<UserProducerPage />} />
         <Route path="/become-producer" element={<BecomeProducerPage />} />
