@@ -4,6 +4,7 @@ import getValidTokenFromStorage from "../common/utils";
 import { AuthApi } from "../api/authApi";
 import { jwtDecode } from "jwt-decode";
 import type { DecodedJwt } from "../common/utils";
+import type { AxiosError } from "axios";
 const loginApi = AuthApi.login;
 const registerApi = AuthApi.register;
 
@@ -19,7 +20,7 @@ export interface User {
 }
 
 export interface AuthState {
-  authenticationError: Error | null;
+  authenticationError: AxiosError | null;
   isAuthenticated: boolean;
   isAuthenticating: boolean;
   isRegistering: boolean;
@@ -146,6 +147,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { email, password } = request;
     setState({
       ...state,
+      isAuthenticated: false,
       pendingAuthentication: true,
       email,
       password,
@@ -224,7 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (canceled) return;
         setState((prev) => ({
           ...prev,
-          authenticationError: error as Error,
+          authenticationError: error as AxiosError,
           pendingRegistration: false,
           isRegistering: false,
         }));
@@ -279,9 +281,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (canceled) return;
         setState((prev) => ({
           ...prev,
-          authenticationError: error as Error,
+          authenticationError: error as AxiosError,
           pendingAuthentication: false,
           isAuthenticating: false,
+          isAuthenticated: false,
         }));
       }
     }

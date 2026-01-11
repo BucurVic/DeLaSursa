@@ -7,9 +7,33 @@ export interface CreateComandaProdusDto {
   pretUnitar: number;
 }
 
+export interface Adresa {
+  numeComplet: string;
+  telefon: string;
+  stradaNumeNumar: string;
+  localitate: string;
+  judet: string;
+  codPostal: string;
+}
+
+export enum MetodaPlata {
+  CARD,
+  RAMBURS,
+}
+
+export enum MetodaLivrare {
+  HOME_DELIVERY,
+  SELF_PICKUP,
+}
+
 export interface CreateComandaRequest {
   clientId: number;
   comandaProduseList: CreateComandaProdusDto[];
+  metodaPlata: MetodaPlata;
+  adresaLivrare: Adresa;
+  adresaFacturare: Adresa;
+  metodaLivrare: MetodaLivrare;
+  observatii: string | null;
 }
 
 export const ordersApi = {
@@ -25,7 +49,7 @@ export const ordersApi = {
 
   getAllForProducator: async (prodId: number) => {
     const response = await api.get<ComandaDto[]>(
-      `/comanda/producator/${prodId}`,
+      `/comanda/producator/${prodId}`
     );
     return response.data;
   },

@@ -5,7 +5,7 @@ INSERT INTO useri (username, email, parola, is_email_verified,avatar) VALUES
     ('admin', 'admin@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/1/admin.png'),
 
     -- 10 clienti
-    ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/2/man.jpg'),
+        ('client1', 'client1@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/2/man.jpg'),
     ('client2', 'client2@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/3/woman.jpg'),
     ('client3', 'client3@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/4/man.jpg'),
     ('client4', 'client4@example.com', '$2a$12$yBGoM7/u77A2IR1MSGn2Z.K8S61oVM/8EKhZUDdOtPV7m19XcrxZS',true,'/uploads/useri/5/woman.jpg'),
@@ -144,19 +144,67 @@ INSERT INTO pachet_produs (id_pachet, id_produs, cantitate, pret_unitar) VALUES
     (9, 10, 5, 5.5);
 
 -- ========================================================
+-- STEP 8: Inserăm adrese
+-- ========================================================
+INSERT INTO adresa (nume_complet, telefon, strada_nume_numar, localitate, judet, cod_postal) VALUES
+    ('ClientNameMock1', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4373'),
+    ('ClientNameMock2', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4235'),
+    ('ClientNameMock3', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4312'),
+    ('ClientNameMock4', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4739'),
+    ('ClientNameMock5', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4644'),
+    ('ClientNameMock6', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '4316'),
+    ('ClientNameMock7', '0773823937', 'Teodor Mihali nr1', 'Cluj-Napoca', 'Cluj', '7461');
+
+-- ========================================================
+-- STEP 8: Inserăm metoda_livrare_pret
+-- ========================================================
+INSERT INTO metoda_livrare_pret(metoda_livrare, pret) VALUES
+        (0, 20),
+        (1, 0);
+-- ========================================================
 -- STEP 8: Inserăm comenzi
 -- ========================================================
-INSERT INTO comenzi (id_client, data_efectuarii) VALUES
-    (2, '2025-01-01'),
-    (3, '2025-01-02'),
-    (4, '2025-01-03'),
-    (5, '2025-01-04'),
-    (6, '2025-01-05'),
-    (7, '2025-01-06'),
-    (8, '2025-01-07'),
-    (9, '2025-01-08'),
-    (10, '2025-01-09'),
-    (11, '2025-01-10');
+INSERT INTO comenzi (id_client, data_efectuarii, status_comanda, adresa_livrare_id, adresa_facturare_id, metoda_livrare_id, metoda_plata, observatii) VALUES
+    (2, '2025-01-01', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock1'),
+                                                            (SELECT id FROM adresa WHERE nume_complet='ClientNameMock1'),
+                                                            (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+                                                            0, 'observatie'),
+    (3, '2025-01-02', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock2'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock2'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (4, '2025-01-03', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock3'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock3'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (5, '2025-01-04', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock4'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock4'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (6, '2025-01-05', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock4'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock4'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (7, '2025-01-06', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock5'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock5'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (8, '2025-01-07', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock6'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock6'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (9, '2025-01-08', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock7'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock7'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (10, '2025-01-09', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock2'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock2'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie'),
+    (11, '2025-01-10', 0, (SELECT id FROM adresa WHERE nume_complet='ClientNameMock7'),
+     (SELECT id FROM adresa WHERE nume_complet='ClientNameMock7'),
+     (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+     0, 'observatie');
 
 -- ========================================================
 -- STEP 9: Inserăm comanda_produs
