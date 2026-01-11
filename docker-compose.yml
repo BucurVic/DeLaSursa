@@ -16,7 +16,7 @@ services:
   # --- Spring Boot Backend ---
   backend:
     build:
-    context: ./Backend/DeLaSursa
+      context: ./Backend/DeLaSursa
     container_name: spring-app
     depends_on:
       - postgres
