@@ -120,6 +120,7 @@ export const textResources = {
     producers: "Producători",
     cart: "Coș de cumpărături",
     subscriptions: "Abonamente",
+    bundles: "Pachete",
     support: "Suport Clienți",
     login: "Autentificare",
     register: "Înregistrare",

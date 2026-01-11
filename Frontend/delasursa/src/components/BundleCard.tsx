@@ -6,41 +6,38 @@ import {
     CardMedia,
     Typography,
     Button,
-    Chip,
     Divider,
     Stack
 } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import { colors } from "../theme";
 import { useNavigate } from "react-router-dom";
+import {ShoppingCartOutlined} from "@mui/icons-material";
 
 export interface BundleItem {
     name: string;
     quantity: string;
 }
 
-export interface SubscriptionBundleProps {
+export interface BundleProps {
     id: string;
     title: string;
     price: number;
     currency: string;
-    frequency: string;
     image: string;
     items: BundleItem[];
     onSubscribe: (id: string) => void;
     viewMode?: "grid" | "list";
 }
 
-const SubscriptionBundleCard: React.FC<SubscriptionBundleProps> = ({
+const BundleCard: React.FC<BundleProps> = ({
                                                                        id,
                                                                        title,
                                                                        price,
                                                                        currency,
-                                                                       frequency,
                                                                        image,
                                                                        items,
-                                                                       onSubscribe,
+                                                           onAddToCart,
                                                                        viewMode = "grid"
                                                                    }) => {
     const isList = viewMode === "list";
@@ -76,7 +73,7 @@ const SubscriptionBundleCard: React.FC<SubscriptionBundleProps> = ({
             }}>
                 <CardMedia
                     component="img"
-                    onClick={() => navigate(`/abonamente/${id}`)}
+                    onClick={() => navigate(`/pachete/${id}`)}
                     height={isList ? "100%" : "140"}
                     image={image}
                     alt={title}
@@ -84,20 +81,6 @@ const SubscriptionBundleCard: React.FC<SubscriptionBundleProps> = ({
                         objectFit: "cover",
                         height: { xs: "140px", md: isList ? "100%" : "140px" },
                         cursor: 'pointer'
-                    }}
-                />
-                <Chip
-                    label={frequency}
-                    size="small"
-                    sx={{
-                        position: "absolute",
-                        top: "1rem",
-                        right: "1rem",
-                        bgcolor: colors.lightGreen1,
-                        color: colors.darkGreen2,
-                        fontWeight: "bold",
-                        fontSize: "0.75rem",
-                        zIndex: 2
                     }}
                 />
             </Box>
@@ -214,26 +197,27 @@ const SubscriptionBundleCard: React.FC<SubscriptionBundleProps> = ({
                     display: "flex",
                     justifyContent: isList ? "flex-end" : "stretch"
                 }}>
+
                     <Button
+                        fullWidth
                         variant="contained"
-                        fullWidth={!isList}
-                        startIcon={<ShoppingBasketIcon />}
-                        onClick={(e) => {
-                            e.stopPropagation(); // Previne navigarea la click pe buton
-                            onSubscribe(id);
+                        startIcon={<ShoppingCartOutlined />}
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                            e.stopPropagation();
+                            onAddToCart();
                         }}
+
                         sx={{
-                            bgcolor: colors.lightGreen1,
-                            color: colors.darkGreen2,
-                            fontWeight: "bold",
-                            py: 1,
-                            px: 4,
-                            borderRadius: "0.8rem",
-                            textTransform: "none",
-                            "&:hover": { bgcolor: colors.lightGreen2 }
+                            height: "1.872rem", // 13% of content height
+                            backgroundColor: colors.lightGreen1,
+                            color: colors.darkGreen1,
+                            borderRadius: "0.6rem",
+                            "&:hover": {
+                                backgroundColor: colors.lightGreen2
+                            }
                         }}
                     >
-                        Abonează-te
+                        Adaugă în coș
                     </Button>
                 </Box>
             </CardContent>
@@ -241,4 +225,4 @@ const SubscriptionBundleCard: React.FC<SubscriptionBundleProps> = ({
     );
 };
 
-export default SubscriptionBundleCard;
+export default BundleCard;

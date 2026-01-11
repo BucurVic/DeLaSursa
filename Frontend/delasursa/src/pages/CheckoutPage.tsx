@@ -222,7 +222,7 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     // Dacă coșul e gol și NU suntem în procesul de succes (toast activ) și nu încărcăm, redirectăm
     if (items.length === 0 && !snackbarOpen && !loading) {
-      navigate("/products");
+      navigate("/produse");
     }
   }, [items, navigate, snackbarOpen, loading]);
 

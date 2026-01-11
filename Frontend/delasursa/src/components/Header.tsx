@@ -59,11 +59,12 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
 
     const navLinks = [
         { text: textResources.navbar.home, path: "/" },
-        { text: textResources.navbar.products, path: "/products" },
+        { text: textResources.navbar.products, path: "/produse" },
+        { text: textResources.navbar.bundles, path: "/pachete" },
         { text: textResources.navbar.producers, path: "/producers" },
-        { text: textResources.navbar.subscriptions, path: "/abonamente" },
+        { text: textResources.navbar.subscriptions, path: "/pachete" },
         { text: textResources.navbar.support, path: "/suport" },
-        { type: "cart", path: "/cart" }, // Coșul e aici pentru logică, dar îl tratăm separat vizual
+        { type: "cart", path: "/cos-de-cumparaturi" }, // Coșul e aici pentru logică, dar îl tratăm separat vizual
     ];
 
     // --- LISTA DE PROFIL CU LINK-URI ---
@@ -117,7 +118,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
             aria-label="cart"
             size="large"
             sx={{ color: colors.white1 }}
-            onClick={() => navigateTo("/cart")}
+            onClick={() => navigateTo("/cos-de-cumparaturi")}
         >
              <Badge
                 badgeContent={total}
@@ -341,7 +342,7 @@ const Header: React.FC<Props> = ({ variant = "full", className }) => {
                                                 {/* Coșul pe mobil */}
                                                 <ListItem disablePadding sx={{ width: "100%", boxSizing: "border-box" }}>
                                                     <ListItemButton
-                                                        onClick={() => navigateTo("/cart")}
+                                                        onClick={() => navigateTo("/cos-de-cumparaturi")}
                                                         sx={{ py: "0.25rem", width: "100%", justifyContent: "center" }}
                                                     >
                                                         <ListItemText

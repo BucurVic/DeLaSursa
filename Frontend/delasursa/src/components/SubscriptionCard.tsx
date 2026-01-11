@@ -34,7 +34,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
 
   return (
     <Card
-      onClick={() => navigate(`/product/${productId}`)}
+      onClick={() => navigate(`/produse/${productId}`)}
       sx={{
         width: "100%",
         height: { xs: "auto", sm: "13rem" },

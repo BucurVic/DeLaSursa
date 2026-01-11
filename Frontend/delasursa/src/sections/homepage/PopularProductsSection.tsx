@@ -37,7 +37,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
     const displayProducts = products.slice(0, 12);
 
     const handleViewAll = () => {
-        navigate("/products");
+        navigate("/produse");
     }
 
     return (
@@ -108,7 +108,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
                         rating={product.rating}
                         reviewCount={product.reviewCount}
                         price={product.price}
-                        currency={product.currency}
+                        currency={"RON"}
                         onAddToCart={() => onAddToCart(product.id)}
                     />
                 ))}

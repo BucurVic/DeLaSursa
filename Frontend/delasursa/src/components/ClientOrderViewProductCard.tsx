@@ -46,7 +46,7 @@ const ClientOrderViewProductCard: React.FC<ClientOrderViewProductCardProps> = ({
 
   return (
     <Card
-      onClick={() => navigate(`/product/${productId}`)}
+      onClick={() => navigate(`/produse/${productId}`)}
       sx={{
         width: "100%",
         height: { xs: "auto", sm: "13rem" },

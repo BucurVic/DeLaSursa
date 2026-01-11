@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     Box,
@@ -11,19 +11,22 @@ import {
     Chip,
     Stack,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import StarIcon from '@mui/icons-material/Star';
 
 import { colors } from "../theme";
 import { useCart } from "../context/CartContext";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { pacheteApi, type PachetDTO } from "../api/pacheteApi";
+import {ShoppingCartOutlined} from "@mui/icons-material"; //
 
 const textResources = {
-    addToCartButton: "Abonează-te Acum",
+    addToCartButton: "Adaugă în coș",
     loadingText: "Se încarcă...",
     reviewsTitle: "Recenzii Clienți"
 };
 
-// --- MOCK DATA (Cu lista de imagini) ---
+// --- FRONTEND DATA STRUCTURE ---
 interface BundleItem {
     name: string;
     quantity: string;
@@ -34,60 +37,28 @@ interface BundleDetailData {
     title: string;
     price: number;
     currency: string;
-    frequency: string;
     producer: string;
-    images: string[]; // <-- Lista de imagini
+    images: string[];
     items: BundleItem[];
-    description: string;
     rating: number;
 }
 
-const mockBundleDatabase: BundleDetailData[] = [
-    {
-        id: "101",
-        title: "Coșul Vitaminizant",
-        price: 120,
+// --- MAPPER FUNCTION ---
+const mapBackendToFrontend = (pachet: PachetDTO): BundleDetailData => { //
+    return {
+        id: pachet.id.toString(),
+        title: pachet.nume,
+        price: pachet.pretTotal,
         currency: "RON",
-        frequency: "Săptămânal",
-        producer: "Ferma Verde",
-        rating: 4.9,
-        // Lista de imagini
-        images: [
-            "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=800",
-            "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=800",
-            "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
-        ],
-        description: "Un mix perfect de legume de sezon, culese în dimineața livrării direct din grădina noastră. Ideal pentru o familie de 2-4 persoane.",
-        items: [
-            { name: "Cartofi albi", quantity: "2 kg" },
-            { name: "Roșii de grădină", quantity: "1 kg" },
-            { name: "Castraveți", quantity: "1 kg" },
-            { name: "Ceapă verde", quantity: "2 leg" },
-            { name: "Morcovi", quantity: "1 kg" },
-        ]
-    },
-    {
-        id: "2",
-        title: "Pachet Mic Dejun",
-        price: 85,
-        currency: "RON",
-        frequency: "Săptămânal",
-        producer: "Lactate Tradiționale",
-        rating: 5.0,
-        images: [
-            "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=800",
-            "https://images.unsplash.com/photo-1563805042-60570630a59f?w=800",
-            "https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=800",
-        ],
-        description: "Startul perfect al zilei cu produse lactate bio de la văcuțe hrănite pe pășune.",
-        items: [
-            { name: "Ouă de țară", quantity: "10 buc" },
-            { name: "Lapte proaspăt", quantity: "2 L" },
-            { name: "Unt de casă", quantity: "200 g" },
-            { name: "Telemea", quantity: "500 g" },
-        ]
-    }
-];
+        producer: pachet.producatorNume || "Producător Local",
+        images: pachet.imagine ? [pachet.imagine] : ["https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"], // Use fetched image or default
+        items: pachet.produse ? pachet.produse.map(item => ({
+            name: item.numeProdus,
+            quantity: `${item.cantitate} ${item.unitateMasura}`
+        })) : [],
+        rating: 5.0 // Default rating
+    };
+};
 
 const reviews = [
     { id: 1, user: "Elena M.", rating: 5, date: "2024-12-10", comment: "Legumele sunt incredibile, mult mai gustoase decât la supermarket!" },
@@ -95,22 +66,45 @@ const reviews = [
     { id: 3, user: "Ana S.", rating: 4, date: "2024-11-15", comment: "Foarte bune, aș fi vrut mai mulți morcovi data trecută." },
 ];
 
-const SubscriptionDetailsPage = () => {
+const BundleDetailsPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { addItem } = useCart();
 
     const [bundle, setBundle] = useState<BundleDetailData | null>(null);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const found = mockBundleDatabase.find(b => b.id === id);
-        if (found) {
-            setBundle(found);
-            setSelectedImageIndex(0);
-        }
+        const fetchBundleDetails = async () => {
+            if (!id) return;
+            try {
+                setLoading(true);
+                // Currently fetching all packages and filtering. Ideally, implement getById in API
+                const response = await pacheteApi.getAll(0, 100);
+                const foundPachet = response.data.content.find((p: PachetDTO) => p.id.toString() === id); //
+
+                if (foundPachet) {
+                    setBundle(mapBackendToFrontend(foundPachet));
+                    setSelectedImageIndex(0);
+                }
+            } catch (error) {
+                console.error("Eroare la încărcarea detaliilor pachetului:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBundleDetails();
     }, [id]);
 
-    if (!bundle) return <Typography sx={{ p: 4 }}>{textResources.loadingText}</Typography>;
+    if (loading) return <Typography sx={{ p: 4 }}>{textResources.loadingText}</Typography>;
+    if (!bundle) return (
+        <Box sx={{ minHeight: "100vh", bgcolor: colors.darkGreen2, color: colors.white1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Typography variant="h5">Pachetul nu a fost găsit.</Typography>
+            <Button onClick={() => navigate(-1)} sx={{ ml: 2, color: colors.lightGreen1 }}>Înapoi</Button>
+        </Box>
+    );
 
     return (
         <Box
@@ -122,6 +116,14 @@ const SubscriptionDetailsPage = () => {
                 py: { xs: "1.5rem", md: "3rem" },
             }}
         >
+            {/* Buton Înapoi */}
+            <Button
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate(-1)}
+                sx={{ mb: 3, color: colors.lightGreen1, textTransform: "none" }}
+            >
+                Înapoi
+            </Button>
 
             {/* --- SECȚIUNEA PRINCIPALĂ (Flex Row) --- */}
             <Box
@@ -211,11 +213,6 @@ const SubscriptionDetailsPage = () => {
                         </Typography>
 
                         <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'center', md: 'flex-start' }, alignItems: 'center', flexWrap: 'wrap' }}>
-                            <Chip
-                                label={bundle.frequency}
-                                size="small"
-                                sx={{ bgcolor: colors.lightGreen1, color: colors.darkGreen2, fontWeight: "bold" }}
-                            />
                             <Typography sx={{ opacity: 0.8 }}>
                                 • De la: <b>{bundle.producer}</b>
                             </Typography>
@@ -240,17 +237,6 @@ const SubscriptionDetailsPage = () => {
                         <Typography component="span" sx={{ fontSize: '1rem', color: colors.white2, ml: 1 }}>/ livrare</Typography>
                     </Typography>
 
-                    {/* Descriere Text */}
-                    <Typography
-                        sx={{
-                            opacity: 0.9,
-                            lineHeight: "1.6",
-                            mb: 3,
-                            fontSize: { xs: "0.9rem", sm: "1rem" },
-                        }}
-                    >
-                        {bundle.description}
-                    </Typography>
 
                     {/* LISTA DE PRODUSE (CONȚINUT) - AICI E POZIȚIONATĂ */}
                     <Box
@@ -286,22 +272,11 @@ const SubscriptionDetailsPage = () => {
 
                     {/* Buton CTA */}
                     <Box>
+
                         <Button
+                            fullWidth
                             variant="contained"
-                            sx={{
-                                backgroundColor: colors.lightGreen2,
-                                color: colors.darkGreen1,
-                                fontWeight: 600,
-                                px: { xs: 3, md: 6 },
-                                py: 1.5,
-                                fontSize: "1.1rem",
-                                textTransform: "none",
-                                borderRadius: "0.7rem",
-                                width: "fit-content",
-                                "&:hover": {
-                                    backgroundColor: colors.lightGreen1,
-                                },
-                            }}
+                            startIcon={<ShoppingCartOutlined />}
                             onClick={() =>
                                 addItem({
                                     id: String(bundle.id),
@@ -311,6 +286,15 @@ const SubscriptionDetailsPage = () => {
                                     quantity: 1,
                                 })
                             }
+                            sx={{
+                                height: "3rem", // 13% of content height
+                                backgroundColor: colors.lightGreen1,
+                                color: colors.darkGreen1,
+                                borderRadius: "0.6rem",
+                                "&:hover": {
+                                    backgroundColor: colors.lightGreen2
+                                }
+                            }}
                         >
                             {textResources.addToCartButton}
                         </Button>
@@ -370,4 +354,4 @@ const SubscriptionDetailsPage = () => {
     );
 };
 
-export default SubscriptionDetailsPage;
+export default BundleDetailsPage;

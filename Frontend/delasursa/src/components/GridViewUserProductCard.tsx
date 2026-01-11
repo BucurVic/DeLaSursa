@@ -46,7 +46,7 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
 
     return (
         <Card
-            onClick={() => navigate(`/product/${productId}`)}
+            onClick={() => navigate(`/produse/${productId}`)}
             sx={{
                 height: "24rem",
                 width: "12rem",
@@ -254,7 +254,7 @@ const GridViewUserProductCard: React.FC<GridViewUserProductCardProps> = ({
                             }
                         }}
                     >
-                        ADAUGĂ ÎN COȘ
+                        Adaugă în coș
                     </Button>
                 </Box>
             </CardContent>

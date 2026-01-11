@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { produseApi } from "../api/produseApi";
 import { colors } from "../theme/colors";
 import { useCart } from "../context/CartContext";
 import { textResources } from "../theme";
+import {ShoppingCartOutlined} from "@mui/icons-material";
 
 const reviews = [
     {
@@ -145,21 +146,9 @@ const ProductDetailsPage = () => {
 
                     <Box>
                         <Button
+                            fullWidth
                             variant="contained"
-                            sx={{
-                                backgroundColor: colors.lightGreen2,
-                                color: colors.darkGreen1,
-                                fontWeight: 600,
-                                px: { xs: 3, md: 4 },
-                                py: 1.2,
-                                fontSize: "1rem",
-                                textTransform: "none",
-                                borderRadius: "0.7rem",
-                                width: "fit-content",
-                                "&:hover": {
-                                    backgroundColor: colors.lightGreen1,
-                                },
-                            }}
+                            startIcon={<ShoppingCartOutlined />}
                             onClick={() =>
                                 addItem({
                                     id: product.id.toString(),
@@ -169,8 +158,17 @@ const ProductDetailsPage = () => {
                                     quantity: 1,
                                 })
                             }
+                            sx={{
+                                height: "3rem", // 13% of content height
+                                backgroundColor: colors.lightGreen1,
+                                color: colors.darkGreen1,
+                                borderRadius: "0.6rem",
+                                "&:hover": {
+                                    backgroundColor: colors.lightGreen2
+                                }
+                            }}
                         >
-                            {textResources.productDetailsPage.addToCartButton}
+                           Adaugă în coș
                         </Button>
                     </Box>
                 </Box>
