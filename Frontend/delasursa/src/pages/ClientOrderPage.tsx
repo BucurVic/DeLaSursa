@@ -120,7 +120,7 @@ export default function ClientOrderPage() {
 
   const subtotal = order.products.reduce(
     (sum, p) => sum + p.price * p.quantity,
-    0,
+    0
   );
   const total = subtotal + order.transportCost;
 

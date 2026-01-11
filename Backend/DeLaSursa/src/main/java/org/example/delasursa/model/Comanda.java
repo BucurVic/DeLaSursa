@@ -2,6 +2,9 @@ package org.example.delasursa.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.delasursa.common.dto.enums.ComandaStatus;
+import org.example.delasursa.common.dto.enums.MetodaLivrare;
+import org.example.delasursa.common.dto.enums.MetodaPlata;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -34,4 +37,18 @@ public class Comanda {
     @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)
     private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
 
+    private ComandaStatus statusComanda;
+
+    @ManyToOne
+    private Adresa adresaLivrare;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Adresa adresaFacturare;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private MetodaLivrarePret metodaLivrare;
+
+    private MetodaPlata metodaPlata;
+
+    private String observatii;
 }
