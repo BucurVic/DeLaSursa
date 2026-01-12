@@ -97,7 +97,11 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
               <strong>Stare abonament:</strong> {subscription.status} <br />
               <strong>Frecvență livrare:</strong> {subscription.freceventa} zile{" "}
               <br />
-              <strong>Durată abonament:</strong> {subscription.duration} luni
+              <strong>Data începerii:</strong>{" "}
+              {new Date(subscription.dataInceput).toLocaleDateString(
+                "en-US",
+                {},
+              )}
             </Typography>
 
             <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
