@@ -34,11 +34,24 @@ public class SubscriptieController {
 
         Page<SubscriptieDTO> page = subscriptieService.getAll(pageable);
         List<SubscriptieDTO> content = page.getContent();
-        if(content.isEmpty()) {
+        if (content.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
         return ResponseEntity.ok(page.getContent());
+    }
+
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<SubscriptieDTO>> getByClient(
+            @PathVariable Integer clientId
+    ) {
+        List<SubscriptieDTO> subs = subscriptieService.getAllForClient(clientId);
+
+        if (subs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(subs);
     }
 
     @GetMapping("/{id}")

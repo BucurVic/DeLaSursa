@@ -1,42 +1,52 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext.tsx";
-import { jwtDecode } from "jwt-decode";
-import type { DecodedJwt } from "../common/utils.ts";
 import { Box, Typography } from "@mui/material";
 import { textResources } from "../theme";
 import SubscriptionCard from "../components/SubscriptionCard.tsx";
-import type { Produs } from "../types/Produs.ts";
-import { produseApi } from "../api/produseApi.ts";
+import { type SubscriptieDTO, subscriptiiApi } from "../api/subscriptiiApi.ts";
+import type { BundleData } from "../types/BundleData.ts";
+import type { PachetDTO } from "../api/pacheteApi.ts";
+import { jwtDecode } from "jwt-decode";
 
 interface Subscription {
   id: number;
-  product: Produs;
-  supplierRegion: string;
-  totalPrice: number;
-  currency: string;
-  duration: number;
+  clientId: number;
+  dataInceput: string;
+  freceventa: number;
+  status: string;
+  supplier?: string;
+  supplierRegion?: string;
+  pachet: BundleData;
 }
 
-const productMock = await produseApi.getById(1);
+const mapBackendToFrontend = (pachet: PachetDTO): BundleData => ({
+  id: pachet.id.toString(),
+  title: pachet.nume,
+  price: pachet.pretTotal ?? 0,
+  currency: "RON",
+  producer: pachet.producatorNume,
+  image:
+    pachet.imagine && pachet.imagine.trim()
+      ? pachet.imagine
+      : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
+  items:
+    pachet.produse?.map((item) => ({
+      name: item.numeProdus,
+      quantity: `${item.cantitate ?? 0} ${item.unitateMasura ?? ""}`,
+    })) || [],
+});
 
-const allSubs: Subscription[] = [
-  {
-    id: 1,
-    product: productMock.data,
+const mapSubscriptions = (subs: SubscriptieDTO[]): Subscription[] =>
+  subs.map((sub) => ({
+    id: sub.id,
+    clientId: sub.clientId,
+    dataInceput: sub.dataInceput,
+    freceventa: sub.freceventa,
+    status: sub.status,
+    supplier: sub.pachet?.producatorNume,
     supplierRegion: "Cluj",
-    totalPrice: 30,
-    currency: "Lei",
-    duration: 11,
-  },
-  {
-    id: 1,
-    product: productMock.data,
-    supplierRegion: "Arad",
-    totalPrice: 35,
-    currency: "Lei",
-    duration: 10,
-  },
-];
+    pachet: mapBackendToFrontend(sub.pachet!),
+  }));
 
 const MySubscriptionsPage: React.FC = () => {
   const { token } = useContext(AuthContext);
@@ -44,16 +54,18 @@ const MySubscriptionsPage: React.FC = () => {
 
   useEffect(() => {
     const loadSubs = async () => {
-      try {
-        if (!token) return;
+      if (!token) return;
 
-        const decoded = jwtDecode<DecodedJwt>(token);
+      try {
+        const decoded = jwtDecode<{ id: string }>(token);
         const userId = Number(decoded.id);
 
-        //const allSubs = await subscriptionsApi.getAllForUser(userId);
-        setSubscriptions(allSubs);
-      } catch (error) {
-        console.error("Eroare la incarcarea abonamentelor", error);
+        const allSubs: SubscriptieDTO[] =
+          await subscriptiiApi.getAllForUser(userId);
+        const mapped: Subscription[] = mapSubscriptions(allSubs);
+        setSubscriptions(mapped);
+      } catch (err) {
+        console.error("Eroare la încărcarea abonamentelor:", err);
       }
     };
 
@@ -71,18 +83,7 @@ const MySubscriptionsPage: React.FC = () => {
       ) : (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {subscriptions.map((sub) => (
-            <SubscriptionCard
-              key={sub.id}
-              productId={sub.product.id}
-              image={sub.product.produsImagine || ""}
-              title={sub.product.produsName}
-              category={sub.product.categorie}
-              supplierRegion={sub.supplierRegion}
-              supplier={sub.product.producatorName}
-              totalPrice={sub.totalPrice}
-              currency={sub.currency}
-              duration={sub.duration}
-            />
+            <SubscriptionCard key={sub.id} subscription={sub} viewMode="list" />
           ))}
         </Box>
       )}

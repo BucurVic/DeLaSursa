@@ -5,6 +5,8 @@ import org.example.delasursa.common.dto.subscriptie.SubscriptieDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface SubscriptieService {
 
     Page<SubscriptieDTO> getAll(Pageable pageable);
@@ -16,4 +18,6 @@ public interface SubscriptieService {
     SubscriptieDTO update(Integer id, SubscriptieDTO request);
 
     void delete(Integer id);
+
+    List<SubscriptieDTO> getAllForClient(Integer clientId);
 }

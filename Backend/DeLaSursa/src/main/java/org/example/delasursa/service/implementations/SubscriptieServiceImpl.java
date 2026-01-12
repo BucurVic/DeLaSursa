@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -69,5 +71,10 @@ public class SubscriptieServiceImpl implements SubscriptieService {
         }
         subscriptieRepository.deleteById(id);
         log.info("Subscriptie with id={} deleted successfully", id);
+    }
+
+    @Override
+    public List<SubscriptieDTO> getAllForClient(Integer clientId) {
+        return subscriptieRepository.findSubscriptieByClient_Id(clientId).stream().map(subscriptieMapper::toDto).toList();
     }
 }
