@@ -70,7 +70,7 @@ export default function Sidebar({ collapsed = true, className }: SidebarProps) {
     },
     {
       key: "subscriptions",
-      label: textResources.sidebar.subscriptions,
+      label: textResources.sidebar.bundles,
       icon: <CreditCardIcon />,
     },
     {
@@ -87,7 +87,7 @@ export default function Sidebar({ collapsed = true, className }: SidebarProps) {
     { key: "reviews", path: textResources.dashboardUrls.reviews },
     { key: "stats", path: textResources.dashboardUrls.stats },
     { key: "messages", path: textResources.dashboardUrls.messages },
-    { key: "subscriptions", path: textResources.dashboardUrls.subscriptions },
+    { key: "subscriptions", path: textResources.dashboardUrls.bundles },
     { key: "settings", path: textResources.dashboardUrls.settings },
   ];
 
