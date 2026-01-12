@@ -119,7 +119,7 @@ export default function ProducerDashboardMain() {
   const stats = [
     {
       icon: <Wallet />,
-      value: "2.450 LEI",
+      value: "2.450 RON",
       label: tr.producerDashboard.income,
     },
     {
@@ -189,7 +189,7 @@ export default function ProducerDashboardMain() {
                 reviewCount={30}
                 price={p.pret}
                 unit={p.unitate_masura}
-                currency={"LEI"}
+                currency={"RON"}
               />
             ))}
           </Card>

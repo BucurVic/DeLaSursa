@@ -4,21 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.subscriptie.CreateSubscriptieRequest;
 import org.example.delasursa.common.dto.subscriptie.SubscriptieDTO;
+import org.example.delasursa.common.exceptions.SubscriptieException;
 import org.example.delasursa.model.Client;
 import org.example.delasursa.model.Pachet;
 import org.example.delasursa.model.Subscriptie;
 import org.example.delasursa.repository.ClientRepository;
 import org.example.delasursa.repository.PachetRepository;
-import org.springframework.stereotype.Component;
-
-import org.example.delasursa.common.exceptions.SubscriptieException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SubscriptieMapper {
 
+    private final PachetMapper pachetMapper;
     private final ClientRepository clientRepository;
     private final PachetRepository pachetRepository;
 
@@ -30,7 +30,7 @@ public class SubscriptieMapper {
         return SubscriptieDTO.builder()
                 .id(subscriptie.getId())
                 .clientId(subscriptie.getClient() != null ? subscriptie.getClient().getId() : null)
-                .pachetId(subscriptie.getPachet() != null ? subscriptie.getPachet().getId() : null)
+                .pachet(subscriptie.getPachet() != null ? pachetMapper.toDTO(subscriptie.getPachet()) : null)
                 .dataInceput(subscriptie.getDataInceput())
                 .freceventa(subscriptie.getFreceventa())
                 .status(subscriptie.getStatus())
@@ -49,12 +49,8 @@ public class SubscriptieMapper {
                     });
             target.setClient(client);
         }
-        if (dto.getPachetId() != null) {
-            Pachet pachet = pachetRepository.findById(dto.getPachetId())
-                    .orElseThrow(() -> {
-                        log.warn("Pachet not found for id={} while mapping SubscriptieDTO", dto.getPachetId());
-                        return new SubscriptieException("Pachet not found", HttpStatus.NOT_FOUND);
-                    });
+        if (dto.getPachet() != null) {
+            Pachet pachet = pachetMapper.toEntity(dto.getPachet());
             target.setPachet(pachet);
         }
         target.setDataInceput(dto.getDataInceput());

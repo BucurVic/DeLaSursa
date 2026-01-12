@@ -25,7 +25,7 @@ export default function IncomeChart({
           }}
         >
           <p style={{ color: colors.darkGreen1 }}>{label}</p>
-          <p style={{ color: colors.lightGreen2 }}>{payload[0].value} LEI</p>
+          <p style={{ color: colors.lightGreen2 }}>{payload[0].value} RON</p>
         </div>
       );
     }
