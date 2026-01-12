@@ -99,7 +99,7 @@ const MyOrdersPage: React.FC = () => {
                       0,
                     ) + (order.transportCost || 0)
                   ).toFixed(2)}{" "}
-                  Lei
+                  RON
                 </Typography>
                 {/*<Typography>*/}
                 {/*  <strong>{textResources.orders.status}</strong> {order.status}*/}

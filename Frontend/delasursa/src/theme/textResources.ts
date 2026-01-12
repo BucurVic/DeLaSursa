@@ -78,7 +78,7 @@ export const textResources = {
 
   productCard: {
     inactiveLabel: "Dezactivat",
-    priceSuffix: "lei",
+    priceSuffix: "RON",
     status: {
       active: "Activ",
     },
@@ -99,7 +99,7 @@ export const textResources = {
     name: "Nume produs",
     category: "Categorie",
     unit: "Unitate de măsură",
-    price: "Preț (lei / unitate)",
+    price: "Preț (RON / unitate)",
     stock: "Stoc disponibil",
     region: "Regiune",
     description: "Descriere produs",
@@ -238,7 +238,7 @@ export const textResources = {
     phone: "Telefon:",
     billingAddress: "Adresă de facturare",
     total: "Total:",
-    currency: "LEI",
+    currency: "RON",
     addReview: "ADAUGĂ RECENZIE",
     clientEmail: "Email client:",
     changeStatus: "Schimbă status",

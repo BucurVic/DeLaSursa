@@ -73,7 +73,7 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
     quantity: cp.cantitate,
     unit: cp.produs.unitateDeMasura,
     price: cp.pretUnitar,
-    currency: "LEI",
+    currency: "RON",
     image: cp.produs.imagineProdus || "",
     rating: 4.9,
     reviewCount: 29,
@@ -294,7 +294,7 @@ export default function ProducerOrderPage() {
           {tr.trackingNO} {order.trackingNumber}
         </Typography>
         <Typography>
-          {tr.trackingCost} {order.shippingCost} lei
+          {tr.trackingCost} {order.shippingCost} RON
         </Typography>
       </Card>
 

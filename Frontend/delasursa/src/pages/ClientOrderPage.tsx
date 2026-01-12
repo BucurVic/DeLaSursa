@@ -62,7 +62,7 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
     supplierRegion: "Cluj",
     supplier: cp.produs.numeProducator,
     price: cp.pretUnitar,
-    currency: "LEI",
+    currency: "RON",
     onAddReview: () => console.log("Review added"),
   })),
   deliveryAddress: {
@@ -120,7 +120,7 @@ export default function ClientOrderPage() {
 
   const subtotal = order.products.reduce(
     (sum, p) => sum + p.price * p.quantity,
-    0
+    0,
   );
   const total = subtotal + order.transportCost;
 
