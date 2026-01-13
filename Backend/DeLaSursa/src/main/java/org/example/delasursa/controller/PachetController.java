@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.pachet.CreatePachetRequest;
 import org.example.delasursa.common.dto.pachet.PachetDTO;
+import org.example.delasursa.common.dto.pachet.PachetProdusRequest;
 import org.example.delasursa.common.dto.pachet.UpdatePachetRequest;
-import org.example.delasursa.repository.PachetRepository;
 import org.example.delasursa.service.PachetService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,7 +35,7 @@ public class PachetController {
             @PageableDefault(size = 6) Pageable pageable
     ) {
         log.info("Get all pachete request received | page {} | size = {}",
-                pageable.getPageNumber(),pageable.getPageSize());
+                pageable.getPageNumber(), pageable.getPageSize());
 
         Page<PachetDTO> page = pachetService.getAll(pageable);
 
@@ -61,12 +64,17 @@ public class PachetController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('PRODUCATOR')")
     public ResponseEntity<PachetDTO> createPachet(
-            @ModelAttribute @Valid CreatePachetRequest request
+            @RequestPart("nume") String nume,
+            @RequestPart("produse") List<PachetProdusRequest> produse,
+            @RequestPart(value = "imagine", required = false) MultipartFile imagine
     ) {
+        CreatePachetRequest request = new CreatePachetRequest();
+        request.setNume(nume);
+        request.setProduse(produse);
+        request.setImagine(imagine);
         log.info("Create pachet request received: '{}' with {} products",
                 request.getNume(),
                 request.getProduse() != null ? request.getProduse().size() : 0);
-
         PachetDTO result = pachetService.create(request);
 
         log.info("Pachet created successfully with id {}", result.getId());
