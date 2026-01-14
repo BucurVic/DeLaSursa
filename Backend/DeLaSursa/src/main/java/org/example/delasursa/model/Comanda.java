@@ -31,7 +31,7 @@ public class Comanda {
     @Column(name = "data_efectuarii")
     private LocalDate dataEfectuarii;
 
-    @OneToMany(mappedBy = "comanda")
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)
     private Set<ComandaPachet> comandaPachete = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)

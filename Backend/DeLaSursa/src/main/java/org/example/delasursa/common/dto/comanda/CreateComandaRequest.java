@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.example.delasursa.common.dto.enums.MetodaLivrare;
 import org.example.delasursa.common.dto.enums.MetodaPlata;
 import org.example.delasursa.model.Adresa;
-import org.example.delasursa.model.MetodaLivrarePret;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ import java.util.List;
 public class CreateComandaRequest {
     private Integer clientId;
     private List<CreateComandaProdusDto> comandaProduseList;
+    private List<CreateComandaPachetDto> comandaPacheteList;
     private MetodaPlata metodaPlata;
     private Adresa adresaLivrare;
     private Adresa adresaFacturare;

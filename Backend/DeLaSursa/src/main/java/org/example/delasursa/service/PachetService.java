@@ -6,14 +6,15 @@ import org.example.delasursa.common.dto.pachet.UpdatePachetRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface PachetService {
 
     public Page<PachetDTO> getAll(Pageable pageable);
-    public Page<PachetDTO> getAllForProducator(Integer producatorId,Pageable pageable);
+
+    public Page<PachetDTO> getAllForProducator(Integer producatorId, Pageable pageable);
 
     PachetDTO create(CreatePachetRequest request);
+
+    PachetDTO findById(Integer id);
 
     PachetDTO update(Integer id, UpdatePachetRequest request);
 

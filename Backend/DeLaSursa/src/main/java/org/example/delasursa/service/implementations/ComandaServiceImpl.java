@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.ClientDto;
 import org.example.delasursa.common.dto.admin.ComandaSummary;
-import org.example.delasursa.common.dto.comanda.ComandaDto;
-import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
-import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
-import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
+import org.example.delasursa.common.dto.comanda.*;
 import org.example.delasursa.common.dto.enums.ComandaStatus;
 import org.example.delasursa.common.exceptions.*;
 import org.example.delasursa.common.mappers.ComandaMapper;
@@ -40,6 +37,7 @@ public class ComandaServiceImpl implements ComandaService {
     private final ComandaProdusRepository comandaProdusRepository;
     private final MetodaLivrarePretRepository metodaLivrarePretRepository;
     private final AdresaRepository adresaRepository;
+    private final PachetRepository pachetRepository;
 
     @Override
     @Transactional
@@ -108,6 +106,16 @@ public class ComandaServiceImpl implements ComandaService {
 
         comanda.setComandaProduse(comandaProuse);
 
+        Set<ComandaPachet> comandaPachete =
+                request.getComandaPacheteList() == null
+                        ? Set.of()
+                        : request.getComandaPacheteList()
+                        .stream()
+                        .map(p -> createFromRequestComandaPachet(p, comanda))
+                        .collect(Collectors.toSet());
+
+        comanda.setComandaPachete(comandaPachete);
+
         comanda.setStatusComanda(ComandaStatus.CREATED);
 
         Comanda savedComanda = comandaRepository.save(comanda);
@@ -132,9 +140,15 @@ public class ComandaServiceImpl implements ComandaService {
                 .numeClient(c.getClient().getNume() + " " + c.getClient().getPrenume())
                 .dataEfectuarii(c.getDataEfectuarii())
                 .numarProduse(c.getComandaProduse().size())
-                .valoareTotala(c.getComandaProduse().stream()
-                        .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
-                        .sum())
+                .valoareTotala(
+                        c.getComandaProduse().stream()
+                                .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
+                                .sum()
+                                +
+                                c.getComandaPachete().stream()
+                                        .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
+                                        .sum()
+                )
                 .build());
     }
 
@@ -142,7 +156,13 @@ public class ComandaServiceImpl implements ComandaService {
     @Override
     public ComandaDto updateStatus(Integer comandaId, ComandaStatus status, Integer prodId) {
         Comanda comanda = comandaRepository.findById(comandaId).orElseThrow(() -> new ResourceNotFoundException("Comanda with id " + comandaId + " not found!"));
-        if (!comanda.getComandaProduse().stream().toList().get(0).getProdus().getProducator().getId().equals(prodId)) {
+        boolean produsApartineProducatorului =
+                comanda.getComandaProduse().stream()
+                        .anyMatch(cp -> cp.getProdus().getProducator().getId().equals(prodId))
+                        || comanda.getComandaPachete().stream()
+                        .anyMatch(cp -> cp.getPachet().getProducator().getId().equals(prodId));
+
+        if (!produsApartineProducatorului) {
             throw new UnauthorizedException("Not authorized to update current order");
         }
         comanda.setStatusComanda(status);
@@ -177,6 +197,27 @@ public class ComandaServiceImpl implements ComandaService {
         return comandaProdus;
 
     }
+
+    private ComandaPachet createFromRequestComandaPachet(
+            CreateComandaPachetDto dto,
+            Comanda comanda
+    ) {
+        Pachet pachet = pachetRepository.findById(dto.getPachetId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Pachet " + dto.getPachetId() + " not found!"
+                        )
+                );
+
+        ComandaPachet cp = new ComandaPachet();
+        cp.setComanda(comanda);
+        cp.setPachet(pachet);
+        cp.setCantitate(Double.valueOf(dto.getCantitate()));
+        cp.setPretUnitar(dto.getPretUnitar());
+
+        return cp;
+    }
+
 
     @Override
     public Integer getTotalComenziUltimulAn() {

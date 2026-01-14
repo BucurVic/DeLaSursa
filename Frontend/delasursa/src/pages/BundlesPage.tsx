@@ -176,10 +176,10 @@ export default function SubscriptionPage() {
     const bundleToAdd = bundles.find((b) => b.id === id);
     if (bundleToAdd) {
       addItem({
-        id: Number(bundleToAdd.id) + 50000,
+        id: "bundle" + bundleToAdd.id.toString(),
         title: bundleToAdd.title,
         price: bundleToAdd.price,
-        image: bundleToAdd.images[0],
+        image: bundleToAdd.image,
         quantity: 1,
       });
     }

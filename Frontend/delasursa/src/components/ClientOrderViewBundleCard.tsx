@@ -120,7 +120,10 @@ const ClientOrderViewBundleCard: React.FC<ClientOrderViewBundleCardProps> = ({
             }}
           >
             <Inventory2Outlined sx={{ fontSize: "1rem" }} />
-            Pachet cu {items.length} tipuri de produse
+            Pachet cu
+            {items.length > 1
+              ? ` ${items.length} tipuri de produse`
+              : " un tip de produse"}
           </Typography>
         </Box>
 
