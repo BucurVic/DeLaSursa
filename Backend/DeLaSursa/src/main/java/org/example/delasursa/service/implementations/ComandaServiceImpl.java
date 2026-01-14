@@ -108,6 +108,8 @@ public class ComandaServiceImpl implements ComandaService {
 
         comanda.setComandaProduse(comandaProuse);
 
+        comanda.setStatusComanda(ComandaStatus.CREATED);
+
         Comanda savedComanda = comandaRepository.save(comanda);
         CreateComandaResponse response = new CreateComandaResponse();
         response.setId(savedComanda.getId());

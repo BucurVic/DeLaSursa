@@ -8,7 +8,6 @@ export interface CreateComandaProdusDto {
 }
 
 export interface Adresa {
-  id: number;
   numeComplet: string;
   telefon: string;
   stradaNumeNumar: string;
