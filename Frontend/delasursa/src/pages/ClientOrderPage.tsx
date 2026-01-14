@@ -8,88 +8,40 @@ import { Card, CardContent, Step, StepLabel, Stepper } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import { AuthContext } from "../context/AuthContext.tsx";
 import { jwtDecode } from "jwt-decode";
-import type { DecodedJwt } from "../common/utils.ts";
+import {
+  ComandaStatusMap,
+  type DecodedJwt,
+  MetodaLivrareMap,
+  MetodaPlataMap,
+} from "../common/utils.ts";
 import { ordersApi } from "../api/ordersApi.ts";
 import type { ComandaDto } from "../common/types.ts";
 
-type Address = {
-  name: string;
-  street: string;
-  city: string;
-  region: string;
-  zip: string;
-  phone: string;
-};
-
-type ProductInOrder = {
-  id: number;
-  image: string;
-  title: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  supplierRegion: string;
-  supplierLogo?: string;
-  supplier: string;
-  price: number;
-  currency?: string;
-  onAddReview: () => void;
-};
-
-type Order = {
-  id: number;
+interface Order extends ComandaDto {
   date: Date;
-  status: "Creată" | "În procesare" | "Pregatită" | "Livrată" | "Anulată";
-  products: ProductInOrder[];
-  deliveryAddress: Address;
-  billingAddress: Address;
-  deliveryMethod: string;
-  paymentMethod: string;
+  status: string;
   transportCost: number;
-};
+  plata: string;
+  livrare: string;
+}
 
-const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
-  id: c.id,
-  date: new Date(c.dataEfectuarii),
-  status: "Creată",
-  products: c.comandaProduse.map((cp) => ({
-    id: cp.id,
-    image: cp.produs.imagineProdus || "",
-    title: cp.produs.numeProdus,
-    category: cp.produs.categorie,
-    quantity: cp.cantitate,
-    unit: cp.produs.unitateDeMasura,
-    supplierRegion: "Cluj",
-    supplier: cp.produs.numeProducator,
-    price: cp.pretUnitar,
-    currency: "RON",
-    onAddReview: () => console.log("Review added"),
-  })),
-  deliveryAddress: {
-    name: `${c.client.nume} ${c.client.prenume}`,
-    street: "Str. Horea 12",
-    city: "Cluj-Napoca",
-    region: "Cluj",
-    zip: "510789",
-    phone: "0701 111 111",
-  },
-  billingAddress: {
-    name: `${c.client.nume} ${c.client.prenume}`,
-    street: "Str. Horea 12",
-    city: "Cluj-Napoca",
-    region: "Cluj",
-    zip: "510789",
-    phone: "0701 111 111",
-  },
-  deliveryMethod: "Curier",
-  paymentMethod: "Card",
-  transportCost: 20,
-});
+const mapOrderWithEnumValues = (order: ComandaDto): Order => {
+  return {
+    ...order,
+    date: new Date(order.dataEfectuarii),
+    status: ComandaStatusMap[order.statusComanda],
+    transportCost: order.metodaLivrare.pret,
+    plata: MetodaPlataMap[order.metodaPlata],
+    livrare: MetodaLivrareMap[order.metodaLivrare.metodaLivrare],
+  };
+};
 
 export default function ClientOrderPage() {
   const { id } = useParams();
   const { token } = useContext(AuthContext);
   const [order, setOrder] = useState<Order>();
+  const isHomeDelivery = order?.livrare === "Livrare acasă";
+
   const tr = textResources.orders;
 
   useEffect(() => {
@@ -105,7 +57,7 @@ export default function ClientOrderPage() {
         const currentOrderDto = allOrders.find((o) => o.id === Number(id));
         if (!currentOrderDto) return;
 
-        const mappedOrder: Order = mapComandaDtoToOrder(currentOrderDto);
+        const mappedOrder: Order = mapOrderWithEnumValues(currentOrderDto);
 
         setOrder(mappedOrder);
       } catch (error) {
@@ -118,8 +70,8 @@ export default function ClientOrderPage() {
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
 
-  const subtotal = order.products.reduce(
-    (sum, p) => sum + p.price * p.quantity,
+  const subtotal = order.comandaProduse.reduce(
+    (sum, p) => sum + p.pretUnitar * p.cantitate,
     0,
   );
   const total = subtotal + order.transportCost;
@@ -164,15 +116,14 @@ export default function ClientOrderPage() {
           </Typography>
 
           <Typography variant="h4">
-            {tr.paymentMethod} {order.paymentMethod}
+            {tr.paymentMethod} {order.plata}
           </Typography>
 
           <Typography variant="h4">
-            {tr.deliveryMethod} {order.deliveryMethod}
+            {tr.deliveryMethod} {order.livrare}
           </Typography>
         </CardContent>
       </Card>
-
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -180,20 +131,37 @@ export default function ClientOrderPage() {
           </Step>
         ))}
       </Stepper>
-
-      <Box
+      <Card
         sx={{
-          width: "100%",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1.5rem",
-          "@media (max-width: 48rem)": {
-            // 768px ~ 48rem
-            gridTemplateColumns: "1fr",
-          },
+          padding: "2rem",
+          borderRadius: "1rem",
+          backgroundColor: colors.darkGreen2,
         }}
       >
-        <Box
+        <Typography variant="h4" color={colors.lightGreen2}>
+          {tr.billingAddress}
+        </Typography>
+        <Divider sx={{ my: "0.5rem" }} />
+
+        <Typography variant="body1">
+          {order.adresaFacturare.numeComplet}
+        </Typography>
+        <Typography variant="body2">
+          {order.adresaFacturare.stradaNumeNumar}
+        </Typography>
+        <Typography variant="body2">
+          {order.adresaFacturare.localitate}, {order.adresaFacturare.judet}
+        </Typography>
+        <Typography variant="body2">
+          {tr.zipCode} {order.adresaFacturare.codPostal}
+        </Typography>
+        <Typography variant="body2">
+          {tr.phone} {order.adresaFacturare.telefon}
+        </Typography>
+      </Card>
+
+      {isHomeDelivery && (
+        <Card
           sx={{
             padding: "2rem",
             borderRadius: "1rem",
@@ -205,46 +173,23 @@ export default function ClientOrderPage() {
           </Typography>
           <Divider sx={{ my: "0.5rem" }} />
 
-          <Typography variant="body1">{order.deliveryAddress.name}</Typography>
-          <Typography variant="body2">
-            {order.deliveryAddress.street}
+          <Typography variant="body1">
+            {order.adresaLivrare.numeComplet}
           </Typography>
           <Typography variant="body2">
-            {order.deliveryAddress.city}, {order.deliveryAddress.region}
+            {order.adresaLivrare.stradaNumeNumar}
           </Typography>
           <Typography variant="body2">
-            {tr.zipCode} {order.deliveryAddress.zip}
+            {order.adresaLivrare.localitate}, {order.adresaLivrare.judet}
           </Typography>
           <Typography variant="body2">
-            {tr.phone} {order.deliveryAddress.phone}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            padding: "2rem",
-            borderRadius: "1rem",
-            backgroundColor: colors.darkGreen2,
-          }}
-        >
-          <Typography variant="h4" color={colors.lightGreen2}>
-            {tr.billingAddress}
-          </Typography>
-          <Divider sx={{ my: "0.5rem" }} />
-
-          <Typography variant="body1">{order.billingAddress.name}</Typography>
-          <Typography variant="body2">{order.billingAddress.street}</Typography>
-          <Typography variant="body2">
-            {order.billingAddress.city}, {order.billingAddress.region}
+            {tr.zipCode} {order.adresaLivrare.codPostal}
           </Typography>
           <Typography variant="body2">
-            {tr.zipCode} {order.billingAddress.zip}
+            {tr.phone} {order.adresaLivrare.telefon}
           </Typography>
-          <Typography variant="body2">
-            {tr.phone} {order.billingAddress.phone}
-          </Typography>
-        </Box>
-      </Box>
+        </Card>
+      )}
 
       <Box
         sx={{
@@ -257,21 +202,20 @@ export default function ClientOrderPage() {
           gap: "1rem",
         }}
       >
-        {order.products.map((prod) => (
+        {order.comandaProduse.map((prod) => (
           <ClientOrderViewProductCard
             key={prod.id}
             productId={prod.id}
-            image={prod.image}
-            title={prod.title}
-            category={prod.category}
-            quantity={prod.quantity}
-            unit={prod.unit}
-            supplierRegion={prod.supplierRegion}
-            supplierLogo={prod.supplierLogo}
-            supplier={prod.supplier}
-            price={prod.price}
-            currency={prod.currency}
-            onAddReview={prod.onAddReview}
+            image={prod.produs.imagineProdus}
+            title={prod.produs.numeProdus}
+            category={prod.produs.categorie}
+            quantity={prod.cantitate}
+            unit={prod.produs.unitateDeMasura}
+            supplierRegion={"Cluj"}
+            supplier={prod.produs.numeProducator}
+            price={prod.pretUnitar}
+            currency={"RON"}
+            onAddReview={() => console.log("Review added")}
           />
         ))}
 

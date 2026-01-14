@@ -8,6 +8,7 @@ export interface CreateComandaProdusDto {
 }
 
 export interface Adresa {
+  id: number;
   numeComplet: string;
   telefon: string;
   stradaNumeNumar: string;
@@ -17,13 +18,27 @@ export interface Adresa {
 }
 
 export enum MetodaPlata {
-  CARD,
-  RAMBURS,
+  CARD = "CARD",
+  RAMBURS = "RAMBURS",
 }
 
-export enum MetodaLivrare {
-  HOME_DELIVERY,
-  SELF_PICKUP,
+export enum MetodaLivrareEnum {
+  HOME_DELIVERY = "HOME_DELIVERY",
+  SELF_PICKUP = "SELF_PICKUP",
+}
+
+export enum ComandaStatus {
+  CANCELED = "CANCELED",
+  CREATED = "CREATED",
+  PROCESSING = "PROCESSING",
+  READY_TO_DELIVER = "READY_TO_DELIVER",
+  DELIVERED = "DELIVERED",
+}
+
+export interface MetodaLivrare {
+  id: number;
+  metodaLivrare: MetodaLivrareEnum;
+  pret: number;
 }
 
 export interface CreateComandaRequest {
@@ -32,7 +47,7 @@ export interface CreateComandaRequest {
   metodaPlata: MetodaPlata;
   adresaLivrare: Adresa;
   adresaFacturare: Adresa;
-  metodaLivrare: MetodaLivrare;
+  metodaLivrare: MetodaLivrareEnum;
   observatii: string | null;
 }
 
@@ -44,13 +59,19 @@ export const ordersApi = {
 
   getAllForUser: async (userId: number) => {
     const response = await api.get<ComandaDto[]>(`/comanda/user/${userId}`);
+    console.log(response.data);
     return response.data;
   },
 
   getAllForProducator: async (prodId: number) => {
     const response = await api.get<ComandaDto[]>(
-      `/comanda/producator/${prodId}`
+      `/comanda/producator/${prodId}`,
     );
+    return response.data;
+  },
+
+  updateStatus: async (orderId: number, newStatus: ComandaStatus) => {
+    const response = await api.put(`/comanda/${orderId}`, { newStatus });
     return response.data;
   },
 };

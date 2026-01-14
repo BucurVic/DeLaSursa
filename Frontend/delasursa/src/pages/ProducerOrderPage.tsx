@@ -9,18 +9,15 @@ import Divider from "@mui/material/Divider";
 import Dropdown from "../components/Dropdown.tsx";
 import { AuthContext } from "../context/AuthContext.tsx";
 import { jwtDecode } from "jwt-decode";
-import { ordersApi } from "../api/ordersApi.ts";
+import { type Adresa, ordersApi } from "../api/ordersApi.ts";
 import type { ComandaDto } from "../common/types.ts";
-import type { DecodedJwt } from "../common/utils.ts";
-
-type Address = {
-  name: string;
-  street: string;
-  city: string;
-  region: string;
-  zip: string;
-  phone: string;
-};
+import {
+  ComandaStatusMap,
+  ComandaStatusReverseMap,
+  type DecodedJwt,
+  MetodaLivrareMap,
+  MetodaPlataMap,
+} from "../common/utils.ts";
 
 type ProductInOrder = {
   id: number;
@@ -41,29 +38,21 @@ type ProductInOrder = {
 type Order = {
   id: number;
   date: Date;
-  status: "Creată" | "În procesare" | "Pregatită" | "Livrată" | "Anulată";
+  status: string;
   products: ProductInOrder[];
-  deliveryAddress: Address;
-  billingAddress: Address;
+  deliveryAddress: Adresa;
+  billingAddress: Adresa;
   deliveryMethod: string;
   paymentMethod: string;
   clientEmail?: string;
-  shippingCost?: number;
+  shippingCost: number;
   trackingNumber?: string;
 };
-
-const orderStatusOptions = [
-  { value: "Creată", label: textResources.orders.created },
-  { value: "În procesare", label: textResources.orders.processing },
-  { value: "Pregatită", label: textResources.orders.ready },
-  { value: "Livrată", label: textResources.orders.delivered },
-  { value: "Anulată", label: textResources.orders.canceled },
-];
 
 const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
   id: c.id,
   date: new Date(c.dataEfectuarii),
-  status: "Creată",
+  status: ComandaStatusMap[c.statusComanda],
   products: c.comandaProduse.map((cp) => ({
     id: cp.id,
     title: cp.produs.numeProdus,
@@ -78,33 +67,28 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
     rating: 4.9,
     reviewCount: 29,
   })),
-  deliveryAddress: {
-    name: `${c.client.nume} ${c.client.prenume}`,
-    street: "Str. Horea 12",
-    city: "Cluj-Napoca",
-    region: "Cluj",
-    zip: "510789",
-    phone: "0723 456 789",
-  },
-  billingAddress: {
-    name: `${c.client.nume} ${c.client.prenume}`,
-    street: "Str. Horea 12",
-    city: "Cluj-Napoca",
-    region: "Cluj",
-    zip: "510789",
-    phone: "0723 456 789",
-  },
-  deliveryMethod: "Curier",
-  paymentMethod: "Card",
-  clientEmail: `${c.client.nume}${c.client.prenume}`,
-  shippingCost: 15,
-  trackingNumber: "AWB1234",
+  deliveryAddress: c.adresaLivrare,
+  billingAddress: c.adresaFacturare,
+  deliveryMethod: MetodaLivrareMap[c.metodaLivrare.metodaLivrare],
+  paymentMethod: MetodaPlataMap[c.metodaPlata],
+  shippingCost: c.metodaLivrare.pret,
+  trackingNumber: `AWB${c.adresaLivrare.codPostal}`,
 });
+
+const orderStatusOptions = [
+  { value: "Creată", label: textResources.orders.created },
+  { value: "În procesare", label: textResources.orders.processing },
+  { value: "Pregatită", label: textResources.orders.ready },
+  { value: "Livrată", label: textResources.orders.delivered },
+  { value: "Anulată", label: textResources.orders.canceled },
+];
 
 export default function ProducerOrderPage() {
   const { id } = useParams();
   const { token } = useContext(AuthContext);
   const [order, setOrder] = useState<Order>();
+
+  const isHomeDelivery = order?.deliveryMethod === "Livrare acasă";
 
   const tr = textResources.orders;
 
@@ -143,9 +127,22 @@ export default function ProducerOrderPage() {
   const steps = ["Creată", "În procesare", "Pregatită", "Livrată"];
   const activeStep = steps.indexOf(order.status);
 
-  const handleStatusChange = (e: any) => {
-    const newStatus = e.target.value;
-    setOrder((prev) => (prev ? { ...prev, status: newStatus } : prev));
+  const handleStatusChange = async (e: any) => {
+    const uiStatus = e.target.value;
+    console.log("UISTATUS: " + uiStatus);
+    const backendStatus = ComandaStatusReverseMap[uiStatus];
+    console.log("backendStatus: " + backendStatus);
+
+    if (!backendStatus || !order) return;
+
+    ordersApi
+      .updateStatus(order.id, backendStatus)
+      .then(() => {
+        setOrder((prev) => (prev ? { ...prev, status: uiStatus } : prev));
+      })
+      .catch((error) => {
+        console.log("Eroare la update status ", error);
+      });
   };
 
   return (
@@ -191,10 +188,6 @@ export default function ProducerOrderPage() {
             {tr.deliveryMethod} {order.deliveryMethod}
           </Typography>
 
-          <Typography variant="h4">
-            {tr.clientEmail} {order.clientEmail}
-          </Typography>
-
           <Dropdown
             label={tr.changeStatus}
             name="orderStatus"
@@ -214,89 +207,86 @@ export default function ProducerOrderPage() {
         ))}
       </Stepper>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1.5rem",
-          "@media (max-width: 48rem)": {
-            // 768px ~ 48rem
-            gridTemplateColumns: "1fr",
-          },
-        }}
-      >
-        <Card
-          sx={{
-            padding: "2rem",
-            borderRadius: "1rem",
-            backgroundColor: colors.darkGreen2,
-          }}
-        >
-          <Typography variant="h4" color={colors.lightGreen2}>
-            {tr.deliveryAddress}
-          </Typography>
-          <Divider sx={{ my: "0.5rem" }} />
-
-          <Typography variant="body1">{order.deliveryAddress.name}</Typography>
-          <Typography variant="body2">
-            {order.deliveryAddress.street}
-          </Typography>
-          <Typography variant="body2">
-            {order.deliveryAddress.city}, {order.deliveryAddress.region}
-          </Typography>
-          <Typography variant="body2">
-            {tr.zipCode} {order.deliveryAddress.zip}
-          </Typography>
-          <Typography variant="body2">
-            {tr.phone} {order.deliveryAddress.phone}
-          </Typography>
-        </Card>
-
-        <Card
-          sx={{
-            padding: "2rem",
-            borderRadius: "1rem",
-            backgroundColor: colors.darkGreen2,
-          }}
-        >
-          <Typography variant="h4" color={colors.lightGreen2}>
-            {tr.billingAddress}
-          </Typography>
-          <Divider sx={{ my: "0.5rem" }} />
-
-          <Typography variant="body1">{order.billingAddress.name}</Typography>
-          <Typography variant="body2">{order.billingAddress.street}</Typography>
-          <Typography variant="body2">
-            {order.billingAddress.city}, {order.billingAddress.region}
-          </Typography>
-          <Typography variant="body2">
-            {tr.zipCode} {order.billingAddress.zip}
-          </Typography>
-          <Typography variant="body2">
-            {tr.phone} {order.billingAddress.phone}
-          </Typography>
-        </Card>
-      </Box>
-
       <Card
         sx={{
-          p: "2rem",
-          backgroundColor: colors.darkGreen2,
+          padding: "2rem",
           borderRadius: "1rem",
+          backgroundColor: colors.darkGreen2,
         }}
       >
         <Typography variant="h4" color={colors.lightGreen2}>
-          {tr.deliveryDetails}
+          {tr.billingAddress}
         </Typography>
         <Divider sx={{ my: "0.5rem" }} />
-        <Typography>{tr.fanCourier}</Typography>
-        <Typography>
-          {tr.trackingNO} {order.trackingNumber}
+
+        <Typography variant="body1">
+          {order.billingAddress.numeComplet}
         </Typography>
-        <Typography>
-          {tr.trackingCost} {order.shippingCost} RON
+        <Typography variant="body2">
+          {order.billingAddress.stradaNumeNumar}
+        </Typography>
+        <Typography variant="body2">
+          {order.billingAddress.localitate}, {order.billingAddress.judet}
+        </Typography>
+        <Typography variant="body2">
+          {tr.zipCode} {order.billingAddress.codPostal}
+        </Typography>
+        <Typography variant="body2">
+          {tr.phone} {order.billingAddress.telefon}
         </Typography>
       </Card>
+
+      {isHomeDelivery && (
+        <>
+          <Card
+            sx={{
+              p: "2rem",
+              backgroundColor: colors.darkGreen2,
+              borderRadius: "1rem",
+            }}
+          >
+            <Typography variant="h4" color={colors.lightGreen2}>
+              {tr.deliveryAddress}
+            </Typography>
+            <Divider sx={{ my: "0.5rem" }} />
+
+            <Typography variant="body1">
+              {order.deliveryAddress.numeComplet}
+            </Typography>
+            <Typography variant="body2">
+              {order.deliveryAddress.stradaNumeNumar}
+            </Typography>
+            <Typography variant="body2">
+              {order.deliveryAddress.localitate}, {order.deliveryAddress.judet}
+            </Typography>
+            <Typography variant="body2">
+              {tr.zipCode} {order.deliveryAddress.codPostal}
+            </Typography>
+            <Typography variant="body2">
+              {tr.phone} {order.deliveryAddress.telefon}
+            </Typography>
+          </Card>
+          <Card
+            sx={{
+              p: "2rem",
+              backgroundColor: colors.darkGreen2,
+              borderRadius: "1rem",
+            }}
+          >
+            <Typography variant="h4" color={colors.lightGreen2}>
+              {tr.deliveryDetails}
+            </Typography>
+            <Divider sx={{ my: "0.5rem" }} />
+            <Typography>{tr.fanCourier}</Typography>
+            <Typography>
+              {tr.trackingNO} {order.trackingNumber}
+            </Typography>
+            <Typography>
+              {tr.trackingCost} {order.shippingCost} RON
+            </Typography>
+          </Card>
+        </>
+      )}
 
       <Box
         sx={{
