@@ -314,10 +314,19 @@ const CheckoutPage: React.FC = () => {
       // 2. Construim payload-ul pentru Backend
       // Trimitem doar ce acceptă backend-ul acum (clientId, produse)
 
+      const produse = items.filter((item) => !item.id.startsWith("bundle"));
+
+      const pachete = items.filter((item) => item.id.startsWith("bundle"));
+
       const orderPayload: CreateComandaRequest = {
         clientId: Number(user.id),
-        comandaProduseList: items.map((item) => ({
+        comandaProduseList: produse.map((item) => ({
           produsId: Number(item.id),
+          cantitate: item.quantity,
+          pretUnitar: item.price,
+        })),
+        comandaPacheteList: pachete.map((item) => ({
+          pachetId: Number(item.id.replace("bundle", "")),
           cantitate: item.quantity,
           pretUnitar: item.price,
         })),

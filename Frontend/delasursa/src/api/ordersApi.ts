@@ -7,6 +7,12 @@ export interface CreateComandaProdusDto {
   pretUnitar: number;
 }
 
+export interface CreateComandaPachetDto {
+  pachetId: number;
+  cantitate: number;
+  pretUnitar: number;
+}
+
 export interface Adresa {
   numeComplet: string;
   telefon: string;
@@ -43,6 +49,7 @@ export interface MetodaLivrare {
 export interface CreateComandaRequest {
   clientId: number;
   comandaProduseList: CreateComandaProdusDto[];
+  comandaPacheteList: CreateComandaPachetDto[];
   metodaPlata: MetodaPlata;
   adresaLivrare: Adresa;
   adresaFacturare: Adresa;

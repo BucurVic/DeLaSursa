@@ -106,7 +106,10 @@ const ProducerOrderViewBundleCard: React.FC<
               textOverflow: "ellipsis",
             }}
           >
-            {items.length} produse în pachet
+            Pachet cu
+            {items.length > 1
+              ? ` ${items.length} tipuri de produse`
+              : " un tip de produse"}
           </Typography>
         </Box>
 
