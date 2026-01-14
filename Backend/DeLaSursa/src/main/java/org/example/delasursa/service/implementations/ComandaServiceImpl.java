@@ -2,17 +2,17 @@ package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.ClientDto;
 import org.example.delasursa.common.dto.admin.ComandaSummary;
 import org.example.delasursa.common.dto.comanda.ComandaDto;
+import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
 import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
 import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
-import org.example.delasursa.common.exceptions.ProducatorException;
-import org.example.delasursa.common.exceptions.ProdusException;
-import org.example.delasursa.common.exceptions.UserException;
+import org.example.delasursa.common.dto.enums.ComandaStatus;
+import org.example.delasursa.common.exceptions.*;
 import org.example.delasursa.common.mappers.ComandaMapper;
 import org.example.delasursa.model.*;
 import org.example.delasursa.repository.*;
-import org.example.delasursa.repository.ComandaProdusRepository;
 import org.example.delasursa.service.ComandaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +20,10 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.example.delasursa.common.dto.ClientDto;
-import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
-import org.example.delasursa.model.Comanda;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,12 +69,12 @@ public class ComandaServiceImpl implements ComandaService {
         //finding the client
         Client client = clientRepository.findById(request.getClientId())
                 .orElseThrow(() -> {
-                    log.warn("Client with id {} not found",  request.getClientId());
+                    log.warn("Client with id {} not found", request.getClientId());
                     return new UserException("Client with id " + request.getClientId() + " not found!", HttpStatus.NOT_FOUND);
                 });
 
         //preparing the comanda
-        Comanda comanda = new  Comanda();
+        Comanda comanda = new Comanda();
         comanda.setClient(client);
         comanda.setMetodaLivrare(metodaLivrarePret);
         comanda.setMetodaPlata(request.getMetodaPlata());
@@ -86,20 +82,18 @@ public class ComandaServiceImpl implements ComandaService {
         comanda.setObservatii(request.getObservatii());
 
         Adresa adresaLivrare = request.getAdresaLivrare();
-        if(adresaRepository.findByAdresa(adresaLivrare).isEmpty()) {
+        if (adresaRepository.findByAdresa(adresaLivrare).isEmpty()) {
             adresaLivrare = adresaRepository.save(adresaLivrare);
         }
 
         comanda.setAdresaLivrare(adresaLivrare);
 
 
-        if(request.getAdresaFacturare() == null) {
+        if (request.getAdresaFacturare() == null) {
             comanda.setAdresaFacturare(adresaLivrare);
-        }
-
-        else {
+        } else {
             Adresa adresaFacturare = request.getAdresaFacturare();
-            if(adresaRepository.findByAdresa(adresaFacturare).isEmpty()) {
+            if (adresaRepository.findByAdresa(adresaFacturare).isEmpty()) {
                 adresaFacturare = adresaRepository.save(adresaFacturare);
             }
             comanda.setAdresaFacturare(adresaFacturare);
@@ -108,7 +102,7 @@ public class ComandaServiceImpl implements ComandaService {
         //seting comanda for comanda produse with
         Set<ComandaProdus> comandaProuse = produse.entrySet().stream()
                 .map(produs ->
-                     createFromMapEntryComanda(produs, comanda)
+                        createFromMapEntryComanda(produs, comanda)
                 )
                 .collect(Collectors.toSet());
 
@@ -128,7 +122,7 @@ public class ComandaServiceImpl implements ComandaService {
     }
 
     @Override
-    public Page<ComandaSummary> getAllComenziSummary(Pageable pageable){
+    public Page<ComandaSummary> getAllComenziSummary(Pageable pageable) {
         Page<Comanda> comenzi = comandaRepository.findAll(pageable);
 
         return comenzi.map(c -> ComandaSummary.builder()
@@ -140,6 +134,17 @@ public class ComandaServiceImpl implements ComandaService {
                         .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
                         .sum())
                 .build());
+    }
+
+    @Transactional
+    @Override
+    public ComandaDto updateStatus(Integer comandaId, ComandaStatus status, Integer prodId) {
+        Comanda comanda = comandaRepository.findById(comandaId).orElseThrow(() -> new ResourceNotFoundException("Comanda with id " + comandaId + " not found!"));
+        if (!comanda.getComandaProduse().stream().toList().get(0).getProdus().getProducator().getId().equals(prodId)) {
+            throw new UnauthorizedException("Not authorized to update current order");
+        }
+        comanda.setStatusComanda(status);
+        return comandaMapper.toDto(comandaRepository.save(comanda));
     }
 
     @Override
@@ -162,7 +167,7 @@ public class ComandaServiceImpl implements ComandaService {
 
     private ComandaProdus createFromMapEntryComanda(Map.Entry<ProdusProducator, Pair<Double, Double>> produs, Comanda comanda) {
         ComandaProdus comandaProdus = new ComandaProdus();
-        Pair<Double, Double> pair =  produs.getValue();
+        Pair<Double, Double> pair = produs.getValue();
         comandaProdus.setComanda(comanda);
         comandaProdus.setPretUnitar(pair.getFirst()); // first -> PretUnitar
         comandaProdus.setCantitate(pair.getSecond()); // second -> Cantiate
@@ -170,6 +175,7 @@ public class ComandaServiceImpl implements ComandaService {
         return comandaProdus;
 
     }
+
     @Override
     public Integer getTotalComenziUltimulAn() {
         return comandaRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
@@ -185,7 +191,7 @@ public class ComandaServiceImpl implements ComandaService {
         List<Comanda> comenzi = comandaRepository.findByClient_User_Username(emailOrUsername);
         return comenzi.stream()
                 .map(cmd -> ComandaDto.builder()
-                        .id(cmd.getId()) 
+                        .id(cmd.getId())
                         .dataEfectuarii(cmd.getDataEfectuarii())
                         .client(ClientDto.builder()
                                 .nume(cmd.getClient().getNume())
@@ -198,16 +204,16 @@ public class ComandaServiceImpl implements ComandaService {
                                         .cantitate(cp.getCantitate())
                                         .pretUnitar(cp.getPretUnitar())
                                         .produs(ComandaProdusDto.ProdusComandaProdusDto.builder()
-                                        
-                                                .numeProdus(cp.getProdus().getProdus().getNume()) 
-                                                
+
+                                                .numeProdus(cp.getProdus().getProdus().getNume())
+
                                                 .categorie(cp.getProdus().getProdus().getCategorie())
 
-                                                .pret(cp.getPretUnitar()) 
-                                                
+                                                .pret(cp.getPretUnitar())
+
                                                 .produsProducatorId(cp.getProdus().getId() != null ? cp.getProdus().getId().intValue() : null)
-                                                
-                                                
+
+
                                                 .build())
                                         .build())
                                 .collect(Collectors.toSet()))

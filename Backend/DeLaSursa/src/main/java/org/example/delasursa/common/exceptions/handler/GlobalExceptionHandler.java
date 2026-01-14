@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String>  handleValidationExceptions(BadCredentialsException e) {
+    public ResponseEntity<String> handleValidationExceptions(BadCredentialsException e) {
         log.error("Log in failed: {}", e.getMessage());
         return ResponseEntity.status(401).body("Invalid credentials: " + e.getMessage());
     }
@@ -68,6 +68,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("Unexpected error occurred", e);
         return ResponseEntity.status(404).body("Resource not found: " + e.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException e) {
+        log.error("Unauthorized to execute request", e);
+        return ResponseEntity.status(403).body("Unauthorized to execute request. " + e.getMessage());
     }
 
     @ExceptionHandler(ProducatorException.class)
