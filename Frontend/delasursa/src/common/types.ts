@@ -4,6 +4,7 @@ import {
   type MetodaLivrare,
   MetodaPlata,
 } from "../api/ordersApi.ts";
+import type { PachetDTO } from "../api/pacheteApi.ts";
 
 export interface LoginResponse {
   token: string;
@@ -49,6 +50,12 @@ export interface ComandaProdusDto {
   pretUnitar: number;
 }
 
+export interface ComandaPachetDto {
+  id: number;
+  pachet: PachetDTO;
+  cantitate: number;
+}
+
 export interface ComandaDto {
   id: number;
   client: ClientDto;
@@ -60,4 +67,5 @@ export interface ComandaDto {
   metodaLivrare: MetodaLivrare;
   metodaPlata: MetodaPlata;
   observatii: string;
+  comandaPachete: ComandaPachetDto[];
 }

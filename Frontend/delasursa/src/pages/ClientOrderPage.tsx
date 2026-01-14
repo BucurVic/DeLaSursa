@@ -16,6 +16,10 @@ import {
 } from "../common/utils.ts";
 import { ordersApi } from "../api/ordersApi.ts";
 import type { ComandaDto } from "../common/types.ts";
+import ClientOrderViewBundleCard, {
+  type OrderBundleItem,
+} from "../components/ClientOrderViewBundleCard.tsx";
+import type { PachetProdusItemDTO } from "../api/pacheteApi.ts";
 
 interface Order extends ComandaDto {
   date: Date;
@@ -33,6 +37,14 @@ const mapOrderWithEnumValues = (order: ComandaDto): Order => {
     transportCost: order.metodaLivrare.pret,
     plata: MetodaPlataMap[order.metodaPlata],
     livrare: MetodaLivrareMap[order.metodaLivrare.metodaLivrare],
+  };
+};
+
+const mapItemToBundleItem = (item: PachetProdusItemDTO): OrderBundleItem => {
+  return {
+    name: item.numeProdus,
+    quantity: item.cantitate,
+    unit: item.unitateMasura,
   };
 };
 
@@ -70,10 +82,15 @@ export default function ClientOrderPage() {
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
 
-  const subtotal = order.comandaProduse.reduce(
-    (sum, p) => sum + p.pretUnitar * p.cantitate,
-    0,
-  );
+  const subtotal =
+    order.comandaProduse.reduce(
+      (sum, p) => sum + p.pretUnitar * p.cantitate,
+      0,
+    ) +
+    order.comandaPachete.reduce(
+      (sum, p) => sum + p.pachet.pretTotal * p.cantitate,
+      0,
+    );
   const total = subtotal + order.transportCost;
 
   const steps = ["Creată", "În procesare", "Pregatită", "Livrată"];
@@ -219,6 +236,20 @@ export default function ClientOrderPage() {
           />
         ))}
 
+        {order.comandaPachete.map((b) => (
+          <ClientOrderViewBundleCard
+            key={b.id}
+            bundleId={b.id.toString()}
+            image={
+              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
+            }
+            title={b.pachet.nume}
+            items={b.pachet.produse.map((p) => mapItemToBundleItem(p))}
+            price={b.pachet.pretTotal}
+            currency={"RON"}
+            onAddReview={() => console.log("Review added")}
+          />
+        ))}
         <Divider sx={{ my: "1rem" }} />
 
         <Typography variant="h5">

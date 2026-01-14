@@ -28,4 +28,5 @@ public class ComandaDto {
     MetodaLivrarePretDto metodaLivrare;
     MetodaPlata metodaPlata;
     String observatii;
+    Set<ComandaPachetDto> comandaPachete;
 }

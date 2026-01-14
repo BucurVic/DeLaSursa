@@ -232,11 +232,7 @@ const CheckoutPage: React.FC = () => {
     0,
   );
   const shippingCost =
-    deliveryMethod === MetodaLivrareEnum.SELF_PICKUP
-      ? 0
-      : subtotal > 200
-        ? 0
-        : 20;
+    deliveryMethod === MetodaLivrareEnum.SELF_PICKUP ? 0 : 20;
   const total = subtotal + shippingCost;
 
   // --- HANDLERS ---

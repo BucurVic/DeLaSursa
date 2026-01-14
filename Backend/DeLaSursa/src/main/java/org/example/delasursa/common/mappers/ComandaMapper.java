@@ -2,7 +2,6 @@ package org.example.delasursa.common.mappers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.delasursa.common.dto.comanda.ComandaDto;
-import org.example.delasursa.common.dto.enums.MetodaPlata;
 import org.example.delasursa.model.Comanda;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +15,7 @@ public class ComandaMapper {
     private final ComandaProdusMapper comandaProdusMapper;
     private final AdresaMapper adresaMapper;
     private final MetodaLivrarePretMapper metodaLivrarePretMapper;
+    private final ComandaPachetMapper comandaPachetMapper;
 
     public ComandaDto toDto(Comanda entity) {
         return ComandaDto.builder()
@@ -32,13 +32,11 @@ public class ComandaMapper {
                 .metodaLivrare(metodaLivrarePretMapper.toDto(entity.getMetodaLivrare()))
                 .metodaPlata(entity.getMetodaPlata())
                 .observatii(entity.getObservatii())
+                .comandaPachete(entity.getComandaPachete()
+                        .stream()
+                        .map(comandaPachetMapper::toDto)
+                        .collect(Collectors.toSet())
+                )
                 .build();
-    }
-
-    private Integer mapMetodaPlata(MetodaPlata metodaPlata) {
-        return switch (metodaPlata) {
-            case CARD -> 0;
-            case RAMBURS -> 1;
-        };
     }
 }
