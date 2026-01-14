@@ -10,7 +10,7 @@ import Dropdown from "../components/Dropdown.tsx";
 import { AuthContext } from "../context/AuthContext.tsx";
 import { jwtDecode } from "jwt-decode";
 import { type Adresa, ordersApi } from "../api/ordersApi.ts";
-import type { ComandaDto } from "../common/types.ts";
+import type { ComandaDto, ComandaPachetDto } from "../common/types.ts";
 import {
   ComandaStatusMap,
   ComandaStatusReverseMap,
@@ -18,6 +18,10 @@ import {
   MetodaLivrareMap,
   MetodaPlataMap,
 } from "../common/utils.ts";
+import ProducerOrderViewBundleCard, {
+  type ProducerOrderViewBundleItem,
+} from "../components/ProducerOrderViewBundleCard.tsx";
+import type { PachetProdusItemDTO } from "../api/pacheteApi.ts";
 
 type ProductInOrder = {
   id: number;
@@ -47,6 +51,7 @@ type Order = {
   clientEmail?: string;
   shippingCost: number;
   trackingNumber?: string;
+  bundles: ComandaPachetDto[];
 };
 
 const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
@@ -73,7 +78,18 @@ const mapComandaDtoToOrder = (c: ComandaDto): Order => ({
   paymentMethod: MetodaPlataMap[c.metodaPlata],
   shippingCost: c.metodaLivrare.pret,
   trackingNumber: `AWB${c.adresaLivrare.codPostal}`,
+  bundles: c.comandaPachete,
 });
+
+const mapItemToBundleItem = (
+  item: PachetProdusItemDTO,
+): ProducerOrderViewBundleItem => {
+  return {
+    name: item.numeProdus,
+    quantity: item.cantitate,
+    unit: item.unitateMasura,
+  };
+};
 
 const orderStatusOptions = [
   { value: "Creată", label: textResources.orders.created },
@@ -118,10 +134,9 @@ export default function ProducerOrderPage() {
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
 
-  const subtotal = order.products.reduce(
-    (sum, p) => sum + p.price * p.quantity,
-    0,
-  );
+  const subtotal =
+    order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) +
+    order.bundles.reduce((sum, p) => sum + p.pachet.pretTotal * p.cantitate, 0);
   const total = subtotal + (order.shippingCost || 0);
 
   const steps = ["Creată", "În procesare", "Pregatită", "Livrată"];
@@ -310,6 +325,22 @@ export default function ProducerOrderPage() {
             currency={prod.currency}
             rating={prod.rating}
             reviewCount={prod.reviewCount}
+          />
+        ))}
+
+        {order.bundles.map((b) => (
+          <ProducerOrderViewBundleCard
+            key={b.id}
+            bundleId={b.id}
+            image={
+              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
+            }
+            title={b.pachet.nume}
+            items={b.pachet.produse.map((p) => mapItemToBundleItem(p))}
+            price={b.pachet.pretTotal}
+            rating={4.9}
+            reviewCount={15}
+            currency={"RON"}
           />
         ))}
 
