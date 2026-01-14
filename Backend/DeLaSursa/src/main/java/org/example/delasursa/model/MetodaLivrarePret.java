@@ -18,6 +18,7 @@ public class MetodaLivrarePret {
 
 
     @Column(unique = true)
+    @Enumerated(EnumType.ORDINAL)
     private MetodaLivrare metodaLivrare;
     private Double pret;
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { colors } from "../theme/colors";
@@ -150,18 +149,6 @@ const ProducerBundleCard: React.FC<ProducerBundleCardProps> = ({
         </Box>
 
         <Box sx={{ display: "flex", gap: "0.8rem", mt: "auto" }}>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/dashboard-producator/pachete/editeaza/${id}`);
-            }}
-          >
-            Editează
-          </Button>
-
           <Button
             fullWidth
             variant="outlined"

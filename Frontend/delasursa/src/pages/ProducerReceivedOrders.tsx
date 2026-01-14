@@ -11,27 +11,23 @@ import { useNavigate } from "react-router-dom";
 import { colors, textResources } from "../theme";
 import { AuthContext } from "../context/AuthContext.tsx";
 import { jwtDecode } from "jwt-decode";
-import type { DecodedJwt } from "../common/utils.ts";
+import { ComandaStatusMap, type DecodedJwt } from "../common/utils.ts";
 import { ordersApi } from "../api/ordersApi.ts";
 import type { ComandaDto } from "../common/types.ts";
 
 interface Order extends ComandaDto {
   status: string;
+  transportCost: number;
 }
 
-const mapOrdersWithRandomStatus = (orders: ComandaDto[]): Order[] => {
-  const statuses = [
-    "Creată",
-    "În procesare",
-    "Pregatită",
-    "Livrată",
-    "Anulată",
-  ];
-
-  return orders.map((order) => ({
-    ...order,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-  }));
+const mapOrdersWithEnumValues = (orders: ComandaDto[]): Order[] => {
+  return orders.map((order) => {
+    return {
+      ...order,
+      status: ComandaStatusMap[order.statusComanda],
+      transportCost: order.metodaLivrare.pret,
+    };
+  });
 };
 
 const ProducerReceivedOrders: React.FC = () => {
@@ -48,7 +44,7 @@ const ProducerReceivedOrders: React.FC = () => {
 
         const allOrders = await ordersApi.getAllForProducator(prodId);
 
-        const ordersWithStatus = mapOrdersWithRandomStatus(allOrders);
+        const ordersWithStatus = mapOrdersWithEnumValues(allOrders);
         setOrders(ordersWithStatus);
       } catch (error) {
         console.error("Eroare la incarcarea comenzii:", error);
@@ -79,19 +75,30 @@ const ProducerReceivedOrders: React.FC = () => {
             }}
           >
             <CardContent>
-              <Typography variant="h5" sx={{ mb: 1 }}>
+              <Typography variant="h3" sx={{ mb: 1 }}>
                 {textResources.orders.order} #{order.id}
               </Typography>
               <Divider sx={{ mb: 2 }} />
+
+              <Typography variant="h5" sx={{ mb: 1 }}>
+                <strong>{textResources.orders.total}</strong>
+                {(
+                  order.comandaProduse.reduce(
+                    (sum, p) => sum + p.pretUnitar * p.cantitate,
+                    0,
+                  ) + (order.transportCost || 0)
+                ).toFixed(2)}{" "}
+                RON
+              </Typography>
 
               <Typography>
                 <strong>{textResources.orders.date}</strong>
                 {order.dataEfectuarii}
               </Typography>
 
-              {/*<Typography sx={{ mt: 1 }}>*/}
-              {/*  <strong>{textResources.orders.status}</strong> {order.status}*/}
-              {/*</Typography>*/}
+              <Typography sx={{ mt: 1 }}>
+                <strong>{textResources.orders.status}</strong> {order.status}
+              </Typography>
 
               <Button
                 variant="outlined"

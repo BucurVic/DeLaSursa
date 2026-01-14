@@ -1,3 +1,10 @@
+import {
+  type Adresa,
+  type ComandaStatus,
+  type MetodaLivrare,
+  MetodaPlata,
+} from "../api/ordersApi.ts";
+
 export interface LoginResponse {
   token: string;
 }
@@ -22,6 +29,7 @@ export interface ClientDto {
   nume: string;
   telefon: string;
   prenume: string;
+  email: string;
 }
 
 export interface ProdusComandaProdusDto {
@@ -46,4 +54,10 @@ export interface ComandaDto {
   client: ClientDto;
   dataEfectuarii: string;
   comandaProduse: ComandaProdusDto[];
+  statusComanda: ComandaStatus;
+  adresaLivrare: Adresa;
+  adresaFacturare: Adresa;
+  metodaLivrare: MetodaLivrare;
+  metodaPlata: MetodaPlata;
+  observatii: string;
 }
