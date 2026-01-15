@@ -222,7 +222,7 @@ export default function ClientOrderPage() {
         {order.comandaProduse.map((prod) => (
           <ClientOrderViewProductCard
             key={prod.id}
-            productId={prod.id}
+            productId={prod.produs.produsProducatorId}
             image={prod.produs.imagineProdus}
             title={prod.produs.numeProdus}
             category={prod.produs.categorie}
@@ -239,7 +239,7 @@ export default function ClientOrderPage() {
         {order.comandaPachete.map((b) => (
           <ClientOrderViewBundleCard
             key={b.id}
-            bundleId={b.id.toString()}
+            bundleId={b.pachet.id.toString()}
             image={
               "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
             }
