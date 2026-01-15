@@ -18,28 +18,28 @@ import GridViewIcon from "@mui/icons-material/GridView";
 import { colors } from "../theme";
 import { useCart } from "../context/CartContext";
 
-// IMPORTĂM API-ul creat mai sus
-import { type PachetDTO, pacheteApi } from "../api/pacheteApi";
-import BundleCard from "../components/BundleCard.tsx";
-import type { BundleData } from "../types/BundleData.ts";
+import { pacheteApi } from "../api/pacheteApi";
+import BundleCard from "../components/BundleCard"; // Fără .tsx
+import type { BundleData } from "../types/BundleData"; // Fără .ts
+import type { PachetDTO } from "../common/types"; // Fără .ts
 
 // --- 2. MAPPER (Backend -> Frontend) ---
 const mapBackendToFrontend = (pachet: PachetDTO): BundleData => {
   return {
-    id: pachet.id.toString(),
+    id: pachet.id ? pachet.id.toString() : "0",
     title: pachet.nume,
     price: pachet.pretTotal,
     currency: "RON",
     producer: pachet.producatorNume || "Producător Local",
     image: pachet.imagine
-      ? pachet.imagine
-      : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
+        ? pachet.imagine
+        : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
     items: pachet.produse
-      ? pachet.produse.map((item) => ({
-          name: item.numeProdus,
-          quantity: `${item.cantitate} ${item.unitateMasura}`, // Ex: "2.0 kg"
+        ? pachet.produse.map((item) => ({
+          name: item.numeProdus || "",
+          quantity: `${item.cantitate} ${item.unitateMasura || ""}`,
         }))
-      : [],
+        : [],
   };
 };
 
@@ -88,48 +88,48 @@ interface FilterSelectProps {
 }
 
 const FilterSelect: React.FC<FilterSelectProps> = ({
-  label,
-  value,
-  options,
-  onChange,
-}) => (
-  <Box sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" }, minWidth: 150 }}>
-    <Typography sx={labelStyles}>{label}</Typography>
-    <Select
-      fullWidth
-      value={value}
-      onChange={onChange}
-      displayEmpty
-      sx={filterInputStyles}
-      MenuProps={{
-        PaperProps: {
-          sx: {
-            bgcolor: colors.darkGreen2,
-            color: colors.white1,
-            borderRadius: "1rem",
-            mt: 1,
-            "& .MuiMenuItem-root": {
-              "&:hover": { bgcolor: colors.lightGreen1Transparent },
-              "&.Mui-selected": {
-                bgcolor: colors.darkGreen1,
-                "&:hover": { bgcolor: colors.lightGreen1Transparent },
+                                                     label,
+                                                     value,
+                                                     options,
+                                                     onChange,
+                                                   }) => (
+    <Box sx={{ flex: { xs: "1 1 45%", md: "1 1 auto" }, minWidth: 150 }}>
+      <Typography sx={labelStyles}>{label}</Typography>
+      <Select
+          fullWidth
+          value={value}
+          onChange={onChange}
+          displayEmpty
+          sx={filterInputStyles}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                bgcolor: colors.darkGreen2,
+                color: colors.white1,
+                borderRadius: "1rem",
+                mt: 1,
+                "& .MuiMenuItem-root": {
+                  "&:hover": { bgcolor: colors.lightGreen1Transparent },
+                  "&.Mui-selected": {
+                    bgcolor: colors.darkGreen1,
+                    "&:hover": { bgcolor: colors.lightGreen1Transparent },
+                  },
+                },
               },
             },
-          },
-        },
-      }}
-    >
-      {options.map((opt) => (
-        <MenuItem key={opt.value} value={opt.value}>
-          {opt.label === "-" ? (
-            <span style={{ opacity: 0.5 }}>-</span>
-          ) : (
-            opt.label
-          )}
-        </MenuItem>
-      ))}
-    </Select>
-  </Box>
+          }}
+      >
+        {options.map((opt) => (
+            <MenuItem key={opt.value} value={opt.value}>
+              {opt.label === "-" ? (
+                  <span style={{ opacity: 0.5 }}>-</span>
+              ) : (
+                  opt.label
+              )}
+            </MenuItem>
+        ))}
+      </Select>
+    </Box>
 );
 
 // --- COMPONENTA PRINCIPALĂ ---
@@ -176,7 +176,9 @@ export default function SubscriptionPage() {
     const bundleToAdd = bundles.find((b) => b.id === id);
     if (bundleToAdd) {
       addItem({
-        id: "bundle" + bundleToAdd.id.toString(),
+        // Adăugăm un offset fictiv pentru a nu conflictualiza ID-urile de produse simple
+        // SAU, ideal, backend-ul ar trebui să aibă ID-uri unice globale (UUID)
+        id: Number(bundleToAdd.id),
         title: bundleToAdd.title,
         price: bundleToAdd.price,
         image: bundleToAdd.image,
@@ -186,8 +188,8 @@ export default function SubscriptionPage() {
   };
 
   const handleDropdownChange = (
-    label: string,
-    event: SelectChangeEvent<string>,
+      label: string,
+      event: SelectChangeEvent<string>,
   ) => {
     const value = event.target.value;
     if (label === "Sortare") setSelectedSort(value);
@@ -199,10 +201,10 @@ export default function SubscriptionPage() {
   // --- CALCUL OPȚIUNI DINAMICE (Bazat pe datele încărcate) ---
   const producerOptions = useMemo(() => {
     const uniqueProducers = Array.from(
-      new Set(bundles.map((b) => b.producer)),
+        new Set(bundles.map((b) => b.producer).filter(Boolean))
     ).map((p) => ({
-      value: p,
-      label: p,
+      value: p!,
+      label: p!,
     }));
     return [{ value: "", label: "-" }, ...uniqueProducers];
   }, [bundles]);
@@ -218,7 +220,6 @@ export default function SubscriptionPage() {
   }, [bundles]);
 
   // --- FILTRARE CLIENT-SIDE ---
-  // Deoarece backend-ul dat are doar 'findAll', facem filtrarea aici
   const activeFilters = useMemo(() => {
     const list: { label: string; onRemove: () => void }[] = [];
     if (selectedProducer)
@@ -283,227 +284,228 @@ export default function SubscriptionPage() {
   ]);
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: colors.darkGreen2 }}>
-      <Typography
-        variant="h2"
-        align="center"
-        pt={5}
-        pb={2}
-        sx={{ color: colors.white1 }}
-      >
-        Pachete pregătite de producătorii noștri
-      </Typography>
-      <Typography
-        variant="h6"
-        align="center"
-        pb={5}
-        sx={{ color: colors.white2 }}
-      >
-        Descoperă coșuri cu produse proaspete, direct de la producători, gândite
-        pentru nevoile tale.
-      </Typography>
-
-      {/* ZONA FILTRE */}
-      <Box sx={{ maxWidth: "1400px", mx: "auto", px: 2 }}>
-        <Card
-          sx={{
-            width: "100%",
-            p: "2rem",
-            boxSizing: "border-box",
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-            bgcolor: colors.darkGreen2,
-            border: `1px solid ${colors.lightGreen1Transparent}`,
-          }}
+      <Box sx={{ minHeight: "100vh", bgcolor: colors.darkGreen2 }}>
+        <Typography
+            variant="h2"
+            align="center"
+            pt={5}
+            pb={2}
+            sx={{ color: colors.white1 }}
         >
-          <Box
-            sx={{ display: "flex", justifyContent: "center", width: "100%" }}
-          >
-            <SearchBar
-              placeholder="Caută pachete..."
-              value={search}
-              onChange={setSearch}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-end",
-              gap: 2,
-              flexWrap: "wrap",
-            }}
-          >
-            <FilterSelect
-              label="Producător"
-              value={selectedProducer}
-              options={producerOptions}
-              onChange={(e) => handleDropdownChange("Producător", e)}
-            />
-            <FilterSelect
-              label="Preț Min"
-              value={selectedMinPrice}
-              options={generatedPriceOptions}
-              onChange={(e) => handleDropdownChange("Preț Min", e)}
-            />
-            <FilterSelect
-              label="Preț Max"
-              value={selectedMaxPrice}
-              options={generatedPriceOptions}
-              onChange={(e) => handleDropdownChange("Preț Max", e)}
-            />
-            <FilterSelect
-              label="Sortare"
-              value={selectedSort}
-              options={sortOptions}
-              onChange={(e) => handleDropdownChange("Sortare", e)}
-            />
-          </Box>
-        </Card>
-
-        {/* CONTROLS BAR */}
-        <Box
-          sx={{
-            mt: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 1,
-          }}
+          Pachete pregătite de producătorii noștri
+        </Typography>
+        <Typography
+            variant="h6"
+            align="center"
+            pb={5}
+            sx={{ color: colors.white2 }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              flexWrap: "wrap",
-            }}
+          Descoperă coșuri cu produse proaspete, direct de la producători, gândite
+          pentru nevoile tale.
+        </Typography>
+
+        {/* ZONA FILTRE */}
+        <Box sx={{ maxWidth: "1400px", mx: "auto", px: 2 }}>
+          <Card
+              sx={{
+                width: "100%",
+                p: "2rem",
+                boxSizing: "border-box",
+                display: "flex",
+                flexDirection: "column",
+                gap: 4,
+                bgcolor: colors.darkGreen2,
+                border: `1px solid ${colors.lightGreen1Transparent}`,
+              }}
           >
-            {activeFilters.length > 0 && (
-              <Box
+            <Box
+                sx={{ display: "flex", justifyContent: "center", width: "100%" }}
+            >
+              <SearchBar
+                  placeholder="Caută pachete..."
+                  value={search}
+                  onChange={setSearch}
+              />
+            </Box>
+
+            <Box
                 sx={{
-                  mt: 2,
-                  px: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "flex-end",
+                  gap: 2,
+                  flexWrap: "wrap",
+                }}
+            >
+              <FilterSelect
+                  label="Producător"
+                  value={selectedProducer}
+                  options={producerOptions}
+                  onChange={(e) => handleDropdownChange("Producător", e)}
+              />
+              <FilterSelect
+                  label="Preț Min"
+                  value={selectedMinPrice}
+                  options={generatedPriceOptions}
+                  onChange={(e) => handleDropdownChange("Preț Min", e)}
+              />
+              <FilterSelect
+                  label="Preț Max"
+                  value={selectedMaxPrice}
+                  options={generatedPriceOptions}
+                  onChange={(e) => handleDropdownChange("Preț Max", e)}
+              />
+              <FilterSelect
+                  label="Sortare"
+                  value={selectedSort}
+                  options={sortOptions}
+                  onChange={(e) => handleDropdownChange("Sortare", e)}
+              />
+            </Box>
+          </Card>
+
+          {/* CONTROLS BAR */}
+          <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+          >
+            <Box
+                sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: 1,
                   flexWrap: "wrap",
                 }}
-              >
-                <Typography variant="h6" sx={{ mr: 1, color: colors.white1 }}>
-                  Filtre active:
-                </Typography>
-                {activeFilters.map((af) => (
-                  <FilterChip
-                    key={af.label}
-                    label={af.label}
-                    onRemove={af.onRemove}
-                  />
-                ))}
-                <Button
-                  size="small"
-                  onClick={() => {
-                    setSearch("");
-                    setSelectedProducer("");
-                    setSelectedMinPrice("");
-                    setSelectedMaxPrice("");
-                    setSelectedSort("");
+            >
+              {activeFilters.length > 0 && (
+                  <Box
+                      sx={{
+                        mt: 2,
+                        px: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        flexWrap: "wrap",
+                      }}
+                  >
+                    <Typography variant="h6" sx={{ mr: 1, color: colors.white1 }}>
+                      Filtre active:
+                    </Typography>
+                    {activeFilters.map((af) => (
+                        <FilterChip
+                            key={af.label}
+                            label={af.label}
+                            onRemove={af.onRemove}
+                        />
+                    ))}
+                    <Button
+                        size="small"
+                        onClick={() => {
+                          setSearch("");
+                          setSelectedProducer("");
+                          setSelectedMinPrice("");
+                          setSelectedMaxPrice("");
+                          setSelectedSort("");
+                        }}
+                        sx={{ color: colors.lightGreen1 }}
+                    >
+                      Resetează filtrele
+                    </Button>
+                  </Box>
+              )}
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton
+                  onClick={() => setViewType("grid")}
+                  sx={{
+                    bgcolor:
+                        viewType === "grid" ? colors.lightGreen1 : "transparent",
+                    color: viewType === "grid" ? colors.darkGreen2 : colors.white2,
+                    borderRadius: "0.5rem",
+                    "&:hover": {
+                      bgcolor: colors.lightGreen1,
+                      color: colors.darkGreen2,
+                    },
                   }}
-                  sx={{ color: colors.lightGreen1 }}
+              >
+                <GridViewIcon />
+              </IconButton>
+              <IconButton
+                  onClick={() => setViewType("list")}
+                  sx={{
+                    bgcolor:
+                        viewType === "list" ? colors.lightGreen1 : "transparent",
+                    color: viewType === "list" ? colors.darkGreen2 : colors.white2,
+                    borderRadius: "0.5rem",
+                    "&:hover": {
+                      bgcolor: colors.lightGreen1,
+                      color: colors.darkGreen2,
+                    },
+                  }}
+              >
+                <ViewListIcon />
+              </IconButton>
+            </Box>
+          </Box>
+
+          {/* REZULTATE */}
+          <Box sx={{ mt: 4, mb: 8 }}>
+            {loading ? (
+                <Typography align="center" sx={{ color: colors.white1, mt: 4 }}>
+                  Se încarcă pachetele...
+                </Typography>
+            ) : filteredBundles.length === 0 ? (
+                <Typography align="center" sx={{ color: colors.white2, mt: 4 }}>
+                  Nu am găsit pachete.
+                </Typography>
+            ) : viewType === "grid" ? (
+                <Grid
+                    container
+                    spacing={4}
+                    justifyContent="center"
+                    alignItems="stretch"
                 >
-                  Resetează filtrele
-                </Button>
-              </Box>
+                  {filteredBundles.map((bundle) => (
+                      <Grid
+                          item
+                          xs={12}
+                          sm={6}
+                          md={4}
+                          lg={3}
+                          key={bundle.id}
+                          sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <BundleCard
+                            {...bundle}
+                            // AICI TRIMITEM ID-UL CORECT CĂTRE COȘ
+                            onAddToCart={handleBuyBundle}
+                            viewMode="grid"
+                        />
+                      </Grid>
+                  ))}
+                </Grid>
+            ) : (
+                <Stack spacing={3} alignItems="center">
+                  {filteredBundles.map((bundle) => (
+                      <Box key={bundle.id} sx={{ width: "100%", maxWidth: "900px" }}>
+                        <BundleCard
+                            {...bundle}
+                            onAddToCart={handleBuyBundle}
+                            viewMode="list"
+                        />
+                      </Box>
+                  ))}
+                </Stack>
             )}
           </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <IconButton
-              onClick={() => setViewType("grid")}
-              sx={{
-                bgcolor:
-                  viewType === "grid" ? colors.lightGreen1 : "transparent",
-                color: viewType === "grid" ? colors.darkGreen2 : colors.white2,
-                borderRadius: "0.5rem",
-                "&:hover": {
-                  bgcolor: colors.lightGreen1,
-                  color: colors.darkGreen2,
-                },
-              }}
-            >
-              <GridViewIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => setViewType("list")}
-              sx={{
-                bgcolor:
-                  viewType === "list" ? colors.lightGreen1 : "transparent",
-                color: viewType === "list" ? colors.darkGreen2 : colors.white2,
-                borderRadius: "0.5rem",
-                "&:hover": {
-                  bgcolor: colors.lightGreen1,
-                  color: colors.darkGreen2,
-                },
-              }}
-            >
-              <ViewListIcon />
-            </IconButton>
-          </Box>
-        </Box>
-
-        {/* REZULTATE */}
-        <Box sx={{ mt: 4, mb: 8 }}>
-          {loading ? (
-            <Typography align="center" sx={{ color: colors.white1, mt: 4 }}>
-              Se încarcă pachetele...
-            </Typography>
-          ) : filteredBundles.length === 0 ? (
-            <Typography align="center" sx={{ color: colors.white2, mt: 4 }}>
-              Nu am găsit pachete.
-            </Typography>
-          ) : viewType === "grid" ? (
-            <Grid
-              container
-              spacing={4}
-              justifyContent="center"
-              alignItems="stretch"
-            >
-              {filteredBundles.map((bundle) => (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  lg={3}
-                  key={bundle.id}
-                  sx={{ display: "flex", justifyContent: "center" }}
-                >
-                  <BundleCard
-                    {...bundle}
-                    onAddToCart={handleBuyBundle}
-                    viewMode="grid"
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Stack spacing={3} alignItems="center">
-              {filteredBundles.map((bundle) => (
-                <Box key={bundle.id} sx={{ width: "100%", maxWidth: "900px" }}>
-                  <BundleCard
-                    {...bundle}
-                    onAddToCart={handleBuyBundle}
-                    viewMode="list"
-                  />
-                </Box>
-              ))}
-            </Stack>
-          )}
         </Box>
       </Box>
-    </Box>
   );
 }

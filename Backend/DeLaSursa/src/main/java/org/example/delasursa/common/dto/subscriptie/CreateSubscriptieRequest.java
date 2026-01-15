@@ -1,7 +1,5 @@
 package org.example.delasursa.common.dto.subscriptie;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +12,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateSubscriptieRequest {
-    private Integer clientId;
-    private Integer pachetId;
+    // Scoatem clientId - il luam automat din Userul logat
+    private Integer idPachet;
     private LocalDate dataInceput;
-    private Integer freceventa;
-    private String status;
+    private Integer frecventa;
 }
-

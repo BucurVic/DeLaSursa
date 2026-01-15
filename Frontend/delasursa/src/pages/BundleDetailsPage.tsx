@@ -16,8 +16,9 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { colors } from "../theme";
 import { useCart } from "../context/CartContext";
-import { type PachetDTO, pacheteApi } from "../api/pacheteApi";
-import { ShoppingCartOutlined } from "@mui/icons-material"; //
+import { pacheteApi } from "../api/pacheteApi";
+import { ShoppingCartOutlined } from "@mui/icons-material";
+import type {PachetDTO} from "../common/types.ts";
 
 const textResources = {
   addToCartButton: "Adaugă în coș",

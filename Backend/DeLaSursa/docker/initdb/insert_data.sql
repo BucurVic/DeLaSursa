@@ -136,32 +136,32 @@ VALUES (12, 1, 100, 'kg', 2.5, '/uploads/produse/12/mere.jpg'),
 -- ========================================================
 -- STEP 6: Inserăm pachete
 -- ========================================================
-INSERT INTO pachete (id_producator, nume, imagine)
-VALUES (12, 'Pachet Fructe 1', ' '),
-       (13, 'Pachet Fructe 2', ' '),
-       (14, 'Pachet Legume', ' '),
-       (15, 'Pachet Lactate', ' '),
-       (16, 'Pachet Mixt 1', ' '),
-       (17, 'Pachet Mixt 2', ' '),
-       (18, 'Pachet Panificatie', ' '),
-       (19, 'Pachet Bauturi', ' '),
-       (20, 'Pachet Alimentar', ' '),
-       (12, 'Pachet Premium', ' ');
-
+INSERT INTO pachete (id_producator, nume, imagine, pret_total, pret_abonament, descriere, e_abonament, frecventa_livrare) VALUES
+  (12, 'Pachet Fructe 1', ' ', 11.0, 10.0, 'Pachet cu fructe de sezon - Reducere 10% la abonament!', true, 7),
+  (13, 'Pachet Fructe 2', ' ', 12.0, NULL, 'Mix de fructe exotice', false, null),
+  (14, 'Pachet Legume', ' ', 13.5, 12.0, 'Legume proaspete pentru salată', true, 14),
+  (15, 'Pachet Lactate', ' ', 6.0, 5.0, 'Brânzeturi și lapte bio - Super preț la abonament!', true, 30),
+  (16, 'Pachet Mixt 1', ' ', 10.0, NULL, 'Combinație fructe și legume', false, null),
+  (17, 'Pachet Mixt 2', ' ', 4.0, 3.5, 'Pachet mare pentru familie', true, 7),
+  (18, 'Pachet Panificatie', ' ', 30.0, 25.0, 'Pâine și produse de patiserie', true, 7),
+  (19, 'Pachet Bauturi', ' ', 16.0, NULL, 'Sucuri naturale și siropuri', false, null),
+  (20, 'Pachet Alimentar', ' ', 27.5, 25.0, 'Produse de bază (ulei, zahăr, făină)', true, 30),
+  (12, 'Pachet Premium', ' ', 27.5, 25.0, 'Selecție gourmet', true, 14);
 -- ========================================================
 -- STEP 7: Inserăm pachet_produs
 -- ========================================================
-INSERT INTO pachet_produs (id_pachet, id_produs, cantitate, pret_unitar)
-VALUES (1, 1, 2, 2.5),
-       (1, 2, 2, 3.0),
-       (2, 3, 3, 4.0),
-       (3, 4, 3, 4.5),
-       (4, 5, 1, 6.0),
-       (5, 6, 2, 5.0),
-       (6, 7, 4, 1.0),
-       (7, 8, 3, 10.0),
-       (8, 9, 2, 8.0),
-       (9, 10, 5, 5.5);
+INSERT INTO pachet_produs (id_pachet, id_produs, cantitate, pret_unitar) VALUES
+    (1, 1, 2, 2.5),
+    (1, 2, 2, 3.0),
+    (2, 3, 3, 4.0),
+    (3, 4, 3, 4.5),
+    (4, 5, 1, 6.0),
+    (5, 6, 2, 5.0),
+    (6, 7, 4, 1.0),
+    (7, 8, 3, 10.0),
+    (8, 9, 2, 8.0),
+    (9, 10, 5, 5.5),
+    (10, 10, 5, 5.5);
 
 -- ========================================================
 -- STEP 8: Inserăm adrese
@@ -303,138 +303,17 @@ VALUES
 -- ========================================================
 -- STEP 11: Inserăm subscriptii
 -- ========================================================
-INSERT INTO subscriptii (id_client, id_pachet, data_inceput, freceventa, status)
-VALUES (2, 1, '2025-01-01', 7, 'activa'),
-       (3, 2, '2025-01-02', 14, 'activa'),
-       (4, 3, '2025-01-03', 30, 'activa'),
-       (5, 4, '2025-01-04', 7, 'inactiva'),
-       (6, 5, '2025-01-05', 14, 'activa'),
-       (7, 6, '2025-01-06', 30, 'activa'),
-       (8, 7, '2025-01-07', 7, 'inactiva'),
-       (9, 8, '2025-01-08', 14, 'activa'),
-       (10, 9, '2025-01-09', 30, 'activa'),
-       (11, 10, '2025-01-10', 7, 'activa');
-
-
-INSERT INTO admini(id, nume, prenume)
-VALUES (1, 'De La', 'Sursa');
-
-
-update useri
-set data_inregistrare = CURRENT_DATE,
-    status            = true;
-
--- ========================================================
--- STEP 12: Inserăm comenzi suplimentare pentru producatori (fiecare sa aiba cel putin 2 comenzi)
--- ========================================================
-INSERT INTO comenzi (id_client, data_efectuarii, status_comanda, adresa_livrare_id, adresa_facturare_id,
-                     metoda_livrare_id, metoda_plata, observatii)
-VALUES
--- producator 12 → client 2
-(2, '2026-01-11', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock1'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock1'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 13 → client 3
-(3, '2026-01-12', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 14 → client 4
-(4, '2026-01-13', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 15 → client 5
-(5, '2026-01-14', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock4'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock4'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 16 → client 6
-(6, '2026-01-15', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock5'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock5'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 17 → client 7
-(7, '2026-01-16', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock6'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock6'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 18 → client 8
-(8, '2026-01-17', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock7'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock7'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 19 → client 9
-(9, '2026-01-18', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie'),
-
--- producator 20 → client 10
-(10, '2026-01-19', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
- (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
- (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
- 0, 'observatie');
-
--- ========================================================
--- STEP 13: Inserăm comanda_produs pentru noile comenzi
--- ========================================================
-INSERT INTO comanda_produs (id_comanda, id_produs, cantitate, pret_unitar)
-VALUES
--- Comanda noua 1 → producator 12
-(11, 1, 3, 2.5),
-
--- Comanda noua 2 → producator 13
-(12, 3, 2, 4.0),
-
--- Comanda noua 3 → producator 14
-(13, 4, 4, 4.5),
-
--- Comanda noua 4 → producator 15
-(14, 5, 4, 6.0),
-
--- Comanda noua 5 → producator 16
-(15, 6, 4, 5.0),
-
--- Comanda noua 6 → producator 17
-(16, 7, 4, 1.0),
-
--- Comanda noua 7 → producator 18
-(17, 8, 4, 10.0),
-
--- Comanda noua 8 → producator 19
-(18, 9, 1, 8.0),
-
--- Comanda noua 9 → producator 20
-(19, 10, 4, 5.5);
-
--- ========================================================
--- STEP 14: Inserăm comanda_pachet pentru noile comenzi
--- ========================================================
-INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar)
-VALUES
--- Comanda noua 1 → producator 12
-(11, 1, 1, 25),
-
--- Comanda noua 2 → producator 13
-(12, 2, 1, 30),
-
--- Comanda noua 3 → producator 14
-(13, 3, 1, 28),
-
--- Comanda noua 4 → producator 15
-(14, 4, 1, 35),
-
--- Comanda noua 5 → producator 16
-(15, 5, 1, 50),
+INSERT INTO subscriptii (id_client, id_pachet, data_inceput, frecventa, status) VALUES
+    (2, 1, '2025-01-01', 7, 'ACTIV'),
+    (3, 2, '2025-01-02', 14, 'ACTIV'),
+    (4, 3, '2025-01-03', 30, 'ACTIV'),
+    (5, 4, '2025-01-04', 7, 'INACTIV'),
+    (6, 5, '2025-01-05', 14, 'ACTIV'),
+    (7, 6, '2025-01-06', 30, 'ACTIV'),
+    (8, 7, '2025-01-07', 7, 'INACTIV'),
+    (9, 8, '2025-01-08', 14, 'ACTIV'),
+    (10, 9, '2025-01-09', 30, 'ACTIV'),
+    (11, 10, '2025-01-10', 14, 'ACTIV');
 
 -- Comanda noua 6 → producator 17
 (16, 6, 1, 60),

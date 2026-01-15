@@ -29,7 +29,26 @@ public class Pachet {
     @Column(name = "imagine", length = Integer.MAX_VALUE)
     private String imagine;
 
-    @OneToMany(mappedBy = "pachet")
+    // --- CÂMPURI NOI PENTRU ABONAMENTE ---
+
+    @Column(name = "descriere", length = 1000)
+    private String descriere;
+
+    @Column(name = "pret_total")
+    private Double pretTotal; // Acesta lipsea din entitatea ta inițială
+
+    @Column(name = "pret_abonament")
+    private Double pretAbonament;
+
+    @Column(name = "e_abonament")
+    private Boolean eAbonament = false; // Default false (pachet normal)
+
+    @Column(name = "frecventa_livrare")
+    private Integer frecventaLivrare; // 7, 14, 30 zile
+
+    // --- RELAȚII ---
+
+    @OneToMany(mappedBy = "pachet", cascade = CascadeType.ALL)
     private Set<PachetProdus> pachetProduse = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "pachet")
@@ -37,6 +56,4 @@ public class Pachet {
 
     @OneToMany(mappedBy = "pachet")
     private Set<Subscriptie> subscriptii = new LinkedHashSet<>();
-
-
 }

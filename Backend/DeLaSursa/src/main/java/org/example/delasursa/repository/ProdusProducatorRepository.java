@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,8 @@ public interface ProdusProducatorRepository extends JpaRepository<ProdusProducat
     List<ProdusProducator> findByProducator_Id(Integer prodducatorId);
 
     boolean existsByProdus_IdAndProducator_Id(Integer produsId, Integer producatorId);
+
+    Page<ProdusProducator> findAllByProducator_Id(Integer producatorId, Pageable pageable);
 
     Optional<ProdusProducator> findByProdus_IdAndProducator_Id(Integer produsId, Integer producatorId);
 

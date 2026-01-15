@@ -1,94 +1,125 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext.tsx";
-import { Box, Typography } from "@mui/material";
+import { AuthContext } from "../context/AuthContext"; // Asigură-te că calea e corectă (fără .tsx la import)
+import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import { textResources } from "../theme";
-import SubscriptionCard from "../components/SubscriptionCard.tsx";
-import { type SubscriptieDTO, subscriptiiApi } from "../api/subscriptiiApi.ts";
-import type { BundleData } from "../types/BundleData.ts";
-import type { PachetDTO } from "../api/pacheteApi.ts";
+import SubscriptionCard from "../components/SubscriptionCard"; // Fără .tsx
+import { subscriptiiApi } from "../api/subscriptiiApi";       // Fără .ts
+import type { BundleData } from "../types/BundleData";        // Fără .ts
 import { jwtDecode } from "jwt-decode";
+import type { PachetDTO, SubscriptieDTO } from "../common/types";
 
-interface Subscription {
-  id: number;
-  clientId: number;
-  dataInceput: string;
-  freceventa: number;
-  status: string;
-  supplier?: string;
-  supplierRegion?: string;
-  pachet: BundleData;
+// Interfața locală adaptată pentru SubscriptionCard
+// (Trebuie să corespundă cu ce așteaptă componenta ta SubscriptionCard)
+export interface Subscription {
+    id: number;
+    clientId: number;
+    dataInceput: string;
+    frecventa: number; // Corectat din 'freceventa'
+    status: string;
+    supplier?: string;
+    supplierRegion?: string;
+    pachet: BundleData;
 }
 
-const mapBackendToFrontend = (pachet: PachetDTO): BundleData => ({
-  id: pachet.id.toString(),
-  title: pachet.nume,
-  price: pachet.pretTotal ?? 0,
-  currency: "RON",
-  producer: pachet.producatorNume,
-  image:
-    pachet.imagine && pachet.imagine.trim()
-      ? pachet.imagine
-      : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
-  items:
-    pachet.produse?.map((item) => ({
-      name: item.numeProdus,
-      quantity: `${item.cantitate ?? 0} ${item.unitateMasura ?? ""}`,
-    })) || [],
+// Helper pentru a transforma PachetDTO (Backend) -> BundleData (Frontend Card)
+const mapPachetToBundle = (pachet: PachetDTO): BundleData => ({
+    id: pachet.id?.toString() || "0",
+    title: pachet.nume,
+    // LOGICĂ NOUĂ: Afișăm prețul de abonament (redus) dacă există, altfel prețul total
+    price: pachet.pretAbonament ?? pachet.pretTotal,
+    currency: "RON",
+    producer: pachet.producatorNume || "Producător Local",
+    image:
+        pachet.imagine && pachet.imagine.trim()
+            ? pachet.imagine
+            : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
+    items:
+        pachet.produse?.map((item) => ({
+            name: item.numeProdus || "Produs",
+            quantity: `${item.cantitate ?? 0} ${item.unitateMasura ?? "buc"}`,
+        })) || [],
 });
 
-const mapSubscriptions = (subs: SubscriptieDTO[]): Subscription[] =>
-  subs.map((sub) => ({
-    id: sub.id,
-    clientId: sub.clientId,
-    dataInceput: sub.dataInceput,
-    freceventa: sub.freceventa,
-    status: sub.status,
-    supplier: sub.pachet?.producatorNume,
-    supplierRegion: "Cluj",
-    pachet: mapBackendToFrontend(sub.pachet!),
-  }));
-
 const MySubscriptionsPage: React.FC = () => {
-  const { token } = useContext(AuthContext);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+    const { token } = useContext(AuthContext);
+    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadSubs = async () => {
-      if (!token) return;
+    useEffect(() => {
+        const loadSubs = async () => {
+            if (!token) return;
 
-      try {
-        const decoded = jwtDecode<{ id: string }>(token);
-        const userId = Number(decoded.id);
+            setLoading(true);
+            setError(null);
 
-        const allSubs: SubscriptieDTO[] =
-          await subscriptiiApi.getAllForUser(userId);
-        const mapped: Subscription[] = mapSubscriptions(allSubs);
-        setSubscriptions(mapped);
-      } catch (err) {
-        console.error("Eroare la încărcarea abonamentelor:", err);
-      }
-    };
+            try {
+                // 1. Decodare ID Client
+                const decoded: any = jwtDecode(token);
+                const userId = Number(decoded.id);
 
-    loadSubs();
-  }, [token]);
+                // 2. Apel API
+                // Nota: getByClient returnează acum un Page<SubscriptieDTO>
+                const response = await subscriptiiApi.getByClient(userId, 0, 100);
 
-  return (
-    <Box sx={{ mt: 4, px: 2, pb: 6, maxWidth: "900px", mx: "auto" }}>
-      <Typography variant="h3" sx={{ mb: 3 }}>
-        {textResources.subscriptions.mySubscriptions}
-      </Typography>
+                // 3. Extragere array din 'content'
+                const allSubsBackend: SubscriptieDTO[] = response.data.content;
 
-      {subscriptions.length === 0 ? (
-        <Typography>{textResources.subscriptions.noSubscriptions}</Typography>
-      ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {subscriptions.map((sub) => (
-            <SubscriptionCard key={sub.id} subscription={sub} viewMode="list" />
-          ))}
+                // 4. Mapare către formatul pentru UI
+                const mapped: Subscription[] = allSubsBackend.map((sub) => ({
+                    id: sub.id,
+                    clientId: sub.client.id, // Accesam id-ul din obiectul client
+                    dataInceput: sub.dataInceput,
+                    frecventa: sub.frecventa, // Nume corect
+                    status: sub.status,
+                    supplier: sub.pachet.producatorNume,
+                    supplierRegion: "România", // Sau poți lua din user details dacă ai
+                    pachet: mapPachetToBundle(sub.pachet),
+                }));
+
+                setSubscriptions(mapped);
+            } catch (err) {
+                console.error("Eroare la încărcarea abonamentelor:", err);
+                setError("Nu am putut încărca lista de abonamente.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadSubs();
+    }, [token]);
+
+    return (
+        <Box sx={{ mt: 4, px: 2, pb: 6, maxWidth: "900px", mx: "auto" }}>
+            <Typography variant="h3" sx={{ mb: 3, fontWeight: 'bold' }}>
+                {textResources.subscriptions.mySubscriptions}
+            </Typography>
+
+            {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <CircularProgress />
+                </Box>
+            ) : subscriptions.length === 0 ? (
+                <Typography variant="h6" sx={{ opacity: 0.7, textAlign: 'center', mt: 5 }}>
+                    {textResources.subscriptions.noSubscriptions}
+                </Typography>
+            ) : (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    {subscriptions.map((sub) => (
+                        // Aici trimitem obiectul `sub` adaptat
+                        // Asigură-te că SubscriptionCard știe să afișeze și statusul (ACTIV/ANULAT)
+                        <SubscriptionCard
+                            key={sub.id}
+                            subscription={sub}
+                            viewMode="list"
+                        />
+                    ))}
+                </Box>
+            )}
         </Box>
-      )}
-    </Box>
-  );
+    );
 };
 
 export default MySubscriptionsPage;

@@ -29,8 +29,8 @@ public class Subscriptie {
     @Column(name = "data_inceput")
     private LocalDate dataInceput;
 
-    @Column(name = "freceventa")
-    private Integer freceventa;
+    @Column(name = "frecventa")
+    private Integer frecventa;
 
     @Column(name = "status", length = Integer.MAX_VALUE)
     private String status;

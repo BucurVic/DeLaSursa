@@ -25,9 +25,9 @@ public class PachetMapper {
                 .toList()
                 : Collections.emptyList();
 
-        double pretTotalCalculat = produseDTO.stream()
-                .mapToDouble(item -> item.getPretTotalProdus() != null ? item.getPretTotalProdus() : 0.0)
-                .sum();
+//        double pretTotalCalculat = produseDTO.stream()
+//                .mapToDouble(item -> item.getPretTotalProdus() != null ? item.getPretTotalProdus() : 0.0)
+//                .sum();
 
         return PachetDTO.builder()
                 .id(pachet.getId())
@@ -36,7 +36,11 @@ public class PachetMapper {
                 .nume(pachet.getNume())
                 .imagine(pachet.getImagine())
                 .produse(produseDTO)
-                .pretTotal(pretTotalCalculat)
+                .pretTotal(pachet.getPretTotal())
+                .pretAbonament(pachet.getPretAbonament()) // NOU
+                .descriere(pachet.getDescriere())         // NOU
+                .eAbonament(pachet.getEAbonament())
+                .frecventaLivrare(pachet.getFrecventaLivrare())
                 .build();
     }
 

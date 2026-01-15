@@ -7,16 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PachetService {
-
-    public Page<PachetDTO> getAll(Pageable pageable);
-
-    public Page<PachetDTO> getAllForProducator(Integer producatorId, Pageable pageable);
-
-    PachetDTO create(CreatePachetRequest request);
-
-    PachetDTO findById(Integer id);
-
-    PachetDTO update(Integer id, UpdatePachetRequest request);
+    Page<PachetDTO> getAll(Pageable pageable);
+    Page<PachetDTO> getAllForProducator(Integer producatorId, Pageable pageable);
+    PachetDTO getById(Integer id);
+    PachetDTO create(PachetDTO request);
+    PachetDTO update(Integer id, PachetDTO request);
 
     void delete(Integer id);
 }

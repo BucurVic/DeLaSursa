@@ -41,6 +41,7 @@ import MySubscriptionsPage from "./pages/MySubscriptionsPage.tsx";
 import SubscriptionPage from "./pages/BundlesPage.tsx";
 import BundleDetailsPage from "./pages/BundleDetailsPage.tsx";
 import ProducerBundlesPage from "./pages/ProducerBundlesPage.tsx";
+import ProducerSubscriptionsPage from "./pages/ProducerSubscriptionsPage.tsx";
 import CreatePackagePage from "./pages/CreatePackagePage.tsx";
 import BundleProducerListPage from "./pages/BundleProducerListPage.tsx";
 
@@ -105,11 +106,18 @@ function App() {
           <Route path="comenzi-primite" element={<ProducerReceivedOrders />} />
           <Route path="comenzi-primite/:id" element={<ProducerOrderPage />} />
 
-          <Route path="pachete" element={<ProducerBundlesPage />}>
-            <Route index element={<Navigate to="lista" replace />} />
-            <Route path="lista" element={<BundleProducerListPage />} />
-            <Route path="adauga" element={<CreatePackagePage />} />
-          </Route>
+          <Route
+            path="/dashboard-producator/comenzi-primite/:id"
+            element={<ProducerOrderPage />}
+          />
+          <Route
+            path="/dashboard-producator/pachete"
+            element={<ProducerBundlesPage />}
+          />
+            <Route
+                path="/dashboard-producator/abonamente"
+                element={<ProducerSubscriptionsPage />}
+            />
         </Route>
       </Route>
 
