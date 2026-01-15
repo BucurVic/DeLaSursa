@@ -231,31 +231,74 @@ VALUES (2, '2026-01-01', 0, (SELECT id FROM adresa WHERE nume_complet = 'ClientN
 -- STEP 9: Inserăm comanda_produs
 -- ========================================================
 INSERT INTO comanda_produs (id_comanda, id_produs, cantitate, pret_unitar)
-VALUES (1, 1, 2, 2.5),
-       (2, 2, 1, 3.0),
-       (3, 3, 3, 4.0),
-       (4, 4, 4, 4.5),
-       (5, 5, 2, 6.0),
-       (6, 6, 3, 5.0),
-       (7, 7, 5, 1.0),
-       (8, 8, 4, 10.0),
-       (9, 9, 3, 8.0),
-       (10, 10, 6, 5.5);
+VALUES
+-- comanda 1 → producator 12
+(1, 1, 2, 2.5),
+(1, 2, 1, 3.0),
+
+-- comanda 2 → producator 13
+(2, 3, 3, 4.0),
+
+-- comanda 3 → producator 14
+(3, 4, 4, 4.5),
+
+-- comanda 4 → producator 15
+(4, 5, 2, 6.0),
+
+-- comanda 5 → producator 16
+(5, 6, 3, 5.0),
+
+-- comanda 6 → producator 17
+(6, 7, 5, 1.0),
+
+-- comanda 7 → producator 18
+(7, 8, 4, 10.0),
+
+-- comanda 8 → producator 19
+(8, 9, 3, 8.0),
+
+-- comanda 9 → producator 20
+(9, 10, 6, 5.5),
+
+-- comanda 10 → producator 12
+(10, 1, 1, 2.5);
+
 
 -- ========================================================
 -- STEP 10: Inserăm comanda_pachet
 -- ========================================================
 INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar)
-VALUES (1, 1, 1, 25),
-       (2, 2, 2, 30),
-       (3, 3, 3, 28),
-       (4, 4, 2, 35),
-       (5, 5, 1, 50),
-       (6, 6, 3, 60),
-       (7, 7, 2, 20),
-       (8, 8, 1, 40),
-       (9, 9, 2, 32),
-       (10, 10, 1, 75);
+VALUES
+-- comanda 1 → producator 12
+(1, 1, 1, 25),
+
+-- comanda 2 → producator 13
+(2, 2, 2, 30),
+
+-- comanda 3 → producator 14
+(3, 3, 1, 28),
+
+-- comanda 4 → producator 15
+(4, 4, 1, 35),
+
+-- comanda 5 → producator 16
+(5, 5, 1, 50),
+
+-- comanda 6 → producator 17
+(6, 6, 2, 60),
+
+-- comanda 7 → producator 18
+(7, 7, 1, 20),
+
+-- comanda 8 → producator 19
+(8, 8, 1, 40),
+
+-- comanda 9 → producator 20
+(9, 9, 1, 32),
+
+-- comanda 10 → producator 12
+(10, 10, 1, 75);
+
 
 -- ========================================================
 -- STEP 11: Inserăm subscriptii
@@ -280,3 +323,127 @@ VALUES (1, 'De La', 'Sursa');
 update useri
 set data_inregistrare = CURRENT_DATE,
     status            = true;
+
+-- ========================================================
+-- STEP 12: Inserăm comenzi suplimentare pentru producatori (fiecare sa aiba cel putin 2 comenzi)
+-- ========================================================
+INSERT INTO comenzi (id_client, data_efectuarii, status_comanda, adresa_livrare_id, adresa_facturare_id,
+                     metoda_livrare_id, metoda_plata, observatii)
+VALUES
+-- producator 12 → client 2
+(2, '2026-01-11', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock1'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock1'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 13 → client 3
+(3, '2026-01-12', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 14 → client 4
+(4, '2026-01-13', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 15 → client 5
+(5, '2026-01-14', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock4'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock4'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 16 → client 6
+(6, '2026-01-15', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock5'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock5'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 17 → client 7
+(7, '2026-01-16', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock6'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock6'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 18 → client 8
+(8, '2026-01-17', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock7'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock7'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 19 → client 9
+(9, '2026-01-18', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock2'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie'),
+
+-- producator 20 → client 10
+(10, '2026-01-19', 4, (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
+ (SELECT id FROM adresa WHERE nume_complet = 'ClientNameMock3'),
+ (SELECT id FROM metoda_livrare_pret WHERE metoda_livrare = 0),
+ 0, 'observatie');
+
+-- ========================================================
+-- STEP 13: Inserăm comanda_produs pentru noile comenzi
+-- ========================================================
+INSERT INTO comanda_produs (id_comanda, id_produs, cantitate, pret_unitar)
+VALUES
+-- Comanda noua 1 → producator 12
+(11, 1, 3, 2.5),
+
+-- Comanda noua 2 → producator 13
+(12, 3, 2, 4.0),
+
+-- Comanda noua 3 → producator 14
+(13, 4, 4, 4.5),
+
+-- Comanda noua 4 → producator 15
+(14, 5, 4, 6.0),
+
+-- Comanda noua 5 → producator 16
+(15, 6, 4, 5.0),
+
+-- Comanda noua 6 → producator 17
+(16, 7, 4, 1.0),
+
+-- Comanda noua 7 → producator 18
+(17, 8, 4, 10.0),
+
+-- Comanda noua 8 → producator 19
+(18, 9, 1, 8.0),
+
+-- Comanda noua 9 → producator 20
+(19, 10, 4, 5.5);
+
+-- ========================================================
+-- STEP 14: Inserăm comanda_pachet pentru noile comenzi
+-- ========================================================
+INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar)
+VALUES
+-- Comanda noua 1 → producator 12
+(11, 1, 1, 25),
+
+-- Comanda noua 2 → producator 13
+(12, 2, 1, 30),
+
+-- Comanda noua 3 → producator 14
+(13, 3, 1, 28),
+
+-- Comanda noua 4 → producator 15
+(14, 4, 1, 35),
+
+-- Comanda noua 5 → producator 16
+(15, 5, 1, 50),
+
+-- Comanda noua 6 → producator 17
+(16, 6, 1, 60),
+
+-- Comanda noua 7 → producator 18
+(17, 7, 1, 20),
+
+-- Comanda noua 8 → producator 19
+(18, 8, 1, 40),
+
+-- Comanda noua 9 → producator 20
+(19, 9, 1, 32);

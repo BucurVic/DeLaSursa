@@ -18,6 +18,7 @@ export interface ProducerBundleCardProps {
   image: string;
   items: ProducerBundleItem[];
   onDelete: () => void;
+  price: number;
 }
 
 const ProducerBundleCard: React.FC<ProducerBundleCardProps> = ({
@@ -26,6 +27,7 @@ const ProducerBundleCard: React.FC<ProducerBundleCardProps> = ({
   image,
   items,
   onDelete,
+  price,
 }) => {
   const navigate = useNavigate();
   const ITEMS_TO_SHOW = 4;
@@ -92,10 +94,12 @@ const ProducerBundleCard: React.FC<ProducerBundleCardProps> = ({
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
+              mb: "1rem",
             }}
           >
             {title}
           </Typography>
+          <Typography variant="h6">{price} RON</Typography>
         </Box>
 
         <Box
@@ -104,7 +108,6 @@ const ProducerBundleCard: React.FC<ProducerBundleCardProps> = ({
             my: "0.5rem",
           }}
         />
-
         <Box sx={{ flexGrow: 1 }}>
           <Typography
             sx={{

@@ -90,8 +90,7 @@ const ProducerReceivedOrders: React.FC = () => {
                   order.comandaPachete.reduce(
                     (sum, p) => sum + p.pachet.pretTotal * p.cantitate,
                     0,
-                  ) +
-                  (order.transportCost || 0)
+                  )
                 ).toFixed(2)}{" "}
                 RON
               </Typography>
