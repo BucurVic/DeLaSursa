@@ -80,4 +80,14 @@ export const ordersApi = {
     const response = await api.put(`/comanda/${orderId}`, { newStatus });
     return response.data;
   },
+
+  getVenitPeAnProducator: async (prodId: number) => {
+    const response = await api.get(`comanda/producator/${prodId}/venit-an`);
+    return response.data;
+  },
+
+  getVenitPeZiProducator: async (producatorId: number) => {
+    const res = await api.get(`comanda/producator/${producatorId}/venit-pe-zi`);
+    return res.data as { date: string; income: number }[];
+  },
 };

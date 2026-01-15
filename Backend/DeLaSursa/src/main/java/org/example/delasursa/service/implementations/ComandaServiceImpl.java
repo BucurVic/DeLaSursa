@@ -3,6 +3,7 @@ package org.example.delasursa.service.implementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.delasursa.common.dto.ClientDto;
+import org.example.delasursa.common.dto.DailyIncomeDto;
 import org.example.delasursa.common.dto.admin.ComandaSummary;
 import org.example.delasursa.common.dto.comanda.*;
 import org.example.delasursa.common.dto.enums.ComandaStatus;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -170,6 +172,18 @@ public class ComandaServiceImpl implements ComandaService {
     }
 
     @Override
+    public List<DailyIncomeDto> getVenitPeZiProducator(Integer id) {
+        List<Object[]> raw = comandaRepository.getVenitPeZiProducator(id);
+        return raw.stream()
+                .map(row -> new DailyIncomeDto(
+                        row[0].toString(),                  // date ca String
+                        ((Number) row[1]).doubleValue()    // income ca Double
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
     public List<ComandaDto> getAllCommandsByProducatorId(Integer id) {
         if (!producatorRepository.existsById(id)) {
             log.warn("Producator with id {} not found", id);
@@ -178,9 +192,17 @@ public class ComandaServiceImpl implements ComandaService {
 
         List<ProdusProducator> produsProducators = produsProducatorRepository.findByProducator_Id(id);
 
-        return produsProducators.stream()
-                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs(pp)
-                        .stream())
+        List<Pachet> pacheteProducator = pachetRepository.findByProducator_Id(id);
+
+        List<Comanda> comenziDinProduse = produsProducators.stream()
+                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs(pp).stream())
+                .toList();
+
+        List<Comanda> comenziDinPachete = pacheteProducator.stream()
+                .flatMap(p -> comandaRepository.findByComandaPachete_Pachet(p).stream())
+                .toList();
+
+        return Stream.concat(comenziDinProduse.stream(), comenziDinPachete.stream())
                 .distinct()
                 .map(comandaMapper::toDto)
                 .collect(Collectors.toList());
@@ -222,6 +244,11 @@ public class ComandaServiceImpl implements ComandaService {
     @Override
     public Integer getTotalComenziUltimulAn() {
         return comandaRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
+    }
+
+    @Override
+    public Double getTotalComenziForProducatorUltimulAn(Integer id) {
+        return comandaRepository.venitProducatorUltimulAn(id, ComandaStatus.DELIVERED);
     }
 
     @Override

@@ -24,13 +24,23 @@ interface ProducerOrderViewBundleCardProps {
   currency: string;
   rating: number;
   reviewCount: number;
+  quantity: number;
 }
 
 const ITEMS_TO_SHOW = 2;
 
 const ProducerOrderViewBundleCard: React.FC<
   ProducerOrderViewBundleCardProps
-> = ({ image, title, items, price, currency, rating, reviewCount }) => {
+> = ({
+  image,
+  title,
+  items,
+  price,
+  currency,
+  rating,
+  reviewCount,
+  quantity,
+}) => {
   return (
     <Card
       sx={{
@@ -86,7 +96,7 @@ const ProducerOrderViewBundleCard: React.FC<
               textOverflow: "ellipsis",
             }}
           >
-            {title}
+            {title} - <i>{quantity > 1 ? `${quantity} bucăți` : "O bucată"}</i>
           </Typography>
         </Box>
 

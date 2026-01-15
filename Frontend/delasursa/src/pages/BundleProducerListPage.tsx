@@ -144,6 +144,7 @@ export default function BundleProducerListPage() {
               <ProducerBundleCard
                 id={b.id}
                 title={b.title}
+                price={b.price}
                 image={
                   "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
                 }

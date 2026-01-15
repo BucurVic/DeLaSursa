@@ -276,7 +276,7 @@ export const textResources = {
   },
   producerDashboard: {
     title: "Dashboard",
-    income: "Câștiguri luna aceasta",
+    income: "Câștiguri anul acesta",
     pendingOrders: "Comenzi în așteptare",
     deliveredOrders: "Comenzi livrate",
     averageRating: "Rating mediu",

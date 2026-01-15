@@ -248,6 +248,7 @@ export default function ClientOrderPage() {
             price={b.pachet.pretTotal}
             currency={"RON"}
             onAddReview={() => console.log("Review added")}
+            quantity={b.cantitate}
           />
         ))}
         <Divider sx={{ my: "1rem" }} />

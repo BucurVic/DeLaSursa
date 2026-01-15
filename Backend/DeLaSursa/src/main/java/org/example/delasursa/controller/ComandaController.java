@@ -3,6 +3,7 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.DailyIncomeDto;
 import org.example.delasursa.common.dto.comanda.*;
 import org.example.delasursa.jwt.CustomUserDetails;
 import org.example.delasursa.service.ComandaService;
@@ -45,6 +46,17 @@ public class ComandaController {
         List<ComandaDto> comenzi = comandaService.getAllCommandsByProducatorId(id);
         return ResponseEntity.status(HttpStatus.OK).body(comenzi);
 
+    }
+
+    @GetMapping("/producator/{id}/venit-an")
+    @PreAuthorize("hasRole('PRODUCATOR')")
+    public Double getVenitPeProducatorPeAn(@PathVariable Integer id) {
+        return comandaService.getTotalComenziForProducatorUltimulAn(id);
+    }
+
+    @GetMapping("/producator/{id}/venit-pe-zi")
+    public List<DailyIncomeDto> getVenitPeZi(@PathVariable Integer id) {
+        return comandaService.getVenitPeZiProducator(id);
     }
 
 

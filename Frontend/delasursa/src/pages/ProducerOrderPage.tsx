@@ -134,10 +134,9 @@ export default function ProducerOrderPage() {
 
   if (!order) return <Typography>{tr.loadingOrder}</Typography>;
 
-  const subtotal =
+  const total =
     order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) +
     order.bundles.reduce((sum, p) => sum + p.pachet.pretTotal * p.cantitate, 0);
-  const total = subtotal + (order.shippingCost || 0);
 
   const steps = ["Creată", "În procesare", "Pregatită", "Livrată"];
   const activeStep = steps.indexOf(order.status);
@@ -341,17 +340,12 @@ export default function ProducerOrderPage() {
             rating={4.9}
             reviewCount={15}
             currency={"RON"}
+            quantity={b.cantitate}
           />
         ))}
 
         <Divider sx={{ my: "1rem" }} />
 
-        <Typography variant="h5">
-          {tr.subtotal} {subtotal.toFixed(2)} {tr.currency}
-        </Typography>
-        <Typography variant="h5">
-          {tr.delivery} {(order.shippingCost || 0).toFixed(2)} {tr.currency}
-        </Typography>
         <Typography variant="h3">
           {tr.total} {total.toFixed(2)} {tr.currency}
         </Typography>

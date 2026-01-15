@@ -26,6 +26,7 @@ interface ClientOrderViewBundleCardProps {
   price: number;
   currency?: string;
   onAddReview: () => void;
+  quantity: number;
 }
 
 const ITEMS_TO_SHOW = 3;
@@ -38,6 +39,7 @@ const ClientOrderViewBundleCard: React.FC<ClientOrderViewBundleCardProps> = ({
   price,
   currency,
   onAddReview,
+  quantity,
 }) => {
   const navigate = useNavigate();
   const tr = textResources.orders;
@@ -99,7 +101,7 @@ const ClientOrderViewBundleCard: React.FC<ClientOrderViewBundleCardProps> = ({
               textOverflow: "ellipsis",
             }}
           >
-            {title}
+            {title} - <i>{quantity > 1 ? `${quantity} bucăți` : "O bucată"}</i>
           </Typography>
         </Box>
 
