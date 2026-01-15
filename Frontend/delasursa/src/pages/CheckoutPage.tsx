@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
+  Alert,
   Box,
-  Typography,
-  Paper,
-  Grid,
-  TextField,
-  FormControlLabel,
-  Checkbox,
   Button,
-  Divider,
-  RadioGroup,
-  Radio,
-  Stack,
+  Checkbox,
   Container,
+  Divider,
+  FormControlLabel,
+  Grid,
   InputAdornment,
   MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
   Snackbar,
-  Alert,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -32,11 +32,11 @@ import PaymentConfirmationModal from "../components/PaymentConfirmationModal";
 import { useCart } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import {
-  MetodaLivrare,
-  MetodaPlata,
-  ordersApi,
   type Adresa,
   type CreateComandaRequest,
+  MetodaLivrareEnum,
+  MetodaPlata,
+  ordersApi,
 } from "../api/ordersApi";
 
 // --- INTERFEȚE LOCALE (FORMULAR) ---
@@ -56,7 +56,7 @@ const months = Array.from({ length: 12 }, (_, i) => {
 
 const currentYear = new Date().getFullYear() % 100;
 const years = Array.from({ length: 15 }, (_, i) =>
-  (currentYear + i).toString()
+  (currentYear + i).toString(),
 );
 
 // --- STILURI ---
@@ -194,11 +194,11 @@ const CheckoutPage: React.FC = () => {
   const [billingAddress, setBillingAddress] = useState<Adresa | null>(null);
   const [billingSameAsDelivery, setBillingSameAsDelivery] = useState(true);
 
-  const [deliveryMethod, setDeliveryMethod] = useState<MetodaLivrare>(
-    MetodaLivrare.HOME_DELIVERY
+  const [deliveryMethod, setDeliveryMethod] = useState<MetodaLivrareEnum>(
+    MetodaLivrareEnum.HOME_DELIVERY,
   );
   const [paymentMethod, setPaymentMethod] = useState<MetodaPlata>(
-    MetodaPlata.CARD
+    MetodaPlata.CARD,
   );
   const [cardDetails, setCardDetails] = useState<CardData>({
     number: "",
@@ -215,7 +215,7 @@ const CheckoutPage: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
+    "success",
   );
 
   // --- VERIFICARE COȘ GOL ---
@@ -229,16 +229,16 @@ const CheckoutPage: React.FC = () => {
   // --- CALCULE ---
   const subtotal = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
-    0
+    0,
   );
   const shippingCost =
-    deliveryMethod === MetodaLivrare.SELF_PICKUP ? 0 : subtotal > 200 ? 0 : 20;
+    deliveryMethod === MetodaLivrareEnum.SELF_PICKUP ? 0 : 20;
   const total = subtotal + shippingCost;
 
   // --- HANDLERS ---
   const handleAddressChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "delivery" | "billing"
+    type: "delivery" | "billing",
   ) => {
     const { name, value } = e.target;
     let finalValue = value;
@@ -281,7 +281,7 @@ const CheckoutPage: React.FC = () => {
   const handleInitiateOrder = () => {
     // Validare simplă
     if (
-      deliveryMethod === MetodaLivrare.HOME_DELIVERY &&
+      deliveryMethod === MetodaLivrareEnum.HOME_DELIVERY &&
       (!deliveryAddress.stradaNumeNumar || !deliveryAddress.telefon)
     ) {
       setSnackbarMessage("Te rugăm să completezi adresa de livrare.");
@@ -297,7 +297,7 @@ const CheckoutPage: React.FC = () => {
     // 1. Verificare Auth: Ne asigurăm că avem un user valid
     if (!user || !user.id) {
       setSnackbarMessage(
-        "Trebuie să fii autentificat ca și CLIENT pentru a plasa o comandă."
+        "Trebuie să fii autentificat ca și CLIENT pentru a plasa o comandă.",
       );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -314,10 +314,19 @@ const CheckoutPage: React.FC = () => {
       // 2. Construim payload-ul pentru Backend
       // Trimitem doar ce acceptă backend-ul acum (clientId, produse)
 
+      const produse = items.filter((item) => !item.id.startsWith("bundle"));
+
+      const pachete = items.filter((item) => item.id.startsWith("bundle"));
+
       const orderPayload: CreateComandaRequest = {
         clientId: Number(user.id),
-        comandaProduseList: items.map((item) => ({
+        comandaProduseList: produse.map((item) => ({
           produsId: Number(item.id),
+          cantitate: item.quantity,
+          pretUnitar: item.price,
+        })),
+        comandaPacheteList: pachete.map((item) => ({
+          pachetId: Number(item.id.replace("bundle", "")),
           cantitate: item.quantity,
           pretUnitar: item.price,
         })),
@@ -334,7 +343,7 @@ const CheckoutPage: React.FC = () => {
       // 4. Succes
       setLoading(false);
       setSnackbarMessage(
-        "Comanda a fost înregistrată cu succes! Vei fi redirecționat..."
+        "Comanda a fost înregistrată cu succes! Vei fi redirecționat...",
       );
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -480,11 +489,11 @@ const CheckoutPage: React.FC = () => {
             row
             value={deliveryMethod}
             onChange={(e) =>
-              setDeliveryMethod(Number(e.target.value) as MetodaLivrare)
+              setDeliveryMethod(Number(e.target.value) as MetodaLivrareEnum)
             }
           >
             <FormControlLabel
-              value={MetodaLivrare.HOME_DELIVERY}
+              value={MetodaLivrareEnum.HOME_DELIVERY}
               control={
                 <Radio
                   sx={{
@@ -497,7 +506,7 @@ const CheckoutPage: React.FC = () => {
               sx={{ color: colors.white1, mr: 4 }}
             />
             <FormControlLabel
-              value={MetodaLivrare.SELF_PICKUP}
+              value={MetodaLivrareEnum.SELF_PICKUP}
               control={
                 <Radio
                   sx={{

@@ -42,6 +42,8 @@ import SubscriptionPage from "./pages/BundlesPage.tsx";
 import BundleDetailsPage from "./pages/BundleDetailsPage.tsx";
 import ProducerBundlesPage from "./pages/ProducerBundlesPage.tsx";
 import ProducerSubscriptionsPage from "./pages/ProducerSubscriptionsPage.tsx";
+import CreatePackagePage from "./pages/CreatePackagePage.tsx";
+import BundleProducerListPage from "./pages/BundleProducerListPage.tsx";
 
 function App() {
   return (
@@ -89,27 +91,20 @@ function App() {
 
       {/* --- Rute Protejate PRODUCĂTOR --- */}
       <Route element={<ProtectedRoute allowedRoles={["PRODUCATOR"]} />}>
-        <Route element={<ProducerLayout />}>
-          <Route
-            path="/dashboard-producator"
-            element={<ProducerDashboardMain />}
-          />
-          <Route path="/order-producer/:id" element={<ProducerOrderPage />} />
+        <Route path="/dashboard-producator" element={<ProducerLayout />}>
+          <Route index element={<ProducerDashboardMain />} />
 
-          <Route
-            path="/dashboard-producator/produse"
-            element={<ProducerProductsPage />}
-          >
+          <Route path="order/:id" element={<ProducerOrderPage />} />
+
+          <Route path="produse" element={<ProducerProductsPage />}>
             <Route index element={<Navigate to="lista" replace />} />
             <Route path="lista" element={<ProductListPage />} />
             <Route path="adauga" element={<ProductForm />} />
             <Route path="inventar" element={<InventoryPage />} />
           </Route>
 
-          <Route
-            path="/dashboard-producator/comenzi-primite"
-            element={<ProducerReceivedOrders />}
-          />
+          <Route path="comenzi-primite" element={<ProducerReceivedOrders />} />
+          <Route path="comenzi-primite/:id" element={<ProducerOrderPage />} />
 
           <Route
             path="/dashboard-producator/comenzi-primite/:id"

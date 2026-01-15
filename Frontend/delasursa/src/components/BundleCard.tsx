@@ -1,22 +1,22 @@
 import React from "react";
 import {
-    Box,
-    Card,
-    CardContent,
-    CardMedia,
-    Typography,
-    Button,
-    Divider,
-    Stack
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Divider,
+  Stack,
+  Typography,
 } from "@mui/material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { colors } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 
 export interface BundleItem {
-    name: string;
-    quantity: string;
+  name: string;
+  quantity: string;
 }
 
 export interface BundleProps {
@@ -141,8 +141,43 @@ const BundleCard: React.FC<BundleProps> = ({
                         )}
                     </Box>
 
-                    {!isList && <Divider sx={{ borderColor: colors.lightGreen1Transparent, my: 1.5 }} />}
-                </Box>
+      {/* --- ZONA CONTINUT --- */}
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5, // Spațiere puțin mai mare între secțiuni
+          p: 3,
+          width: "100%",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* HEADER (Titlu & Preț) */}
+        <Box
+          sx={{
+            display: isList ? "flex" : "block",
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          <Box sx={{ flex: isList ? 1 : "auto" }}>
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              gutterBottom
+              sx={{
+                // Forțăm titlul pe 2 rânduri max pentru aliniere consistentă în Grid
+                display: "-webkit-box",
+                overflow: "hidden",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: isList ? undefined : 2,
+                minHeight: isList ? "auto" : "3.2rem",
+                lineHeight: 1.2,
+              }}
+            >
+              {title}
+            </Typography>
 
                 {/* LISTA DE PRODUSE */}
                 <Box sx={{ flexGrow: 1 }}>
@@ -183,17 +218,12 @@ const BundleCard: React.FC<BundleProps> = ({
                             </Box>
                         ))}
 
-                        {items.length > ITEMS_TO_SHOW && (
-                            <Typography
-                                variant="caption"
-                                color={colors.lightGreen3}
-                                sx={{ pl: 3.5, pt: 0.5, fontStyle: 'italic', display: 'block' }}
-                            >
-                                + alte {items.length - ITEMS_TO_SHOW}...
-                            </Typography>
-                        )}
-                    </Stack>
-                </Box>
+          {!isList && (
+            <Divider
+              sx={{ borderColor: colors.lightGreen1Transparent, my: 1.5 }}
+            />
+          )}
+        </Box>
 
                 {/* BUTON ACTIUNE - ADAUGĂ ÎN COȘ */}
                 <Box sx={{

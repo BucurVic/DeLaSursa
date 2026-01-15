@@ -17,6 +17,10 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { colors } from "../theme/colors";
+import type { ComandaDto } from "../common/types.ts";
+import { ComandaStatusMap, type DecodedJwt } from "../common/utils.ts";
+import { ordersApi } from "../api/ordersApi.ts";
+import { jwtDecode } from "jwt-decode";
 
 // --- 1. DEFINIRE TIPURI ---
 
@@ -28,21 +32,19 @@ type ClientProfile = {
   adresaLivrare: string;
 };
 
-type ComandaProdus = {
-  id: number;
-  cantitate: number;
-  pretUnitar: number;
-  produs: {
-    numeProdus: string;
-    categorie: string;
-  };
-};
+interface Order extends ComandaDto {
+  status: string;
+  transportCost: number;
+}
 
-type Order = {
-  id: number;
-  dataEfectuarii: string;
-  comandaProduse: ComandaProdus[];
-  status?: string;
+const mapOrdersWithEnumValues = (orders: ComandaDto[]): Order[] => {
+  return orders.map((order) => {
+    return {
+      ...order,
+      status: ComandaStatusMap[order.statusComanda],
+      transportCost: order.metodaLivrare.pret,
+    };
+  });
 };
 
 // --- MOCK DATA ---
@@ -65,18 +67,14 @@ const MyAccountPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  // Calcul Total Comandă
-  const calculateTotal = (order: Order) => {
-    if (!order.comandaProduse || order.comandaProduse.length === 0) return 0;
-    return order.comandaProduse.reduce((acc, item) => {
-      return acc + item.cantitate * item.pretUnitar;
-    }, 0);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!token) return;
+
+        const decoded = jwtDecode<DecodedJwt>(token);
+        const userId = Number(decoded.id);
+
         setLoading(true);
 
         // A. FETCH PROFIL
@@ -96,22 +94,10 @@ const MyAccountPage: React.FC = () => {
           setClientProfile(dataProfile);
         }
 
-        // B. FETCH COMENZI
-        const resOrders = await fetch(
-          "http://localhost:8080/api/account/client/comenzi",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const allOrders = await ordersApi.getAllForUser(userId);
 
-        if (resOrders.ok) {
-          const dataOrders = await resOrders.json();
-          setOrders(dataOrders);
-        }
+        const ordersWithStatus = mapOrdersWithEnumValues(allOrders);
+        setOrders(ordersWithStatus);
       } catch (err: any) {
         console.error("Eroare fetch:", err);
         setError("Nu am putut încărca datele.");
@@ -357,12 +343,24 @@ const MyAccountPage: React.FC = () => {
                           Total
                         </Typography>
                         <Typography variant="h6">
-                          {calculateTotal(order)} RON
+                          {(
+                            order.comandaProduse.reduce(
+                              (sum, p) => sum + p.pretUnitar * p.cantitate,
+                              0,
+                            ) +
+                            order.comandaPachete.reduce(
+                              (sum, p) =>
+                                sum + p.pachet.pretTotal * p.cantitate,
+                              0,
+                            ) +
+                            (order.transportCost || 0)
+                          ).toFixed(2)}{" "}
+                          RON
                         </Typography>
                       </Box>
 
                       <Chip
-                        label="Finalizat"
+                        label={order.status}
                         size="small"
                         sx={{
                           bgcolor: "rgba(74, 222, 128, 0.2)",

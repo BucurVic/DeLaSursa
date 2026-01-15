@@ -7,9 +7,11 @@ import org.example.delasursa.common.exceptions.OperationFailedException;
 import org.example.delasursa.common.exceptions.ResourceNotFoundException;
 import org.example.delasursa.common.mappers.PachetMapper; // Import Mapper-ul tău
 import org.example.delasursa.model.*;
-import org.example.delasursa.repository.*;
+import org.example.delasursa.repository.PachetProdusRepository;
+import org.example.delasursa.repository.PachetRepository;
+import org.example.delasursa.repository.ProdusProducatorRepository;
+import org.example.delasursa.repository.UserRepository;
 import org.example.delasursa.service.PachetService;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -126,6 +128,12 @@ public class PachetServiceImpl implements PachetService {
         } catch (Exception e) {
             throw new OperationFailedException("Eroare la crearea pachetului: " + e.getMessage());
         }
+    }
+
+    @Override
+    public PachetDTO findById(Integer id) {
+        Pachet pachet = pachetRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pachet not found!"));
+        return pachetMapper.toDTO(pachet);
     }
 
     @Override

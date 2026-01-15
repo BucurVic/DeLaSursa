@@ -44,4 +44,17 @@ export const pacheteApi = {
         // Axios DELETE: (url, config) -> Atenție, aici config e al doilea argument!
         return axios.delete(`${API_URL}/${id}`, getAuthHeader());
     }
+
+    formData.append(
+      "produse",
+      new Blob([JSON.stringify(data.produse)], {
+        type: "application/json",
+      }),
+    );
+
+    return api.put<PachetDTO>(`/pachete/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+  delete: (id: number) => api.delete<void>(`/pachete/${id}`),
 };

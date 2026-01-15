@@ -2,17 +2,15 @@ package org.example.delasursa.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.ClientDto;
+import org.example.delasursa.common.dto.DailyIncomeDto;
 import org.example.delasursa.common.dto.admin.ComandaSummary;
-import org.example.delasursa.common.dto.comanda.ComandaDto;
-import org.example.delasursa.common.dto.comanda.CreateComandaRequest;
-import org.example.delasursa.common.dto.comanda.CreateComandaResponse;
-import org.example.delasursa.common.exceptions.ProducatorException;
-import org.example.delasursa.common.exceptions.ProdusException;
-import org.example.delasursa.common.exceptions.UserException;
+import org.example.delasursa.common.dto.comanda.*;
+import org.example.delasursa.common.dto.enums.ComandaStatus;
+import org.example.delasursa.common.exceptions.*;
 import org.example.delasursa.common.mappers.ComandaMapper;
 import org.example.delasursa.model.*;
 import org.example.delasursa.repository.*;
-import org.example.delasursa.repository.ComandaProdusRepository;
 import org.example.delasursa.service.ComandaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,16 +18,13 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.example.delasursa.common.dto.ClientDto;
-import org.example.delasursa.common.dto.comanda.ComandaProdusDto;
-import org.example.delasursa.model.Comanda;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +39,7 @@ public class ComandaServiceImpl implements ComandaService {
     private final ComandaProdusRepository comandaProdusRepository;
     private final MetodaLivrarePretRepository metodaLivrarePretRepository;
     private final AdresaRepository adresaRepository;
+    private final PachetRepository pachetRepository;
 
     @Override
     @Transactional
@@ -73,12 +69,12 @@ public class ComandaServiceImpl implements ComandaService {
         //finding the client
         Client client = clientRepository.findById(request.getClientId())
                 .orElseThrow(() -> {
-                    log.warn("Client with id {} not found",  request.getClientId());
+                    log.warn("Client with id {} not found", request.getClientId());
                     return new UserException("Client with id " + request.getClientId() + " not found!", HttpStatus.NOT_FOUND);
                 });
 
         //preparing the comanda
-        Comanda comanda = new  Comanda();
+        Comanda comanda = new Comanda();
         comanda.setClient(client);
         comanda.setMetodaLivrare(metodaLivrarePret);
         comanda.setMetodaPlata(request.getMetodaPlata());
@@ -86,20 +82,18 @@ public class ComandaServiceImpl implements ComandaService {
         comanda.setObservatii(request.getObservatii());
 
         Adresa adresaLivrare = request.getAdresaLivrare();
-        if(adresaRepository.findByAdresa(adresaLivrare).isEmpty()) {
+        if (adresaRepository.findByAdresa(adresaLivrare).isEmpty()) {
             adresaLivrare = adresaRepository.save(adresaLivrare);
         }
 
         comanda.setAdresaLivrare(adresaLivrare);
 
 
-        if(request.getAdresaFacturare() == null) {
+        if (request.getAdresaFacturare() == null) {
             comanda.setAdresaFacturare(adresaLivrare);
-        }
-
-        else {
+        } else {
             Adresa adresaFacturare = request.getAdresaFacturare();
-            if(adresaRepository.findByAdresa(adresaFacturare).isEmpty()) {
+            if (adresaRepository.findByAdresa(adresaFacturare).isEmpty()) {
                 adresaFacturare = adresaRepository.save(adresaFacturare);
             }
             comanda.setAdresaFacturare(adresaFacturare);
@@ -108,11 +102,23 @@ public class ComandaServiceImpl implements ComandaService {
         //seting comanda for comanda produse with
         Set<ComandaProdus> comandaProuse = produse.entrySet().stream()
                 .map(produs ->
-                     createFromMapEntryComanda(produs, comanda)
+                        createFromMapEntryComanda(produs, comanda)
                 )
                 .collect(Collectors.toSet());
 
         comanda.setComandaProduse(comandaProuse);
+
+        Set<ComandaPachet> comandaPachete =
+                request.getComandaPacheteList() == null
+                        ? Set.of()
+                        : request.getComandaPacheteList()
+                        .stream()
+                        .map(p -> createFromRequestComandaPachet(p, comanda))
+                        .collect(Collectors.toSet());
+
+        comanda.setComandaPachete(comandaPachete);
+
+        comanda.setStatusComanda(ComandaStatus.CREATED);
 
         Comanda savedComanda = comandaRepository.save(comanda);
         CreateComandaResponse response = new CreateComandaResponse();
@@ -128,7 +134,7 @@ public class ComandaServiceImpl implements ComandaService {
     }
 
     @Override
-    public Page<ComandaSummary> getAllComenziSummary(Pageable pageable){
+    public Page<ComandaSummary> getAllComenziSummary(Pageable pageable) {
         Page<Comanda> comenzi = comandaRepository.findAll(pageable);
 
         return comenzi.map(c -> ComandaSummary.builder()
@@ -136,12 +142,47 @@ public class ComandaServiceImpl implements ComandaService {
                 .numeClient(c.getClient().getNume() + " " + c.getClient().getPrenume())
                 .dataEfectuarii(c.getDataEfectuarii())
                 .numarProduse(c.getComandaProduse().size())
-                .valoareTotala(c.getComandaProduse().stream()
-                        .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
-                        .sum())
+                .valoareTotala(
+                        c.getComandaProduse().stream()
+                                .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
+                                .sum()
+                                +
+                                c.getComandaPachete().stream()
+                                        .mapToDouble(cp -> cp.getCantitate() * cp.getPretUnitar())
+                                        .sum()
+                )
                 .build());
     }
 
+    @Transactional
+    @Override
+    public ComandaDto updateStatus(Integer comandaId, ComandaStatus status, Integer prodId) {
+        Comanda comanda = comandaRepository.findById(comandaId).orElseThrow(() -> new ResourceNotFoundException("Comanda with id " + comandaId + " not found!"));
+        boolean produsApartineProducatorului =
+                comanda.getComandaProduse().stream()
+                        .anyMatch(cp -> cp.getProdus().getProducator().getId().equals(prodId))
+                        || comanda.getComandaPachete().stream()
+                        .anyMatch(cp -> cp.getPachet().getProducator().getId().equals(prodId));
+
+        if (!produsApartineProducatorului) {
+            throw new UnauthorizedException("Not authorized to update current order");
+        }
+        comanda.setStatusComanda(status);
+        return comandaMapper.toDto(comandaRepository.save(comanda));
+    }
+
+    @Override
+    public List<DailyIncomeDto> getVenitPeZiProducator(Integer id) {
+        List<Object[]> raw = comandaRepository.getVenitPeZiProducator(id);
+        return raw.stream()
+                .map(row -> new DailyIncomeDto(
+                        row[0].toString(),                  // date ca String
+                        ((Number) row[1]).doubleValue()    // income ca Double
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     @Override
     public List<ComandaDto> getAllCommandsByProducatorId(Integer id) {
         if (!producatorRepository.existsById(id)) {
@@ -151,9 +192,17 @@ public class ComandaServiceImpl implements ComandaService {
 
         List<ProdusProducator> produsProducators = produsProducatorRepository.findByProducator_Id(id);
 
-        return produsProducators.stream()
-                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs(pp)
-                        .stream())
+        List<Pachet> pacheteProducator = pachetRepository.findByProducator_Id(id);
+
+        List<Comanda> comenziDinProduse = produsProducators.stream()
+                .flatMap(pp -> comandaRepository.findByComandaProduse_Produs(pp).stream())
+                .toList();
+
+        List<Comanda> comenziDinPachete = pacheteProducator.stream()
+                .flatMap(p -> comandaRepository.findByComandaPachete_Pachet(p).stream())
+                .toList();
+
+        return Stream.concat(comenziDinProduse.stream(), comenziDinPachete.stream())
                 .distinct()
                 .map(comandaMapper::toDto)
                 .collect(Collectors.toList());
@@ -162,7 +211,7 @@ public class ComandaServiceImpl implements ComandaService {
 
     private ComandaProdus createFromMapEntryComanda(Map.Entry<ProdusProducator, Pair<Double, Double>> produs, Comanda comanda) {
         ComandaProdus comandaProdus = new ComandaProdus();
-        Pair<Double, Double> pair =  produs.getValue();
+        Pair<Double, Double> pair = produs.getValue();
         comandaProdus.setComanda(comanda);
         comandaProdus.setPretUnitar(pair.getFirst()); // first -> PretUnitar
         comandaProdus.setCantitate(pair.getSecond()); // second -> Cantiate
@@ -170,9 +219,36 @@ public class ComandaServiceImpl implements ComandaService {
         return comandaProdus;
 
     }
+
+    private ComandaPachet createFromRequestComandaPachet(
+            CreateComandaPachetDto dto,
+            Comanda comanda
+    ) {
+        Pachet pachet = pachetRepository.findById(dto.getPachetId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Pachet " + dto.getPachetId() + " not found!"
+                        )
+                );
+
+        ComandaPachet cp = new ComandaPachet();
+        cp.setComanda(comanda);
+        cp.setPachet(pachet);
+        cp.setCantitate(Double.valueOf(dto.getCantitate()));
+        cp.setPretUnitar(dto.getPretUnitar());
+
+        return cp;
+    }
+
+
     @Override
     public Integer getTotalComenziUltimulAn() {
         return comandaRepository.countByDataEfectuariiAfter(LocalDate.now().minusYears(1));
+    }
+
+    @Override
+    public Double getTotalComenziForProducatorUltimulAn(Integer id) {
+        return comandaRepository.venitProducatorUltimulAn(id, ComandaStatus.DELIVERED);
     }
 
     @Override
@@ -185,7 +261,7 @@ public class ComandaServiceImpl implements ComandaService {
         List<Comanda> comenzi = comandaRepository.findByClient_User_Username(emailOrUsername);
         return comenzi.stream()
                 .map(cmd -> ComandaDto.builder()
-                        .id(cmd.getId()) 
+                        .id(cmd.getId())
                         .dataEfectuarii(cmd.getDataEfectuarii())
                         .client(ClientDto.builder()
                                 .nume(cmd.getClient().getNume())
@@ -198,16 +274,16 @@ public class ComandaServiceImpl implements ComandaService {
                                         .cantitate(cp.getCantitate())
                                         .pretUnitar(cp.getPretUnitar())
                                         .produs(ComandaProdusDto.ProdusComandaProdusDto.builder()
-                                        
-                                                .numeProdus(cp.getProdus().getProdus().getNume()) 
-                                                
+
+                                                .numeProdus(cp.getProdus().getProdus().getNume())
+
                                                 .categorie(cp.getProdus().getProdus().getCategorie())
 
-                                                .pret(cp.getPretUnitar()) 
-                                                
+                                                .pret(cp.getPretUnitar())
+
                                                 .produsProducatorId(cp.getProdus().getId() != null ? cp.getProdus().getId().intValue() : null)
-                                                
-                                                
+
+
                                                 .build())
                                         .build())
                                 .collect(Collectors.toSet()))

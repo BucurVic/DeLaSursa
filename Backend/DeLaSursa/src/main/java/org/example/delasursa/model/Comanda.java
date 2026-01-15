@@ -3,7 +3,6 @@ package org.example.delasursa.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.delasursa.common.dto.enums.ComandaStatus;
-import org.example.delasursa.common.dto.enums.MetodaLivrare;
 import org.example.delasursa.common.dto.enums.MetodaPlata;
 
 import java.time.LocalDate;
@@ -16,7 +15,8 @@ import java.util.Set;
 @Setter
 @ToString(exclude = {"comandaPachete", "comandaProduse"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comanda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +31,13 @@ public class Comanda {
     @Column(name = "data_efectuarii")
     private LocalDate dataEfectuarii;
 
-    @OneToMany(mappedBy = "comanda")
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)
     private Set<ComandaPachet> comandaPachete = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "comanda", cascade = CascadeType.PERSIST)
     private Set<ComandaProdus> comandaProduse = new LinkedHashSet<>();
 
+    @Enumerated(EnumType.ORDINAL)
     private ComandaStatus statusComanda;
 
     @ManyToOne
@@ -48,6 +49,7 @@ public class Comanda {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private MetodaLivrarePret metodaLivrare;
 
+    @Enumerated(EnumType.ORDINAL)
     private MetodaPlata metodaPlata;
 
     private String observatii;

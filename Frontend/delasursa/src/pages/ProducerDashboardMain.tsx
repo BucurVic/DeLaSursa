@@ -15,24 +15,8 @@ import IncomeChart from "../components/IncomeChart.tsx";
 import ProducerProductCardSimple from "../components/ProducerProductCardSimple.tsx";
 import { AuthContext } from "../context/AuthContext.tsx";
 import { jwtDecode } from "jwt-decode";
-import type { DecodedJwt } from "../common/utils.ts";
-import { ordersApi } from "../api/ordersApi.ts";
-import type { ComandaDto } from "../common/types.ts";
-
-const mapOrdersWithRandomStatus = <T extends object>(orders: T[]) => {
-  const statuses = [
-    "Creată",
-    "În procesare",
-    "Pregatită",
-    "Livrată",
-    "Anulată",
-  ];
-
-  return orders.map((order) => ({
-    ...order,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-  }));
-};
+import { type DecodedJwt } from "../common/utils.ts";
+import { ComandaStatus, ordersApi } from "../api/ordersApi.ts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const incomeData = [
@@ -71,10 +55,13 @@ export const incomeData = [
 export default function ProducerDashboardMain() {
   const { token } = useContext(AuthContext);
 
-  const [orders, setOrders] = useState<ComandaDto[]>([]);
   const [pendingOrders, setPendingOrders] = useState<number>(0);
   const [deliveredOrders, setDeliveredOrders] = useState<number>(0);
   const [products, setProducts] = useState<Produs[]>([]);
+  const [venit, setVenit] = useState<number>(0);
+  const [incomeData, setIncomeData] = useState<
+    { date: string; income: number }[]
+  >([]);
 
   useEffect(() => {
     const loadOrder = async () => {
@@ -85,18 +72,24 @@ export default function ProducerDashboardMain() {
         const producerId = Number(decoded.id);
 
         const allOrders = await ordersApi.getAllForProducator(producerId);
-        const ordersWithStatus = mapOrdersWithRandomStatus(allOrders);
-        setOrders(ordersWithStatus);
+        const data = await ordersApi.getVenitPeZiProducator(producerId);
+        setIncomeData(data);
 
-        const pending = ordersWithStatus.filter(
-          (o) => o.status === "În procesare",
+        const pending = allOrders.filter(
+          (o) =>
+            o.statusComanda === ComandaStatus.CREATED ||
+            o.statusComanda === ComandaStatus.PROCESSING ||
+            o.statusComanda === ComandaStatus.READY_TO_DELIVER,
         ).length;
-        const delivered = ordersWithStatus.filter(
-          (o) => o.status === "Livrată",
+        const delivered = allOrders.filter(
+          (o) => o.statusComanda === ComandaStatus.DELIVERED,
         ).length;
 
         setPendingOrders(pending);
         setDeliveredOrders(delivered);
+
+        const newVenit = await ordersApi.getVenitPeAnProducator(producerId);
+        setVenit(newVenit);
       } catch (error) {
         console.error("Eroare la incarcarea comenzii:", error);
       }
@@ -119,17 +112,17 @@ export default function ProducerDashboardMain() {
   const stats = [
     {
       icon: <Wallet />,
-      value: "2.450 RON",
+      value: venit + " RON",
       label: tr.producerDashboard.income,
     },
     {
       icon: <PendingActions />,
-      value: 3,
+      value: pendingOrders,
       label: tr.producerDashboard.pendingOrders,
     },
     {
       icon: <LocalShipping />,
-      value: 23,
+      value: deliveredOrders,
       label: tr.producerDashboard.deliveredOrders,
     },
     {

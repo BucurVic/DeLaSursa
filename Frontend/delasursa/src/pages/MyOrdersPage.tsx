@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { colors, textResources } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import type { DecodedJwt } from "../common/utils.ts";
+import { ComandaStatusMap, type DecodedJwt } from "../common/utils.ts";
 import { ordersApi } from "../api/ordersApi.ts";
 import type { ComandaDto } from "../common/types.ts";
 
@@ -13,20 +13,14 @@ interface Order extends ComandaDto {
   transportCost: number;
 }
 
-const mapOrdersWithRandomStatus = (orders: ComandaDto[]): Order[] => {
-  const statuses = [
-    "Creată",
-    "În procesare",
-    "Pregatită",
-    "Livrată",
-    "Anulată",
-  ];
-
-  return orders.map((order) => ({
-    ...order,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    transportCost: 20,
-  }));
+const mapOrdersWithEnumValues = (orders: ComandaDto[]): Order[] => {
+  return orders.map((order) => {
+    return {
+      ...order,
+      status: ComandaStatusMap[order.statusComanda],
+      transportCost: order.metodaLivrare.pret,
+    };
+  });
 };
 
 const MyOrdersPage: React.FC = () => {
@@ -45,7 +39,7 @@ const MyOrdersPage: React.FC = () => {
 
         const allOrders = await ordersApi.getAllForUser(userId);
 
-        const ordersWithStatus = mapOrdersWithRandomStatus(allOrders);
+        const ordersWithStatus = mapOrdersWithEnumValues(allOrders);
         setOrders(ordersWithStatus);
       } catch (error) {
         console.error("Eroare la incarcarea comenzii:", error);
@@ -97,13 +91,18 @@ const MyOrdersPage: React.FC = () => {
                     order.comandaProduse.reduce(
                       (sum, p) => sum + p.pretUnitar * p.cantitate,
                       0,
-                    ) + (order.transportCost || 0)
+                    ) +
+                    order.comandaPachete.reduce(
+                      (sum, p) => sum + p.pachet.pretTotal * p.cantitate,
+                      0,
+                    ) +
+                    (order.transportCost || 0)
                   ).toFixed(2)}{" "}
                   RON
                 </Typography>
-                {/*<Typography>*/}
-                {/*  <strong>{textResources.orders.status}</strong> {order.status}*/}
-                {/*</Typography>*/}
+                <Typography>
+                  <strong>{textResources.orders.status}</strong> {order.status}
+                </Typography>
               </CardContent>
             </Card>
           ))}

@@ -7,6 +7,12 @@ export interface CreateComandaProdusDto {
   pretUnitar: number;
 }
 
+export interface CreateComandaPachetDto {
+  pachetId: number;
+  cantitate: number;
+  pretUnitar: number;
+}
+
 export interface Adresa {
   numeComplet: string;
   telefon: string;
@@ -17,22 +23,37 @@ export interface Adresa {
 }
 
 export enum MetodaPlata {
-  CARD,
-  RAMBURS,
+  CARD = "CARD",
+  RAMBURS = "RAMBURS",
 }
 
-export enum MetodaLivrare {
-  HOME_DELIVERY,
-  SELF_PICKUP,
+export enum MetodaLivrareEnum {
+  HOME_DELIVERY = "HOME_DELIVERY",
+  SELF_PICKUP = "SELF_PICKUP",
+}
+
+export enum ComandaStatus {
+  CANCELED = "CANCELED",
+  CREATED = "CREATED",
+  PROCESSING = "PROCESSING",
+  READY_TO_DELIVER = "READY_TO_DELIVER",
+  DELIVERED = "DELIVERED",
+}
+
+export interface MetodaLivrare {
+  id: number;
+  metodaLivrare: MetodaLivrareEnum;
+  pret: number;
 }
 
 export interface CreateComandaRequest {
   clientId: number;
   comandaProduseList: CreateComandaProdusDto[];
+  comandaPacheteList: CreateComandaPachetDto[];
   metodaPlata: MetodaPlata;
   adresaLivrare: Adresa;
   adresaFacturare: Adresa;
-  metodaLivrare: MetodaLivrare;
+  metodaLivrare: MetodaLivrareEnum;
   observatii: string | null;
 }
 
@@ -44,13 +65,29 @@ export const ordersApi = {
 
   getAllForUser: async (userId: number) => {
     const response = await api.get<ComandaDto[]>(`/comanda/user/${userId}`);
+    console.log(response.data);
     return response.data;
   },
 
   getAllForProducator: async (prodId: number) => {
     const response = await api.get<ComandaDto[]>(
-      `/comanda/producator/${prodId}`
+      `/comanda/producator/${prodId}`,
     );
     return response.data;
+  },
+
+  updateStatus: async (orderId: number, newStatus: ComandaStatus) => {
+    const response = await api.put(`/comanda/${orderId}`, { newStatus });
+    return response.data;
+  },
+
+  getVenitPeAnProducator: async (prodId: number) => {
+    const response = await api.get(`comanda/producator/${prodId}/venit-an`);
+    return response.data;
+  },
+
+  getVenitPeZiProducator: async (producatorId: number) => {
+    const res = await api.get(`comanda/producator/${producatorId}/venit-pe-zi`);
+    return res.data as { date: string; income: number }[];
   },
 };

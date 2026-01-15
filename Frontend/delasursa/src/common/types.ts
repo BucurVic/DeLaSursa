@@ -54,11 +54,24 @@ export interface ComandaProdusDto {
   pretUnitar: number;
 }
 
+export interface ComandaPachetDto {
+  id: number;
+  pachet: PachetDTO;
+  cantitate: number;
+}
+
 export interface ComandaDto {
   id: number;
   client: ClientDto;
   dataEfectuarii: string;
   comandaProduse: ComandaProdusDto[];
+  statusComanda: ComandaStatus;
+  adresaLivrare: Adresa;
+  adresaFacturare: Adresa;
+  metodaLivrare: MetodaLivrare;
+  metodaPlata: MetodaPlata;
+  observatii: string;
+  comandaPachete: ComandaPachetDto[];
 }
 
 // ==============================================================================

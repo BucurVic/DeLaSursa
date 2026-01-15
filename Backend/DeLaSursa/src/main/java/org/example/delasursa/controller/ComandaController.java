@@ -3,11 +3,14 @@ package org.example.delasursa.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.delasursa.common.dto.DailyIncomeDto;
 import org.example.delasursa.common.dto.comanda.*;
+import org.example.delasursa.jwt.CustomUserDetails;
 import org.example.delasursa.service.ComandaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +26,7 @@ public class ComandaController {
     private final ComandaService comandaService;
 
     @PostMapping
-    public ResponseEntity<CreateComandaResponse> createComanda(@RequestBody CreateComandaRequest requst ) {
+    public ResponseEntity<CreateComandaResponse> createComanda(@RequestBody CreateComandaRequest requst) {
         return ResponseEntity.status(HttpStatus.CREATED).body(comandaService.createComanda(requst));
     }
 
@@ -31,7 +34,7 @@ public class ComandaController {
     public ResponseEntity<List<ComandaDto>> getAllComenzi(@PathVariable Integer id) {
 
         List<ComandaDto> comenzi = comandaService.getAllComandsByUserId(id);
-        if(comenzi.isEmpty())
+        if (comenzi.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
         return ResponseEntity.status(HttpStatus.OK).body(comenzi);
@@ -45,13 +48,23 @@ public class ComandaController {
 
     }
 
+    @GetMapping("/producator/{id}/venit-an")
+    @PreAuthorize("hasRole('PRODUCATOR')")
+    public Double getVenitPeProducatorPeAn(@PathVariable Integer id) {
+        return comandaService.getTotalComenziForProducatorUltimulAn(id);
+    }
 
-    /// TODO: implementation
-    @PutMapping
-    public ResponseEntity<UpateCoamandaResponse> updateComanda(@RequestBody UpdateComandaRequest request) {
-        return null;
+    @GetMapping("/producator/{id}/venit-pe-zi")
+    public List<DailyIncomeDto> getVenitPeZi(@PathVariable Integer id) {
+        return comandaService.getVenitPeZiProducator(id);
     }
 
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('PRODUCATOR')")
+    public ResponseEntity<UpdateComandaResponse> updateComanda(@PathVariable Integer id, @RequestBody UpdateComandaRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        comandaService.updateStatus(id, request.getNewStatus(), userDetails.getUserId());
+        return ResponseEntity.ok().build();
+    }
 }
 
