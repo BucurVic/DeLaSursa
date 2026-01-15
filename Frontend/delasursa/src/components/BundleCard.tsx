@@ -12,7 +12,7 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { colors } from "../theme";
 import { useNavigate } from "react-router-dom";
-import {ShoppingCartOutlined} from "@mui/icons-material";
+import { ShoppingCartOutlined } from "@mui/icons-material";
 
 export interface BundleItem {
     name: string;
@@ -26,23 +26,29 @@ export interface BundleProps {
     currency: string;
     image: string;
     items: BundleItem[];
-    onSubscribe: (id: string) => void;
+    onAddToCart: (id: string) => void; // Corectat să accepte ID
     viewMode?: "grid" | "list";
 }
 
 const BundleCard: React.FC<BundleProps> = ({
-                                                                       id,
-                                                                       title,
-                                                                       price,
-                                                                       currency,
-                                                                       image,
-                                                                       items,
-                                                           onAddToCart,
-                                                                       viewMode = "grid"
-                                                                   }) => {
+                                               id,
+                                               title,
+                                               price,
+                                               currency,
+                                               image,
+                                               items,
+                                               onAddToCart,
+                                               viewMode = "grid"
+                                           }) => {
     const isList = viewMode === "list";
-    const ITEMS_TO_SHOW = 4; // Am crescut la 4 pentru a arăta mai multe produse
+    const ITEMS_TO_SHOW = 4;
     const navigate = useNavigate();
+
+    // --- FUNCȚIA DE NAVIGARE ---
+    const handleNavigate = () => {
+        // AICI ESTE FIX-UL: Ruta din App.tsx este /pachete/:id
+        navigate(`/pachete/${id}`);
+    };
 
     return (
         <Card
@@ -56,6 +62,7 @@ const BundleCard: React.FC<BundleProps> = ({
                 borderRadius: "1rem",
                 border: `1px solid ${colors.lightGreen1Transparent}`,
                 transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "pointer", // Arată că e clickabil
                 "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: `0 10px 20px -5px rgba(0,0,0,0.3)`,
@@ -63,24 +70,24 @@ const BundleCard: React.FC<BundleProps> = ({
                 },
                 height: "100%"
             }}
+            // Click pe tot cardul duce la detalii
+            onClick={handleNavigate}
         >
             {/* --- ZONA IMAGINE --- */}
             <Box sx={{
                 position: "relative",
                 width: { xs: "100%", md: isList ? "300px" : "100%" },
                 minWidth: { md: isList ? "300px" : "auto" },
-                flexShrink: 0 // Asigură că imaginea nu se micșorează
+                flexShrink: 0
             }}>
                 <CardMedia
                     component="img"
-                    onClick={() => navigate(`/pachete/${id}`)}
                     height={isList ? "100%" : "140"}
                     image={image}
                     alt={title}
                     sx={{
                         objectFit: "cover",
                         height: { xs: "140px", md: isList ? "100%" : "140px" },
-                        cursor: 'pointer'
                     }}
                 />
             </Box>
@@ -90,12 +97,11 @@ const BundleCard: React.FC<BundleProps> = ({
                 flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
-                gap: 1.5, // Spațiere puțin mai mare între secțiuni
+                gap: 1.5,
                 p: 3,
                 width: "100%",
                 justifyContent: "space-between"
             }}>
-
                 {/* HEADER (Titlu & Preț) */}
                 <Box sx={{
                     display: isList ? "flex" : "block",
@@ -108,7 +114,6 @@ const BundleCard: React.FC<BundleProps> = ({
                             fontWeight="bold"
                             gutterBottom
                             sx={{
-                                // Forțăm titlul pe 2 rânduri max pentru aliniere consistentă în Grid
                                 display: '-webkit-box',
                                 overflow: 'hidden',
                                 WebkitBoxOrient: 'vertical',
@@ -140,7 +145,7 @@ const BundleCard: React.FC<BundleProps> = ({
                 </Box>
 
                 {/* LISTA DE PRODUSE */}
-                <Box sx={{ flexGrow: 1 }}> {/* flexGrow aici împinge butonul jos */}
+                <Box sx={{ flexGrow: 1 }}>
                     <Typography
                         variant="subtitle2"
                         color={colors.lightGreen3}
@@ -153,14 +158,14 @@ const BundleCard: React.FC<BundleProps> = ({
                         direction={isList ? { xs: "column", md: "row" } : "column"}
                         spacing={1}
                         flexWrap="wrap"
-                        sx={{ gap: isList ? 3 : 1 }} // Spațiere orizontală mai mare pe list
+                        sx={{ gap: isList ? 3 : 1 }}
                     >
                         {items.slice(0, ITEMS_TO_SHOW).map((item, index) => (
                             <Box
                                 key={index}
                                 sx={{
                                     display: "flex",
-                                    alignItems: "flex-start", // <--- ALINIERE SUS (Important pentru text lung)
+                                    alignItems: "flex-start",
                                     gap: 1,
                                     width: isList ? 'auto' : '100%'
                                 }}
@@ -169,11 +174,10 @@ const BundleCard: React.FC<BundleProps> = ({
                                     sx={{
                                         color: colors.lightGreen1,
                                         fontSize: "1.1rem",
-                                        mt: 0.3 // <--- Ajustare fină pentru a se alinia cu textul
+                                        mt: 0.3
                                     }}
                                 />
                                 <Typography variant="body2" color={colors.white1} sx={{ lineHeight: 1.4 }}>
-                                    {/* Cantitate boldată, nume normal */}
                                     <span style={{ fontWeight: "bold", color: colors.white2 }}>{item.quantity}</span> {item.name}
                                 </Typography>
                             </Box>
@@ -191,24 +195,23 @@ const BundleCard: React.FC<BundleProps> = ({
                     </Stack>
                 </Box>
 
-                {/* BUTON ACTIUNE */}
+                {/* BUTON ACTIUNE - ADAUGĂ ÎN COȘ */}
                 <Box sx={{
                     mt: 2,
                     display: "flex",
                     justifyContent: isList ? "flex-end" : "stretch"
                 }}>
-
                     <Button
                         fullWidth
                         variant="contained"
                         startIcon={<ShoppingCartOutlined />}
-                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        // STOP PROPAGATION - ca să nu declanșăm navigația când dăm add to cart
+                        onClick={(e) => {
                             e.stopPropagation();
-                            onAddToCart();
+                            onAddToCart(id);
                         }}
-
                         sx={{
-                            height: "1.872rem", // 13% of content height
+                            height: "1.872rem",
                             backgroundColor: colors.lightGreen1,
                             color: colors.darkGreen1,
                             borderRadius: "0.6rem",

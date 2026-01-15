@@ -116,18 +116,17 @@ INSERT INTO produs_producator (id_producator, id_produs, cantitate, unitate_masu
 -- ========================================================
 -- STEP 6: Inserăm pachete
 -- ========================================================
-INSERT INTO pachete (id_producator, nume, imagine) VALUES
-    (12, 'Pachet Fructe 1',' '),
-    (13, 'Pachet Fructe 2',' '),
-    (14, 'Pachet Legume',' '),
-    (15, 'Pachet Lactate',' '),
-    (16, 'Pachet Mixt 1',' '),
-    (17, 'Pachet Mixt 2',' '),
-    (18, 'Pachet Panificatie',' '),
-    (19, 'Pachet Bauturi',' '),
-    (20, 'Pachet Alimentar',' '),
-    (12, 'Pachet Premium',' ');
-
+INSERT INTO pachete (id_producator, nume, imagine, pret_total, pret_abonament, descriere, e_abonament, frecventa_livrare) VALUES
+  (12, 'Pachet Fructe 1', ' ', 11.0, 10.0, 'Pachet cu fructe de sezon - Reducere 10% la abonament!', true, 7),
+  (13, 'Pachet Fructe 2', ' ', 12.0, NULL, 'Mix de fructe exotice', false, null),
+  (14, 'Pachet Legume', ' ', 13.5, 12.0, 'Legume proaspete pentru salată', true, 14),
+  (15, 'Pachet Lactate', ' ', 6.0, 5.0, 'Brânzeturi și lapte bio - Super preț la abonament!', true, 30),
+  (16, 'Pachet Mixt 1', ' ', 10.0, NULL, 'Combinație fructe și legume', false, null),
+  (17, 'Pachet Mixt 2', ' ', 4.0, 3.5, 'Pachet mare pentru familie', true, 7),
+  (18, 'Pachet Panificatie', ' ', 30.0, 25.0, 'Pâine și produse de patiserie', true, 7),
+  (19, 'Pachet Bauturi', ' ', 16.0, NULL, 'Sucuri naturale și siropuri', false, null),
+  (20, 'Pachet Alimentar', ' ', 27.5, 25.0, 'Produse de bază (ulei, zahăr, făină)', true, 30),
+  (12, 'Pachet Premium', ' ', 27.5, 25.0, 'Selecție gourmet', true, 14);
 -- ========================================================
 -- STEP 7: Inserăm pachet_produs
 -- ========================================================
@@ -141,7 +140,8 @@ INSERT INTO pachet_produs (id_pachet, id_produs, cantitate, pret_unitar) VALUES
     (6, 7, 4, 1.0),
     (7, 8, 3, 10.0),
     (8, 9, 2, 8.0),
-    (9, 10, 5, 5.5);
+    (9, 10, 5, 5.5),
+    (10, 10, 5, 5.5);
 
 -- ========================================================
 -- STEP 8: Inserăm adrese
@@ -239,17 +239,17 @@ INSERT INTO comanda_pachet (id_comanda, id_pachet, cantitate, pret_unitar) VALUE
 -- ========================================================
 -- STEP 11: Inserăm subscriptii
 -- ========================================================
-INSERT INTO subscriptii (id_client, id_pachet, data_inceput, freceventa, status) VALUES
-    (2, 1, '2025-01-01', 7, 'activa'),
-    (3, 2, '2025-01-02', 14, 'activa'),
-    (4, 3, '2025-01-03', 30, 'activa'),
-    (5, 4, '2025-01-04', 7, 'inactiva'),
-    (6, 5, '2025-01-05', 14, 'activa'),
-    (7, 6, '2025-01-06', 30, 'activa'),
-    (8, 7, '2025-01-07', 7, 'inactiva'),
-    (9, 8, '2025-01-08', 14, 'activa'),
-    (10, 9, '2025-01-09', 30, 'activa'),
-    (11, 10, '2025-01-10', 7, 'activa');
+INSERT INTO subscriptii (id_client, id_pachet, data_inceput, frecventa, status) VALUES
+    (2, 1, '2025-01-01', 7, 'ACTIV'),
+    (3, 2, '2025-01-02', 14, 'ACTIV'),
+    (4, 3, '2025-01-03', 30, 'ACTIV'),
+    (5, 4, '2025-01-04', 7, 'INACTIV'),
+    (6, 5, '2025-01-05', 14, 'ACTIV'),
+    (7, 6, '2025-01-06', 30, 'ACTIV'),
+    (8, 7, '2025-01-07', 7, 'INACTIV'),
+    (9, 8, '2025-01-08', 14, 'ACTIV'),
+    (10, 9, '2025-01-09', 30, 'ACTIV'),
+    (11, 10, '2025-01-10', 14, 'ACTIV');
 
 
 INSERT INTO admini(id,nume,prenume) VALUES

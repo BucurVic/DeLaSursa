@@ -17,6 +17,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import InsertChartOutlinedOutlinedIcon from "@mui/icons-material/InsertChartOutlinedOutlined";
 
 import { colors } from "../theme/colors.ts";
@@ -69,9 +70,14 @@ export default function Sidebar({ collapsed = true, className }: SidebarProps) {
       icon: <ChatBubbleOutlineOutlinedIcon />,
     },
     {
-      key: "subscriptions",
+      key: "bundles",
       label: textResources.sidebar.bundles,
       icon: <CreditCardIcon />,
+    },
+    {
+      key: "subscriptions",
+      label: textResources.sidebar.subscriptions,
+      icon: <AutorenewIcon />,
     },
     {
       key: "settings",
@@ -87,7 +93,8 @@ export default function Sidebar({ collapsed = true, className }: SidebarProps) {
     { key: "reviews", path: textResources.dashboardUrls.reviews },
     { key: "stats", path: textResources.dashboardUrls.stats },
     { key: "messages", path: textResources.dashboardUrls.messages },
-    { key: "subscriptions", path: textResources.dashboardUrls.bundles },
+    { key: "bundles", path: textResources.dashboardUrls.bundles },
+    { key: "subscriptions", path: textResources.dashboardUrls.subscriptions },
     { key: "settings", path: textResources.dashboardUrls.settings },
   ];
 

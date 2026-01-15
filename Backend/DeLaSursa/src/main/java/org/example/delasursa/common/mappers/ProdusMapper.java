@@ -10,17 +10,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProdusMapper {
     @Value("${app.base.url}")
-    private  String baseUrl;
+    private String baseUrl;
 
     public ProdusDTO toDTO(ProdusProducator entity){
-        if(entity==null) return null;
+        if(entity == null) return null;
 
+        // Luăm numele personalizat dacă există, altfel numele generic din Produs
         String produsName = (entity.getDenumirePersonalizata() != null && !entity.getDenumirePersonalizata().isBlank())
                 ? entity.getDenumirePersonalizata()
                 : entity.getProdus().getNume();
 
         return ProdusDTO.builder()
-                .id(entity.getId())
+                .id(entity.getId()) // ID-ul din produs_producator (Asta e crucial!)
                 .produsName(produsName)
                 .producatorName(entity.getProducator().getNume() + ' ' + entity.getProducator().getPrenume())
                 .categorie(entity.getProdus().getCategorie())
@@ -28,11 +29,10 @@ public class ProdusMapper {
                 .unitate_masura(entity.getUnitateMasura())
                 .produsImagine(
                         entity.getImagine() != null
-                            ? baseUrl + entity.getImagine()
-                            : null
+                                ? baseUrl + entity.getImagine()
+                                : null
                 )
                 .cantitate(entity.getCantitate())
                 .build();
     }
-
 }

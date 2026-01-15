@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/verify-email").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/pachete/**").permitAll()
+                        .requestMatchers("/api/subscriptii/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults())

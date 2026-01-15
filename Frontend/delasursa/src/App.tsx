@@ -41,6 +41,7 @@ import MySubscriptionsPage from "./pages/MySubscriptionsPage.tsx";
 import SubscriptionPage from "./pages/BundlesPage.tsx";
 import BundleDetailsPage from "./pages/BundleDetailsPage.tsx";
 import ProducerBundlesPage from "./pages/ProducerBundlesPage.tsx";
+import ProducerSubscriptionsPage from "./pages/ProducerSubscriptionsPage.tsx";
 
 function App() {
   return (
@@ -118,6 +119,10 @@ function App() {
             path="/dashboard-producator/pachete"
             element={<ProducerBundlesPage />}
           />
+            <Route
+                path="/dashboard-producator/abonamente"
+                element={<ProducerSubscriptionsPage />}
+            />
         </Route>
       </Route>
 

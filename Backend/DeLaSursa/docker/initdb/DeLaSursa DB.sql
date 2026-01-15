@@ -105,9 +105,14 @@ CREATE TABLE produse (
 
 CREATE TABLE pachete (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  id_producator integer NOT NULL references producatori(id),
+  id_producator integer NOT NULL references producatori(id) ON DELETE CASCADE,
   nume varchar,
-  imagine varchar
+  imagine varchar,
+  descriere varchar(1000),
+  pret_total float,
+  pret_abonament float,
+  e_abonament boolean DEFAULT false,
+  frecventa_livrare integer
 );
 
 CREATE TABLE subscriptii (
@@ -115,7 +120,7 @@ CREATE TABLE subscriptii (
   id_client integer NOT NULL references clienti(id),
   id_pachet integer NOT NULL references pachete(id),
   data_inceput date,
-  freceventa integer,
+  frecventa integer,
   status varchar
 );
 

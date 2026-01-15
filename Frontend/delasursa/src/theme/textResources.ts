@@ -20,6 +20,7 @@ export const textResources = {
     reviews: "/dashboard-producator",
     messages: "/dashboard-producator",
     bundles: "/dashboard-producator/pachete",
+    subscriptions: "/dashboard-producator/abonamente",
     settings: "/dashboard-producator",
   },
 
@@ -153,6 +154,7 @@ export const textResources = {
     stats: "Statistici",
     messages: "Mesaje",
     bundles: "Pachete",
+    subscriptions: "Abonamente",
     settings: "Setări cont producător",
   },
 

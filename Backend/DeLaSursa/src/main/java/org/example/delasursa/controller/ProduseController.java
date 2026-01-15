@@ -43,6 +43,14 @@ public class ProduseController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/producator/{id}")
+    public ResponseEntity<Page<ProdusDTO>> getByProducator(
+            @PathVariable Integer id,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(produsService.getAllByProducator(id, pageable));
+    }
+
     @GetMapping("/producator")
     @PreAuthorize("hasRole('PRODUCATOR')")
     public ResponseEntity<List<ProdusDTO>> getAllProducator(){

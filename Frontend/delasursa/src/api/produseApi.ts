@@ -1,6 +1,6 @@
-import api, {publicApi} from "./axios";
-import type {Produs} from "../types/Produs";
-import type {PaginatedResponse} from "../types/PaginatedResponse";
+import api, { publicApi } from "./axios";
+import type { Produs } from "../types/Produs";
+import type { PaginatedResponse } from "../types/PaginatedResponse";
 
 export interface CreateProdusData {
     nume: string;
@@ -24,7 +24,15 @@ export const produseApi = {
     getAllPaged: (page: number, size: number) =>
         api.get<PaginatedResponse<Produs>>(`/produse?page=${page}&size=${size}`),
 
+    // Aceasta este metoda simplă (existentă)
     getAllProducator: () => api.get<Produs[]>("/produse/producator"),
+
+    // --- MODIFICARE: Adăugăm această metodă pentru a suporta codul din ProducerBundlesPage ---
+    // Presupunem că endpoint-ul '/produse/producator' știe să returneze paginat dacă primește params
+    getByProducator: (idProducator: number, page = 0, size = 1000) =>
+        api.get<PaginatedResponse<Produs>>(`/produse/producator/${idProducator}`, {
+            params: { page, size }
+        }),
 
     getPopular: (page = 0, size = 12) =>
         publicApi.get<PaginatedResponse<Produs>>(`/produse/populare?page=${page}&size=${size}`),
@@ -40,7 +48,6 @@ export const produseApi = {
 
     getById: (id: number) => api.get<Produs>(`/produse/${id}`),
 
-
     add: (data: CreateProdusData) => {
         const formData = new FormData();
         formData.append("nume", data.nume);
@@ -54,7 +61,6 @@ export const produseApi = {
             headers: { "Content-Type": "multipart/form-data" },
         });
     },
-
 
     update: (id: number, data: UpdateProdusData) => {
         const formData = new FormData();
