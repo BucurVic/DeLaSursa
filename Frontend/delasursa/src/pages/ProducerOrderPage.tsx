@@ -341,6 +341,7 @@ export default function ProducerOrderPage() {
             rating={4.9}
             reviewCount={15}
             currency={"RON"}
+            quantity={b.cantitate}
           />
         ))}
 
