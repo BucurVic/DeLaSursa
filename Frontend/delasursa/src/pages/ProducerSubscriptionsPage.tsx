@@ -104,12 +104,49 @@ const ProducerSubscriptionsPage: React.FC = () => {
         return result;
     }, [offers, search, selectedMinPrice, selectedMaxPrice, selectedSort]);
 
-    const handleSaveSubscription = async (data: SubscriptionOfferDTO) => {
+    const handleSaveSubscription = async (data: SubscriptionOfferDTO | any) => {
         try {
-            const pachetPayload: PachetDTO = { id: data.isNewPachet ? undefined : data.pachetId, producatorId: producerId, nume: data.numePachetNou || "Pachet Fără Nume", imagine: data.imaginePachetNou || "", pretTotal: data.pret, pretAbonament: data.pretAbonament, descriere: data.descriere, eAbonament: true, frecventaLivrare: data.frecventa, produse: [] };
-            if (data.isNewPachet) await pacheteApi.create(pachetPayload); else if (data.pachetId) await pacheteApi.update(data.pachetId, pachetPayload);
-            setIsCreateModalOpen(false); setIsEditModalOpen(false); fetchData();
-        } catch (err) { alert("Eroare la salvare."); }
+            const pachetPayload: PachetDTO = {
+                id: data.isNewPachet ? undefined : (data.pachetId || data.id), // Fallback la data.id
+                producatorId: producerId,
+
+                // Mapare câmpuri (verificăm ambele variante de nume pentru siguranță)
+                nume: data.numePachetNou || data.nume || "Pachet Fără Nume",
+                imagine: data.imaginePachetNou || data.imagine || "",
+                descriere: data.descriere,
+
+                // Prețuri
+                pretTotal: data.pret || data.pretTotal, // Modalul poate trimite 'pretTotal', DTO are 'pret'
+                pretAbonament: data.pretAbonament,
+
+                // Setări Abonament
+                eAbonament: true,
+                frecventaLivrare: data.frecventa || data.frecventaLivrare,
+
+                // --- FIX CRITIC AICI ---
+                // Nu mai punem [], ci luăm produsele care vin din data (din Modal)
+                produse: data.produse || []
+            };
+
+            console.log("Payload trimis la server:", pachetPayload); // DEBUG
+
+            if (data.isNewPachet) {
+                await pacheteApi.create(pachetPayload);
+            } else if (pachetPayload.id) {
+                await pacheteApi.update(pachetPayload.id, pachetPayload);
+            }
+
+            // Închidem modalele și reîncărcăm datele
+            setIsCreateModalOpen(false);
+            setIsEditModalOpen(false);
+
+            // Asigură-te că funcția asta chiar face request la backend!
+            fetchData();
+
+        } catch (err) {
+            console.error(err);
+            alert("Eroare la salvare.");
+        }
     };
     const handleEditClick = (offer: PachetDTO) => { setTargetPackage(offer); setIsEditModalOpen(true); };
     const handleDeleteOffer = async (id: number) => { if (!window.confirm("Sigur ștergi?")) return; try { await pacheteApi.delete(id); fetchData(); } catch (err) { alert("Eroare."); } };
@@ -117,111 +154,161 @@ const ProducerSubscriptionsPage: React.FC = () => {
     const handleViewDetails = (id: number) => { navigate(`/pachete/${id}`); };
 
     // --- RENDER CARD (EQUAL HEIGHT LOGIC) ---
-    const renderSubscriptionCard = (offer: PachetDTO, isList: boolean) => (
-        <Card sx={{
-            bgcolor: colors.darkGreen1,
-            border: `1px solid ${colors.lightGreen1Transparent}`,
-            borderRadius: '1rem',
-            // [FIX] Cardul ocupa 100% din inaltimea Grid Item-ului
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
-            alignItems: isList ? 'center' : 'stretch',
-            transition: 'transform 0.2s',
-            '&:hover': { transform: 'translateY(-4px)', borderColor: colors.lightGreen1 }
-        }}>
-            <CardMedia
-                component="img"
-                image={offer.imagine || "/images/default.jpg"}
-                alt={offer.nume}
-                onClick={() => handleViewDetails(offer.id!)}
-                sx={{
-                    objectFit: 'cover',
-                    cursor: 'pointer',
-                    // Grid: 140px fix. List: 100% inaltime sau fix
-                    height: isList ? { xs: 200, sm: '100%' } : 140,
-                    minHeight: isList ? { sm: 200 } : 'auto', // Asigură o înălțime minimă în List View
-                    width: isList ? { xs: '100%', sm: 280 } : '100%',
-                    flexShrink: 0
-                }}
-            />
+    const renderSubscriptionCard = (offer: PachetDTO, isList: boolean) => {
+        // 1. Prețul de Referință: Prețul pachetului standard (fără abonament)
+        // Acesta este prețul la care ne raportăm acum, conform cerinței
+        const standardPrice = offer.pretTotal || 0;
 
-            {/* Containerul de text + butoane */}
-            <Box sx={{
+        // 2. Prețul de Vânzare: Prețul special pentru abonament
+        // Dacă nu există preț special setat, fallback la prețul standard
+        const subscriptionPrice = offer.pretAbonament || standardPrice;
+
+        // 3. Calculăm reducerea strict între Pachet Standard vs. Abonament
+        const hasDiscount = standardPrice > subscriptionPrice;
+
+        // Evităm împărțirea la 0
+        const discountPercent = (hasDiscount && standardPrice > 0)
+            ? Math.round(((standardPrice - subscriptionPrice) / standardPrice) * 100)
+            : 0;
+
+        return (
+            <Card sx={{
+                bgcolor: colors.darkGreen1,
+                border: `1px solid ${colors.lightGreen1Transparent}`,
+                borderRadius: '1rem',
+                height: '100%',
+                width: '100%',
                 display: 'flex',
                 flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
-                flexGrow: 1,
-                width: '100%',
-                justifyContent: 'space-between',
                 alignItems: isList ? 'center' : 'stretch',
-                p: isList ? 2 : 0
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'translateY(-4px)', borderColor: colors.lightGreen1 }
             }}>
-                <CardContent sx={{
-                    flexGrow: 1,
-                    pb: 1,
-                    px: isList ? 3 : 1.5,
-                    textAlign: isList ? 'left' : 'center',
+                <CardMedia
+                    component="img"
+                    image={offer.imagine || "/images/default.jpg"}
+                    alt={offer.nume}
+                    onClick={() => handleViewDetails(offer.id!)}
+                    sx={{
+                        objectFit: 'cover',
+                        cursor: 'pointer',
+                        height: isList ? { xs: 200, sm: '100%' } : 140,
+                        minHeight: isList ? { sm: 200 } : 'auto',
+                        width: isList ? { xs: '100%', sm: 280 } : '100%',
+                        flexShrink: 0
+                    }}
+                />
+
+                {/* Containerul de text + butoane */}
+                <Box sx={{
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                    width: '100%'
+                    flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
+                    flexGrow: 1,
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: isList ? 'center' : 'stretch',
+                    p: isList ? 2 : 0
                 }}>
-                    <Typography
-                        gutterBottom
-                        variant={isList ? "h5" : "subtitle1"}
-                        fontWeight="bold"
-                        color={colors.white1}
-                        sx={{
-                            lineHeight: 1.2,
-                            mb: 1,
-                            // [FIX] Forțăm 2 linii mereu pentru aliniere egală
-                            minHeight: isList ? 'auto' : '2.4em',
-                            display: '-webkit-box',
-                            overflow: 'hidden',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: 2
-                        }}
-                    >
-                        {offer.nume}
-                    </Typography>
-
-                    <Box sx={{ display: 'flex', gap: 0.5, mb: 1, flexWrap: "wrap", alignItems: 'center', justifyContent: isList ? 'flex-start' : 'center' }}>
-                        {offer.pretAbonament && offer.pretAbonament < offer.pretTotal && <Typography variant="caption" sx={{ textDecoration: 'line-through', color: colors.white2, opacity: 0.6 }}>{offer.pretTotal}</Typography>}
-                        <Chip icon={<MonetizationOnIcon sx={{ fontSize: '1rem !important', color: colors.darkGreen2 + '!important' }} />} label={`${offer.pretAbonament || offer.pretTotal} LEI`} size="small" sx={{ bgcolor: (offer.pretAbonament && offer.pretAbonament < offer.pretTotal) ? colors.lightGreen1 : colors.lightGreen1, color: colors.darkGreen2, fontWeight: 'bold' }} />
-                        {offer.pretAbonament && offer.pretAbonament < offer.pretTotal && <Chip label={`-${Math.round(((offer.pretTotal - offer.pretAbonament) / offer.pretTotal) * 100)}%`} size="small" color="error" />}
-                    </Box>
-
-                    {offer.descriere && (
+                    <CardContent sx={{
+                        flexGrow: 1,
+                        pb: 1,
+                        px: isList ? 3 : 1.5,
+                        textAlign: isList ? 'left' : 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                        width: '100%'
+                    }}>
                         <Typography
-                            variant="caption"
+                            gutterBottom
+                            variant={isList ? "h5" : "subtitle1"}
+                            fontWeight="bold"
+                            color={colors.white1}
                             sx={{
-                                color: colors.white2,
-                                opacity: 0.7,
-                                // [FIX] Trunchiem mereu la 2 linii
-                                overflow: 'hidden',
+                                lineHeight: 1.2,
+                                mb: 1,
+                                minHeight: isList ? 'auto' : '2.4em',
                                 display: '-webkit-box',
-                                WebkitLineClamp: 2,
+                                overflow: 'hidden',
                                 WebkitBoxOrient: 'vertical',
-                                minHeight: '2.6em' // Rezervă loc chiar dacă e text scurt
+                                WebkitLineClamp: 2
                             }}
                         >
-                            {offer.descriere}
+                            {offer.nume}
                         </Typography>
-                    )}
-                </CardContent>
 
-                {/* Zona Butoane */}
-                <Box sx={{ p: isList ? 0 : 1.5, pt: 0, display: 'flex', flexDirection: 'column', gap: 1, width: isList ? 'auto' : '100%', minWidth: isList ? '200px' : 'auto', justifyContent: 'center' }}>
-                    <Button fullWidth variant="outlined" size="small" startIcon={<GroupIcon fontSize="small"/>} onClick={() => handleViewSubscribers(offer.id!, offer.nume)} sx={{ color: colors.white1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem', '&:hover': { borderColor: colors.lightGreen1, bgcolor: 'rgba(255,255,255,0.05)' } }}>Vezi Abonați</Button>
-                    <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                        <Button variant="outlined" size="small" onClick={() => handleEditClick(offer)} sx={{ flex: 1, color: colors.lightGreen1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem' }}><EditIcon fontSize="small" /> Editează</Button>
-                        <Button variant="outlined" size="small" color="error" onClick={() => handleDeleteOffer(offer.id!)} sx={{ flex: 1, borderRadius: '0.6rem', borderColor: 'rgba(211, 47, 47, 0.5)' }}><DeleteOutlineIcon fontSize="small" /> Șterge</Button>
+                        {/* --- ZONA PREȚ ȘI REDUCERE --- */}
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: isList ? 'flex-start' : 'center',
+                            mb: 1.5
+                        }}>
+                            {/* Dacă abonamentul e mai ieftin decât pachetul standard */}
+                            {hasDiscount && (
+                                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 0.5 }}>
+                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: colors.white2, opacity: 0.7 }}>
+                                        {standardPrice.toFixed(2)} RON
+                                    </Typography>
+                                    <Chip
+                                        label={`Extra -${discountPercent}%`}
+                                        size="small"
+                                        sx={{
+                                            height: '20px',
+                                            fontSize: '0.7rem',
+                                            bgcolor: 'rgba(46, 125, 50, 0.2)',
+                                            color: '#81c784',
+                                            border: '1px solid #2e7d32'
+                                        }}
+                                    />
+                                </Box>
+                            )}
+
+                            {/* Prețul de Abonament */}
+                            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                                <Chip
+                                    icon={<MonetizationOnIcon sx={{ fontSize: '1rem !important', color: colors.darkGreen2 + '!important' }} />}
+                                    label={`${subscriptionPrice} RON`}
+                                    size="small"
+                                    sx={{ bgcolor: colors.lightGreen1, color: colors.darkGreen2, fontWeight: 'bold' }}
+                                />
+                                {/* Afișăm frecvența (ex: / săptămână) pentru claritate */}
+                                <Typography variant="caption" sx={{ color: colors.white2 }}>
+                                    / {offer.frecventaLivrare || 7} zile
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        {offer.descriere && (
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: colors.white2,
+                                    opacity: 0.7,
+                                    overflow: 'hidden',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    minHeight: '2.6em'
+                                }}
+                            >
+                                {offer.descriere}
+                            </Typography>
+                        )}
+                    </CardContent>
+
+                    {/* Zona Butoane */}
+                    <Box sx={{ p: isList ? 0 : 1.5, pt: 0, display: 'flex', flexDirection: 'column', gap: 1, width: isList ? 'auto' : '100%', minWidth: isList ? '200px' : 'auto', justifyContent: 'center' }}>
+                        <Button fullWidth variant="outlined" size="small" startIcon={<GroupIcon fontSize="small"/>} onClick={() => handleViewSubscribers(offer.id!, offer.nume)} sx={{ color: colors.white1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem', '&:hover': { borderColor: colors.lightGreen1, bgcolor: 'rgba(255,255,255,0.05)' } }}>Vezi Abonați</Button>
+                        <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+                            <Button variant="outlined" size="small" onClick={() => handleEditClick(offer)} sx={{ flex: 1, color: colors.lightGreen1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem' }}><EditIcon fontSize="small" /> Editează</Button>
+                            <Button variant="outlined" size="small" color="error" onClick={() => handleDeleteOffer(offer.id!)} sx={{ flex: 1, borderRadius: '0.6rem', borderColor: 'rgba(211, 47, 47, 0.5)' }}><DeleteOutlineIcon fontSize="small" /> Șterge</Button>
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-        </Card>
-    );
+            </Card>
+        );
+    };
 
     return (
         <Container maxWidth="xl" sx={{ py: 4, color: colors.white1, minHeight: '80vh' }}>

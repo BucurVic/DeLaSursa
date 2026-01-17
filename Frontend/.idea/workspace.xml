@@ -5,48 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="Refactor the logic of the bundles, added a specific section in the navbar and in also for the producers. &#10;&#10;Page for all the bundles, with filters available in the frontend&#10;&#10;Page for  bundle details&#10;&#10;Add bundles to cart">
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/client/ClientDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/CreateSubscriptionModal.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/EditBundleModal.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/EditSubscriptionModal.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/ViewSubscribersModal.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerSubscriptionsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/DeLaSursa DB.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/DeLaSursa DB.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/12/pachet_mere.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/12/pachet_mere_pere.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/13/pachet_rosii.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/14/pachet_castraveti.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/15/pachet_branza.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/16/pachet_lapte.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/17/pachet_paine.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/18/pachet_ulei.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/19/pachet_cafea.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/20/pachet_zahar.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/delasursa/src/components/CreateBundleModal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/insert_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/insert_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/pachet/PachetDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/pachet/PachetDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/subscriptie/CreateSubscriptieRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/subscriptie/CreateSubscriptieRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/subscriptie/SubscriptieDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/dto/subscriptie/SubscriptieDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/PachetMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/PachetMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/ProdusMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/ProdusMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/SubscriptieMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/SubscriptieMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/PachetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/PachetController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/ProduseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/ProduseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/SubscriptieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/controller/SubscriptieController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/Pachet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/Pachet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/Subscriptie.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/model/Subscriptie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/ProdusProducatorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/ProdusProducatorRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/ProdusRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/ProdusRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/SubscriptieRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/repository/SubscriptieRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/PachetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/PachetService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/ProdusService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/ProdusService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/SubscriptieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/SubscriptieService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/PachetServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/PachetServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/ProdusServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/ProdusServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/SubscriptieServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/SubscriptieServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/api/pacheteApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/api/pacheteApi.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/api/produseApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/api/produseApi.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/api/subscriptiiApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/api/subscriptiiApi.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/common/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/common/types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/components/BundleCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/BundleCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/Sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BundlesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BundlesPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/MySubscriptionsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/MySubscriptionsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/CreateSubscriptionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/CreateSubscriptionModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/components/EditSubscriptionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/EditSubscriptionModal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProducerBundlesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerBundlesPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/theme/textResources.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProducerSubscriptionsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerSubscriptionsPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,26 +78,26 @@
     <option name="showLibraryContents" value="true" />
     <option name="showModules" value="false" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "feature/ViewCreateAbonament-Victor",
-    "javascript.preferred.runtime.type.id": "node",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Semestrul 5/PC/DeLaSursa/Backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.updates",
-    "ts.external.directory.path": "/Users/victorbucur/FACC/ANUL3/SEM1/PC/Frontend/delasursa/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/fixes-&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Semestrul 5/PC/DeLaSursa/Backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.updates&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/victorbucur/FACC/ANUL3/SEM1/PC/Frontend/delasursa/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/delasursa/src/pages/auth" />
@@ -155,6 +134,8 @@
       <workItem from="1763983296002" duration="14000" />
       <workItem from="1768130950448" duration="12687000" />
       <workItem from="1768337032242" duration="50069000" />
+      <workItem from="1768516581157" duration="1250000" />
+      <workItem from="1768605036944" duration="10180000" />
     </task>
     <task id="LOCAL-00001" summary="dropdpwn, file uploader and add product form">
       <option name="closed" value="true" />

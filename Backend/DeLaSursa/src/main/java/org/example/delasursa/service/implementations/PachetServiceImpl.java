@@ -130,11 +130,11 @@ public class PachetServiceImpl implements PachetService {
         }
     }
 
-    @Override
-    public PachetDTO findById(Integer id) {
-        Pachet pachet = pachetRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pachet not found!"));
-        return pachetMapper.toDTO(pachet);
-    }
+//    @Override
+//    public PachetDTO findById(Integer id) {
+//        Pachet pachet = pachetRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pachet not found!"));
+//        return pachetMapper.toDTO(pachet);
+//    }
 
     @Override
     @Transactional
