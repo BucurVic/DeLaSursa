@@ -5,26 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3a26b8b-9123-4e6c-91b1-ea6ce2240987" name="Changes" comment="Refactor the logic of the bundles, added a specific section in the navbar and in also for the producers. &#10;&#10;Page for all the bundles, with filters available in the frontend&#10;&#10;Page for  bundle details&#10;&#10;Add bundles to cart">
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/12/pachet_mere.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/12/pachet_mere_pere.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/13/pachet_rosii.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/14/pachet_castraveti.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/15/pachet_branza.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/16/pachet_lapte.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/17/pachet_paine.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/18/pachet_ulei.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/19/pachet_cafea.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/uploads/pachete/20/pachet_zahar.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/delasursa/src/components/CreateBundleModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/insert_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/docker/initdb/insert_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/PachetMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/common/mappers/PachetMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/PachetServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/DeLaSursa/src/main/java/org/example/delasursa/service/implementations/PachetServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/api/pacheteApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/api/pacheteApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/api/subscriptiiApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/api/subscriptiiApi.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/components/BundleCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/BundleCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/components/CreateSubscriptionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/CreateSubscriptionModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/components/EditSubscriptionModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/components/EditSubscriptionModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProducerBundlesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerBundlesPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BundleDetailsPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/BundlesPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/BundlesPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/CheckoutPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/CheckoutPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ClientOrderPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ClientOrderPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProducerOrderPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerOrderPage.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/delasursa/src/pages/ProducerSubscriptionsPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/delasursa/src/pages/ProducerSubscriptionsPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -135,7 +124,7 @@
       <workItem from="1768130950448" duration="12687000" />
       <workItem from="1768337032242" duration="50069000" />
       <workItem from="1768516581157" duration="1250000" />
-      <workItem from="1768605036944" duration="10180000" />
+      <workItem from="1768605036944" duration="26903000" />
     </task>
     <task id="LOCAL-00001" summary="dropdpwn, file uploader and add product form">
       <option name="closed" value="true" />

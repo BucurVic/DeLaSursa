@@ -205,6 +205,7 @@ const BundleCard: React.FC<BundleProps> = ({
                         startIcon={<ShoppingCartOutlined />}
                         onClick={(e) => {
                             e.stopPropagation();
+                            // REVERT: Trimitem ID-ul original, fără prefix, ca să poată fi găsit de părinte
                             onAddToCart(id);
                         }}
                         sx={{

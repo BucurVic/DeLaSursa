@@ -84,7 +84,7 @@ const ProducerSubscriptionsPage: React.FC = () => {
             const response = await pacheteApi.getByProducator(producerId, 0, 100);
             const toatePachetele = response.data.content;
             setOffers(toatePachetele.filter(p => Boolean(p.eAbonament)));
-            setAllPackages(toatePachetele.map(p => ({ id: p.id || 0, nume: p.nume, imagine: p.imagine, pretTotal: p.pretTotal, eAbonament: p.eAbonament, frecventaLivrare: p.frecventaLivrare, descriere: p.descriere })));
+            setAllPackages(toatePachetele.map(p => ({ id: p.id || 0, nume: p.nume, imagine: p.imagine, pretTotal: p.pretTotal, eAbonament: p.eAbonament, frecventaLivrare: p.frecventaLivrare, descriere: p.descriere, pretAbonament: p.pretAbonament, produse: p.produse || [] })));
         } catch (err) { console.error(err); setError("Nu am putut încărca ofertele."); } finally { setLoading(false); }
     };
     useEffect(() => { fetchData(); }, [producerId]);

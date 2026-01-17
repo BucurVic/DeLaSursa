@@ -171,21 +171,27 @@ export default function SubscriptionPage() {
     fetchData();
   }, []);
 
-  // Handlers
-  const handleBuyBundle = (id: string) => {
-    const bundleToAdd = bundles.find((b) => b.id === id);
-    if (bundleToAdd) {
-      addItem({
-        // Adăugăm un offset fictiv pentru a nu conflictualiza ID-urile de produse simple
-        // SAU, ideal, backend-ul ar trebui să aibă ID-uri unice globale (UUID)
-        id: Number(bundleToAdd.id),
-        title: bundleToAdd.title,
-        price: bundleToAdd.price,
-        image: bundleToAdd.image,
-        quantity: 1,
-      });
-    }
-  };
+    // Handlers
+    const handleBuyBundle = (id: string) => {
+        // 1. Căutăm pachetul folosind ID-ul original (care vine din BundleCard curat, ex: "15")
+        const bundleToAdd = bundles.find((b) => b.id === id);
+
+        if (bundleToAdd) {
+            addItem({
+                // 2. --- FIX CRITIC: Adăugăm prefixul "bundle" aici ---
+                // Astfel, în coș va ajunge cu ID-ul "bundle15", iar checkout-ul îl va recunoaște ca pachet.
+                id: `bundle${bundleToAdd.id}`,
+
+                title: bundleToAdd.title,
+                price: bundleToAdd.price,
+                image: bundleToAdd.image,
+                quantity: 1,
+            });
+
+            // Opțional: Poți adăuga un mesaj de confirmare aici
+            // alert("Pachet adăugat în coș!");
+        }
+    };
 
   const handleDropdownChange = (
       label: string,

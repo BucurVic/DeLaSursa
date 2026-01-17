@@ -293,11 +293,12 @@ const CheckoutPage: React.FC = () => {
   };
 
   // --- LOGICA DE TRIMITERE COMANDĂ ---
+  // --- LOGICA DE TRIMITERE COMANDĂ ---
   const handleConfirmOrder = async () => {
-    // 1. Verificare Auth: Ne asigurăm că avem un user valid
+    // 1. Verificare Auth
     if (!user || !user.id) {
       setSnackbarMessage(
-        "Trebuie să fii autentificat ca și CLIENT pentru a plasa o comandă.",
+          "Trebuie să fii autentificat ca și CLIENT pentru a plasa o comandă.",
       );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -311,25 +312,40 @@ const CheckoutPage: React.FC = () => {
     try {
       console.log("Plasare comandă pentru User ID:", user.id);
 
-      // 2. Construim payload-ul pentru Backend
-      // Trimitem doar ce acceptă backend-ul acum (clientId, produse)
+      // --- FIX LOGICĂ SEPARARE PRODUSE vs PACHETE ---
 
-      const produse = items.filter((item) => !item.id.startsWith("bundle"));
+      // Helper: Verificăm strict dacă e pachet (trebuie să fie String ȘI să înceapă cu "bundle")
+      const isBundle = (id: string | number) => {
+        return typeof id === 'string' && id.startsWith("bundle");
+      };
 
-      const pachete = items.filter((item) => item.id.startsWith("bundle"));
+      // 1. Filtrăm Pachetele
+      const pacheteItems = items.filter((item) => isBundle(item.id));
+
+      // 2. Filtrăm Produsele (Tot ce NU e pachet este produs)
+      const produseItems = items.filter((item) => !isBundle(item.id));
+
+      // 3. Mapăm listele pentru Backend
+      const comandaProduseList = produseItems.map((item) => ({
+        produsId: Number(item.id), // Aici suntem siguri că e ID de produs
+        cantitate: item.quantity,
+        pretUnitar: item.price,
+      }));
+
+      const comandaPacheteList = pacheteItems.map((item) => ({
+        // Scoatem prefixul "bundle" și convertim restul în număr
+        pachetId: Number(String(item.id).replace("bundle", "")),
+        cantitate: item.quantity,
+        pretUnitar: item.price,
+      }));
+
+      console.log("Produse de trimis:", comandaProduseList);
+      console.log("Pachete de trimis:", comandaPacheteList);
 
       const orderPayload: CreateComandaRequest = {
         clientId: Number(user.id),
-        comandaProduseList: produse.map((item) => ({
-          produsId: Number(item.id),
-          cantitate: item.quantity,
-          pretUnitar: item.price,
-        })),
-        comandaPacheteList: pachete.map((item) => ({
-          pachetId: Number(item.id.replace("bundle", "")),
-          cantitate: item.quantity,
-          pretUnitar: item.price,
-        })),
+        comandaProduseList: comandaProduseList,
+        comandaPacheteList: comandaPacheteList,
         metodaLivrare: deliveryMethod,
         metodaPlata: paymentMethod,
         adresaFacturare: billingAddress,
@@ -337,38 +353,33 @@ const CheckoutPage: React.FC = () => {
         observatii: observations,
       };
 
-      // 3. Apelăm API-ul
+      // 4. Apelăm API-ul
       await ordersApi.createOrder(orderPayload);
 
-      // 4. Succes
+      // 5. Succes
       setLoading(false);
       setSnackbarMessage(
-        "Comanda a fost înregistrată cu succes! Vei fi redirecționat...",
+          "Comanda a fost înregistrată cu succes! Vei fi redirecționat...",
       );
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
 
-      // 5. Golim coșul
+      // 6. Golim coșul
       clearCart();
 
-      // 6. Redirecționare după 5 secunde
       setTimeout(() => {
         navigate("/");
       }, 5000);
+
     } catch (error: any) {
       console.error("Eroare la plasarea comenzii:", error);
       setLoading(false);
 
       let errorMsg = "A apărut o eroare la salvarea comenzii.";
-
-      // Încercăm să extragem un mesaj mai clar de la server
       if (error.response) {
         if (error.response.status === 404) {
-          errorMsg = `Eroare: Contul tău (ID: ${user.id}) nu este găsit în baza de date a clienților.`;
-        } else if (
-          error.response.data &&
-          typeof error.response.data === "string"
-        ) {
+          errorMsg = `Eroare: Contul tău (ID: ${user.id}) nu este găsit.`;
+        } else if (error.response.data && typeof error.response.data === "string") {
           errorMsg = `Eroare server: ${error.response.data}`;
         }
       }

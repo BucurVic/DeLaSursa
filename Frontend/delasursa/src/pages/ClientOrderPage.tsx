@@ -240,9 +240,7 @@ export default function ClientOrderPage() {
           <ClientOrderViewBundleCard
             key={b.id}
             bundleId={b.pachet.id.toString()}
-            image={
-              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800"
-            }
+            image={b.pachet.imagine}
             title={b.pachet.nume}
             items={b.pachet.produse.map((p) => mapItemToBundleItem(p))}
             price={b.pachet.pretTotal}
