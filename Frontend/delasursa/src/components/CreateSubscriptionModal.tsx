@@ -35,7 +35,6 @@ const inputStyles = {
     "& .MuiSelect-icon": { color: colors.lightGreen1 },
     "& .MuiFormLabel-root": { color: colors.white2 },
     "& .MuiFormLabel-root.Mui-focused": { color: colors.lightGreen1 },
-    // Stil specific pentru câmpuri disabled (Prețul Standard)
     "& .MuiInputBase-input.Mui-disabled": {
         color: colors.white2,
         WebkitTextFillColor: colors.white2,
@@ -55,14 +54,18 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                                                                              open, onClose, onSave, existingPackages
                                                                          }) => {
 
-    // --- STATE ---
     const [selectedPackageId, setSelectedPackageId] = useState<string>("");
 
     // Configurare Ofertă
     const [description, setDescription] = useState("");
-    const [standardPrice, setStandardPrice] = useState<string>(""); // Read-only
-    const [subscriptionPrice, setSubscriptionPrice] = useState<string>(""); // Editable
+    const [standardPrice, setStandardPrice] = useState<string>("");
+    const [subscriptionPrice, setSubscriptionPrice] = useState<string>("");
     const [frequency, setFrequency] = useState<string>("7");
+
+    // --- STATE PENTRU DATELE ORIGINALE ---
+    const [pkgName, setPkgName] = useState("");
+    const [pkgImage, setPkgImage] = useState("");
+    const [pkgProducts, setPkgProducts] = useState<any[]>([]);
 
     // Validare
     const [warningMessage, setWarningMessage] = useState<string | null>(null);
@@ -75,6 +78,9 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
             setStandardPrice("");
             setSubscriptionPrice("");
             setFrequency("7");
+            setPkgName("");
+            setPkgImage("");
+            setPkgProducts([]);
             setWarningMessage(null);
         }
     }, [open]);
@@ -85,23 +91,25 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
         const pkg = existingPackages.find(p => p.id === Number(id));
 
         if (pkg) {
-            // 1. Setăm prețul standard (doar pentru informare, nu se editează aici)
             setStandardPrice(pkg.pretTotal ? pkg.pretTotal.toString() : "");
-
-            // 2. Dacă pachetul are deja descriere, o preluăm
             setDescription(pkg.descriere || "");
 
-            // 3. Verificăm dacă e deja abonament
+            // Salvăm datele critice
+            setPkgName(pkg.nume || "");
+            setPkgImage(pkg.imagine || "");
+
+            // --- FIX TS2339: Folosim (pkg as any) pentru a accesa 'produse' ---
+            // Dacă 'produse' nu există pe tipul Pachet, îl forțăm aici
+            const produseExistente = (pkg as any).produse || [];
+            setPkgProducts(produseExistente);
+
             if (pkg.eAbonament) {
-                setWarningMessage(`Pachetul "${pkg.nume}" este deja activ ca abonament. Modificările de aici vor actualiza oferta existentă.`);
-                // Pre-populăm valorile curente
-                setSubscriptionPrice(pkg.pretTotal ? pkg.pretTotal.toString() : "");
-                // Notă: Dacă ai pretAbonament în obiectul Pachet din frontend, ar fi ideal să-l folosești aici:
-                // pkg.pretAbonament ? pkg.pretAbonament.toString() : ...
+                setWarningMessage(`Pachetul "${pkg.nume}" este deja activ ca abonament. Modificările vor actualiza oferta.`);
+                setSubscriptionPrice(pkg.pretAbonament ? pkg.pretAbonament.toString() : (pkg.pretTotal ? pkg.pretTotal.toString() : ""));
                 setFrequency(pkg.frecventaLivrare ? pkg.frecventaLivrare.toString() : "7");
             } else {
                 setWarningMessage(null);
-                setSubscriptionPrice(""); // Lăsăm gol ca să introducă reducerea
+                setSubscriptionPrice("");
                 setFrequency("7");
             }
         }
@@ -111,23 +119,27 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
     const handleSubmit = () => {
         if (!selectedPackageId) return;
 
-        // Validare simplă (Preț abonament vs Standard)
         const std = Number(standardPrice);
         const sub = Number(subscriptionPrice);
 
         if (sub >= std && std > 0) {
-            if(!window.confirm("Prețul de abonament este mai mare sau egal cu prețul standard (fără reducere). Ești sigur că vrei să continui?")) {
+            if(!window.confirm("Prețul de abonament este mai mare sau egal cu prețul standard. Continui?")) {
                 return;
             }
         }
 
-        const dto: SubscriptionOfferDTO = {
-            isNewPachet: false, // Întotdeauna false acum
+        // --- FIX: Folosim 'any' pentru DTO pentru a permite câmpul 'produse' ---
+        const dto: any = {
+            isNewPachet: false,
             pachetId: Number(selectedPackageId),
 
-            // Datele ofertei
-            pret: Number(standardPrice),          // Trimitem prețul standard pentru consistență
-            pretAbonament: Number(subscriptionPrice), // Prețul special
+            // Datele de update esențiale
+            numePachetNou: pkgName,
+            imaginePachetNou: pkgImage,
+            produse: pkgProducts, // <--- Lista de produse pe care am salvat-o mai sus
+
+            pret: Number(standardPrice),
+            pretAbonament: Number(subscriptionPrice),
             frecventa: Number(frequency),
             descriere: description
         };
@@ -161,7 +173,6 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
             </DialogTitle>
 
             <DialogContent sx={{ mt: 3 }}>
-
                 {/* 1. SELECTARE PACHET */}
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="body2" sx={{ color: colors.white2, mb: 0.5 }}>Selectează Pachetul din Stoc</Typography>
@@ -181,7 +192,6 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                         ))}
                     </Select>
 
-                    {/* MESAJ AVERTISMENT */}
                     {warningMessage && (
                         <Alert
                             severity="warning"
@@ -200,7 +210,7 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                         fullWidth
                         multiline
                         rows={2}
-                        placeholder="Ex: Primești acest coș în fiecare marți. Conține legume de sezon..."
+                        placeholder="Ex: Primești acest coș în fiecare marți..."
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         sx={inputStyles}
@@ -215,7 +225,7 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                         <TextField
                             fullWidth
                             value={standardPrice}
-                            disabled // Este read-only
+                            disabled
                             InputProps={{ endAdornment: <InputAdornment position="end" sx={{color: colors.white2}}>RON</InputAdornment> }}
                             sx={inputStyles}
                         />
@@ -235,7 +245,7 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                                 ...inputStyles,
                                 "& .MuiInputBase-root": {
                                     ...inputStyles["& .MuiInputBase-root"],
-                                    border: `1px solid ${colors.lightGreen1}` // Evidențiem acest câmp
+                                    border: `1px solid ${colors.lightGreen1}`
                                 }
                             }}
                         />
