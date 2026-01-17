@@ -95,19 +95,32 @@ const EditSubscriptionModal: React.FC<EditSubscriptionModalProps> = ({
     const handleSubmit = () => {
         if (!targetPackage) return;
 
-        const dto: SubscriptionOfferDTO = {
-            pachetId: targetPackage.id,
-            isNewPachet: false,
-            numePachetNou: formData.nume,
-            imaginePachetNou: formData.imagine,
+        // Construim payload-ul combinând datele vechi cu cele noi
+        const payload = {
+            // 1. Păstrăm baza (ID, produse, producerId etc.)
+            ...targetPackage,
+
+            // 2. SUPRASCRIEM explicit câmpurile editabile
+            // Backend-ul ia valoarea de aici, indiferent ce era în targetPackage
+            nume: formData.nume,
+            imagine: formData.imagine,
             descriere: formData.descriere,
-            pret: Number(formData.pretTotal),
+
+            // Convertim la numere
+            pretTotal: Number(formData.pretTotal),
             pretAbonament: Number(formData.pretAbonament),
-            frecventa: Number(formData.frecventa)
+
+            // --- FIX CRITIC ---
+            // State-ul tău se numește 'frecventa', dar Backend-ul așteaptă 'frecventaLivrare'
+            frecventaLivrare: Number(formData.frecventa),
+
+            // Ne asigurăm că produsele nu se pierd
+            produse: targetPackage.produse || []
         };
 
-        onSave(dto);
-        onClose();
+        console.log("Se trimite la update:", payload); // Debug în consolă
+        onSave(payload);
+        // onClose(); <--- Sfat: Mută asta în componenta părinte (după succes), sau las-o aici dacă vrei optimistic UI
     };
 
     return (

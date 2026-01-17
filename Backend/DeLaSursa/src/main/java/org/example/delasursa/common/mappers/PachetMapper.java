@@ -6,6 +6,7 @@ import org.example.delasursa.model.Pachet;
 import org.example.delasursa.model.PachetProdus;
 import org.example.delasursa.model.Producator;
 import org.example.delasursa.model.ProdusProducator;
+import org.springframework.beans.factory.annotation.Value; // IMPORT NOU
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -15,9 +16,18 @@ import java.util.Set;
 
 @Component
 public class PachetMapper {
+
+    // 1. Injectăm URL-ul serverului (definit în application.properties)
+    // Asigură-te că ai linia: app.base.url=http://localhost:8080
+    @Value("${app.base.url}")
+    private String baseUrl;
+
     public PachetDTO toDTO(Pachet pachet) {
         if (pachet == null)
             return null;
+
+        // 2. Procesăm imaginea principală a Pachetului
+        String fullPachetImage = processImageUrl(pachet.getImagine());
 
         List<PachetProdusItemDTO> produseDTO = pachet.getPachetProduse() != null
                 ? pachet.getPachetProduse().stream()
@@ -25,20 +35,19 @@ public class PachetMapper {
                 .toList()
                 : Collections.emptyList();
 
-//        double pretTotalCalculat = produseDTO.stream()
-//                .mapToDouble(item -> item.getPretTotalProdus() != null ? item.getPretTotalProdus() : 0.0)
-//                .sum();
-
         return PachetDTO.builder()
                 .id(pachet.getId())
                 .producatorId(pachet.getProducator() != null ? pachet.getProducator().getId() : null)
                 .producatorNume(pachet.getProducator() != null ? pachet.getProducator().getNume() : null)
                 .nume(pachet.getNume())
-                .imagine(pachet.getImagine())
+
+                // Folosim URL-ul procesat (absolut)
+                .imagine(fullPachetImage)
+
                 .produse(produseDTO)
                 .pretTotal(pachet.getPretTotal())
-                .pretAbonament(pachet.getPretAbonament()) // NOU
-                .descriere(pachet.getDescriere())         // NOU
+                .pretAbonament(pachet.getPretAbonament())
+                .descriere(pachet.getDescriere())
                 .eAbonament(pachet.getEAbonament())
                 .frecventaLivrare(pachet.getFrecventaLivrare())
                 .build();
@@ -52,7 +61,16 @@ public class PachetMapper {
         Pachet pachet = new Pachet();
         pachet.setId(dto.getId());
         pachet.setNume(dto.getNume());
+
+        // La salvare păstrăm calea relativă (sau cum vine din frontend)
+        // De obicei frontend-ul trimite înapoi exact ce a primit sau calea relativă de la upload
         pachet.setImagine(dto.getImagine());
+
+        pachet.setPretTotal(dto.getPretTotal());
+        pachet.setPretAbonament(dto.getPretAbonament());
+        pachet.setDescriere(dto.getDescriere());
+        pachet.setEAbonament(dto.getEAbonament()); // Nu uita să mapezi și astea la entity
+        pachet.setFrecventaLivrare(dto.getFrecventaLivrare());
 
         if (dto.getProducatorId() != null) {
             Producator producator = new Producator();
@@ -109,11 +127,25 @@ public class PachetMapper {
                 .idPachetProdus(pachetProdus.getId())
                 .idProdusProducator(produsSursa != null ? produsSursa.getId() : null)
                 .numeProdus(numeAfisat)
-                .imagineProdus(produsSursa != null ? produsSursa.getImagine() : null)
+
+                // Opțional: Aplicăm logica și la produsele din interior, ca să nu fie link-uri moarte
+                .imagineProdus(produsSursa != null ? processImageUrl(produsSursa.getImagine()) : null)
+
                 .unitateMasura(produsSursa != null ? produsSursa.getUnitateMasura() : null)
                 .cantitate(cantitate)
                 .pretUnitar(pretUnitar)
                 .pretTotalProdus(cantitate * pretUnitar)
                 .build();
+    }
+
+    // --- METODĂ AJUTĂTOARE PENTRU URL ---
+    private String processImageUrl(String imagePath) {
+        if (imagePath == null || imagePath.isBlank()) {
+            return null;
+        }
+        if (imagePath.startsWith("http")) {
+            return imagePath;
+        }
+        return baseUrl + imagePath;
     }
 }

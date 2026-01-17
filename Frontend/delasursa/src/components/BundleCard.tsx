@@ -1,13 +1,13 @@
 import React from "react";
 import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Divider,
-  Stack,
-  Typography,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CardMedia,
+    Divider,
+    Stack,
+    Typography,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { colors } from "../theme";
@@ -15,8 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 
 export interface BundleItem {
-  name: string;
-  quantity: string;
+    name: string;
+    quantity: string;
 }
 
 export interface BundleProps {
@@ -26,7 +26,7 @@ export interface BundleProps {
     currency: string;
     image: string;
     items: BundleItem[];
-    onAddToCart: (id: string) => void; // Corectat să accepte ID
+    onAddToCart: (id: string) => void;
     viewMode?: "grid" | "list";
 }
 
@@ -44,9 +44,7 @@ const BundleCard: React.FC<BundleProps> = ({
     const ITEMS_TO_SHOW = 4;
     const navigate = useNavigate();
 
-    // --- FUNCȚIA DE NAVIGARE ---
     const handleNavigate = () => {
-        // AICI ESTE FIX-UL: Ruta din App.tsx este /pachete/:id
         navigate(`/pachete/${id}`);
     };
 
@@ -62,7 +60,7 @@ const BundleCard: React.FC<BundleProps> = ({
                 borderRadius: "1rem",
                 border: `1px solid ${colors.lightGreen1Transparent}`,
                 transition: "transform 0.2s, box-shadow 0.2s",
-                cursor: "pointer", // Arată că e clickabil
+                cursor: "pointer",
                 "&:hover": {
                     transform: "translateY(-4px)",
                     boxShadow: `0 10px 20px -5px rgba(0,0,0,0.3)`,
@@ -70,7 +68,6 @@ const BundleCard: React.FC<BundleProps> = ({
                 },
                 height: "100%"
             }}
-            // Click pe tot cardul duce la detalii
             onClick={handleNavigate}
         >
             {/* --- ZONA IMAGINE --- */}
@@ -140,44 +137,7 @@ const BundleCard: React.FC<BundleProps> = ({
                             </Typography>
                         )}
                     </Box>
-
-      {/* --- ZONA CONTINUT --- */}
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 1.5, // Spațiere puțin mai mare între secțiuni
-          p: 3,
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        {/* HEADER (Titlu & Preț) */}
-        <Box
-          sx={{
-            display: isList ? "flex" : "block",
-            justifyContent: "space-between",
-            gap: 2,
-          }}
-        >
-          <Box sx={{ flex: isList ? 1 : "auto" }}>
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              gutterBottom
-              sx={{
-                // Forțăm titlul pe 2 rânduri max pentru aliniere consistentă în Grid
-                display: "-webkit-box",
-                overflow: "hidden",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: isList ? undefined : 2,
-                minHeight: isList ? "auto" : "3.2rem",
-                lineHeight: 1.2,
-              }}
-            >
-              {title}
-            </Typography>
+                </Box>
 
                 {/* LISTA DE PRODUSE */}
                 <Box sx={{ flexGrow: 1 }}>
@@ -217,13 +177,21 @@ const BundleCard: React.FC<BundleProps> = ({
                                 </Typography>
                             </Box>
                         ))}
+                    </Stack>
 
-          {!isList && (
-            <Divider
-              sx={{ borderColor: colors.lightGreen1Transparent, my: 1.5 }}
-            />
-          )}
-        </Box>
+                    {/* Items rămași */}
+                    {items.length > ITEMS_TO_SHOW && (
+                        <Typography variant="caption" sx={{ color: colors.white2, ml: 3, mt: 0.5, display: 'block' }}>
+                            ...și încă {items.length - ITEMS_TO_SHOW} produse
+                        </Typography>
+                    )}
+
+                    {!isList && (
+                        <Divider
+                            sx={{ borderColor: colors.lightGreen1Transparent, my: 1.5 }}
+                        />
+                    )}
+                </Box>
 
                 {/* BUTON ACTIUNE - ADAUGĂ ÎN COȘ */}
                 <Box sx={{
@@ -235,7 +203,6 @@ const BundleCard: React.FC<BundleProps> = ({
                         fullWidth
                         variant="contained"
                         startIcon={<ShoppingCartOutlined />}
-                        // STOP PROPAGATION - ca să nu declanșăm navigația când dăm add to cart
                         onClick={(e) => {
                             e.stopPropagation();
                             onAddToCart(id);

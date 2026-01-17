@@ -251,9 +251,9 @@ const CreateSubscriptionModal: React.FC<CreateSubscriptionModalProps> = ({
                             sx={inputStyles["& .MuiInputBase-root"]}
                             MenuProps={{ PaperProps: { sx: { bgcolor: colors.darkGreen2, color: colors.white1 } } }}
                         >
-                            <MenuItem value="7">Săptămânal (7)</MenuItem>
-                            <MenuItem value="14">2 Săptămâni (14)</MenuItem>
-                            <MenuItem value="30">Lunar (30)</MenuItem>
+                            <MenuItem value="7">Săptămânal (7 zile)</MenuItem>
+                            <MenuItem value="14">Bi-Săptămânal (14 zile)</MenuItem>
+                            <MenuItem value="30">Lunar (30 zile)</MenuItem>
                         </Select>
                     </Grid>
                 </Grid>

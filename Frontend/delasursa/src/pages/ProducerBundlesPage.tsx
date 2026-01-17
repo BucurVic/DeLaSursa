@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import {
     Box,
     Card,
@@ -14,7 +14,7 @@ import {
     Chip,
     CircularProgress,
     Alert,
-    Snackbar // <--- IMPORT NOU
+    Snackbar
 } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import ViewListIcon from "@mui/icons-material/ViewList";
@@ -36,22 +36,30 @@ import { produseApi } from "../api/produseApi";
 import type { BundleData } from "../types/BundleData.ts";
 import type { PachetDTO, ProdusDTO } from "../common/types";
 
-// --- MODAL IMPORT ---
+// --- MODAL IMPORTS ---
 import EditBundleModal from "../components/EditBundleModal";
+import CreateBundleModal from "../components/CreateBundleModal"; // <--- IMPORT NOU
 
-// --- MAPPER HELPER ---
-const mapBackendToFrontend = (pachet: PachetDTO): BundleData => ({
-    id: pachet.id?.toString() || "",
-    title: pachet.nume,
-    price: pachet.pretTotal,
-    currency: "RON",
-    producer: pachet.producatorNume,
-    image: pachet.imagine ? pachet.imagine : "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800",
-    items: pachet.produse ? pachet.produse.map((item) => ({
-        name: item.numeProdus || "",
-        quantity: `${item.cantitate} ${item.unitateMasura || 'buc'}`, // Fallback vizual
-    })) : [],
-});
+// --- MAPPER HELPER ACTUALIZAT ---
+const mapBackendToFrontend = (pachet: PachetDTO): BundleData & { originalPrice: number } => {
+    const originalPrice = pachet.produse
+        ? pachet.produse.reduce((acc, item) => acc + ((item.pretUnitar || 0) * (item.cantitate || 1)), 0)
+        : (pachet.pretTotal || 0);
+
+    return {
+        id: pachet.id?.toString() || "",
+        title: pachet.nume,
+        price: pachet.pretTotal,
+        originalPrice: originalPrice,
+        currency: "RON",
+        producer: pachet.producatorNume,
+        image: pachet.imagine,
+        items: pachet.produse ? pachet.produse.map((item) => ({
+            name: item.numeProdus || "",
+            quantity: `${item.cantitate} ${item.unitateMasura || 'buc'}`,
+        })) : [],
+    };
+};
 
 // --- STILURI ---
 const filterInputStyles = {
@@ -105,8 +113,9 @@ export default function ProducerBundlesPage() {
     const [selectedSort, setSelectedSort] = useState("");
     const [viewType, setViewType] = useState<"grid" | "list">("grid");
 
-    // --- STATE MODAL EDITARE ---
+    // --- STATE MODALE ---
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // <--- STATE NOU CREATE
     const [targetBundle, setTargetBundle] = useState<PachetDTO | null>(null);
 
     const producerId = token ? Number(jwtDecode<DecodedJwt>(token).id) : null;
@@ -127,27 +136,21 @@ export default function ProducerBundlesPage() {
         }
     };
 
-    // --- FETCH PRODUSE (CU MAPARE CORECTĂ) ---
     const fetchMyProducts = async () => {
         if (!producerId) return;
         try {
             const response = await produseApi.getByProducator(producerId, 0, 1000);
-
             let rawData: any[] = [];
-            // Gestionăm ambele formate posibile de la backend (Page sau List)
             if ((response.data as any).content) {
                 rawData = (response.data as any).content;
             } else if (Array.isArray(response.data)) {
                 rawData = response.data;
             }
 
-            // --- MAPARE CRITICĂ ---
             const mappedProducts: ProdusDTO[] = rawData.map((p: any) => ({
                 id: p.id,
-                // Backend trimite 'produsName' sau 'nume'
                 nume: p.produsName || p.nume || "Produs Fără Nume",
                 pret: p.pret,
-                // Backend trimite 'unitate_masura' (snake_case), Frontend vrea 'unitateMasura' (camelCase)
                 unitateMasura: p.unitate_masura || p.unitateMasura || 'buc',
                 cantitate: p.cantitate,
                 imagine: p.produsImagine || p.imagine,
@@ -157,7 +160,6 @@ export default function ProducerBundlesPage() {
             setMyProducts(mappedProducts);
         } catch (e) {
             console.error("Nu am putut încărca produsele pentru modal", e);
-            // Nu dăm eroare utilizatorului aici, doar logăm, pentru a nu bloca pagina principală
         }
     };
 
@@ -167,8 +169,33 @@ export default function ProducerBundlesPage() {
     }, [producerId]);
 
     // --- HANDLERS ---
-    const handleCreateClick = () => { alert("Deschide Create Bundle Modal (TODO)"); };
 
+    // 1. Deschide Modal Creare
+    const handleCreateClick = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    // 2. Salvează Pachet Nou
+    const handleSaveNewBundle = async (newBundleData: any) => {
+        try {
+            // Adăugăm ID-ul producătorului la datele care vin din modal
+            const payload = {
+                ...newBundleData,
+                producatorId: producerId
+            };
+
+            await pacheteApi.create(payload);
+
+            setIsCreateModalOpen(false);
+            setSuccessMessage("Pachet creat cu succes!");
+            fetchBundles(); // Refresh listă
+        } catch (e) {
+            console.error(e);
+            setErrorMessage("Eroare la crearea pachetului.");
+        }
+    };
+
+    // 3. Editare Existentă
     const handleEditBundle = async (id: string) => {
         try {
             const res = await pacheteApi.getById(Number(id));
@@ -193,18 +220,15 @@ export default function ProducerBundlesPage() {
         }
     };
 
-    // --- DELETE HANDLER (CU GESTIONARE EROARE 400) ---
+    // 4. Ștergere
     const handleDeleteBundle = async (id: string) => {
         if(!window.confirm("Sigur ștergi acest pachet?")) return;
-
         try {
             await pacheteApi.delete(Number(id));
             setSuccessMessage("Pachet șters cu succes.");
             fetchBundles();
         } catch(error: any) {
             console.error("Eroare la ștergere:", error);
-            // Extragem mesajul de eroare trimis de backend (despre abonamente)
-            // Backend-ul trimite 400 Bad Request cu un mesaj JSON
             const serverMsg = error.response?.data?.message || error.response?.data || "A apărut o eroare la ștergere.";
             setErrorMessage(serverMsg);
         }
@@ -228,78 +252,99 @@ export default function ProducerBundlesPage() {
     }, [bundles, search, selectedMinPrice, selectedMaxPrice, selectedSort]);
 
     // --- CARD RENDERER ---
-    const renderCardContent = (bundle: BundleData, isList: boolean) => (
-        <Card sx={{
-            bgcolor: colors.darkGreen1,
-            border: `1px solid ${colors.lightGreen1Transparent}`,
-            borderRadius: '1rem',
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
-            alignItems: isList ? 'center' : 'stretch',
-            transition: 'transform 0.2s',
-            '&:hover': { transform: 'translateY(-4px)', borderColor: colors.lightGreen1 }
-        }}>
-            <CardMedia
-                component="img"
-                image={bundle.image}
-                alt={bundle.title}
-                onClick={() => handleViewDetails(bundle.id)}
-                sx={{
-                    objectFit: 'cover',
-                    cursor: 'pointer',
-                    height: isList ? { xs: 200, sm: '100%' } : 140,
-                    minHeight: isList ? { sm: 200 } : 'auto',
-                    width: isList ? { xs: '100%', sm: 280 } : '100%',
-                    flexShrink: 0
-                }}
-            />
-            <Box sx={{
+    const renderCardContent = (bundle: BundleData & { originalPrice?: number }, isList: boolean) => {
+        const originalPrice = bundle.originalPrice || 0;
+        const hasDiscount = originalPrice > bundle.price;
+        const discountPercent = hasDiscount
+            ? Math.round(((originalPrice - bundle.price) / originalPrice) * 100)
+            : 0;
+
+        return (
+            <Card sx={{
+                bgcolor: colors.darkGreen1,
+                border: `1px solid ${colors.lightGreen1Transparent}`,
+                borderRadius: '1rem',
+                height: '100%',
+                width: '100%',
                 display: 'flex',
                 flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
-                flexGrow: 1,
-                width: '100%',
-                justifyContent: 'space-between',
                 alignItems: isList ? 'center' : 'stretch',
-                p: isList ? 2 : 0
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'translateY(-4px)', borderColor: colors.lightGreen1 }
             }}>
-                <CardContent sx={{ flexGrow: 1, pb: 1, px: isList ? 3 : 1.5, textAlign: isList ? 'left' : 'center', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%' }}>
-                    <Typography
-                        gutterBottom
-                        variant={isList ? "h5" : "subtitle1"}
-                        fontWeight="bold"
-                        color={colors.white1}
-                        sx={{
-                            lineHeight: 1.2,
-                            mb: 1,
-                            minHeight: isList ? 'auto' : '2.4em',
-                            display: '-webkit-box',
-                            overflow: 'hidden',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: 2
-                        }}
-                    >
-                        {bundle.title}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, alignItems: 'center', justifyContent: isList ? 'flex-start' : 'center' }}>
-                        <Chip icon={<MonetizationOnIcon sx={{ fontSize: '1rem !important', color: colors.darkGreen2 + '!important' }} />} label={`${bundle.price} RON`} size="small" sx={{ bgcolor: colors.lightGreen1, color: colors.darkGreen2, fontWeight: 'bold' }} />
-                        <Chip label={`${bundle.items.length} Produse`} size="small" variant="outlined" sx={{ color: colors.white2, borderColor: colors.white2 }} />
+                <CardMedia
+                    component="img"
+                    image={bundle.image}
+                    alt={bundle.title}
+                    onClick={() => handleViewDetails(bundle.id)}
+                    sx={{
+                        objectFit: 'cover',
+                        cursor: 'pointer',
+                        height: isList ? { xs: 200, sm: '100%' } : 140,
+                        minHeight: isList ? { sm: 200 } : 'auto',
+                        width: isList ? { xs: '100%', sm: 280 } : '100%',
+                        flexShrink: 0
+                    }}
+                />
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: isList ? { xs: 'column', sm: 'row' } : 'column',
+                    flexGrow: 1,
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    alignItems: isList ? 'center' : 'stretch',
+                    p: isList ? 2 : 0
+                }}>
+                    <CardContent sx={{ flexGrow: 1, pb: 1, px: isList ? 3 : 1.5, textAlign: isList ? 'left' : 'center', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%' }}>
+                        <Typography
+                            gutterBottom
+                            variant={isList ? "h5" : "subtitle1"}
+                            fontWeight="bold"
+                            color={colors.white1}
+                            sx={{
+                                lineHeight: 1.2,
+                                mb: 1,
+                                minHeight: isList ? 'auto' : '2.4em',
+                                display: '-webkit-box',
+                                overflow: 'hidden',
+                                WebkitBoxOrient: 'vertical',
+                                WebkitLineClamp: 2
+                            }}
+                        >
+                            {bundle.title}
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: isList ? 'flex-start' : 'center', mb: 1.5 }}>
+                            {hasDiscount && (
+                                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 0.5 }}>
+                                    <Typography variant="caption" sx={{ textDecoration: 'line-through', color: colors.white2, opacity: 0.7 }}>
+                                        {originalPrice.toFixed(2)} RON
+                                    </Typography>
+                                    <Chip label={`-${discountPercent}%`} size="small" sx={{ height: '20px', fontSize: '0.7rem', bgcolor: 'rgba(46, 125, 50, 0.2)', color: '#81c784', border: '1px solid #2e7d32' }} />
+                                </Box>
+                            )}
+                            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                                <Chip icon={<MonetizationOnIcon sx={{ fontSize: '1rem !important', color: colors.darkGreen2 + '!important' }} />} label={`${bundle.price} RON`} size="small" sx={{ bgcolor: colors.lightGreen1, color: colors.darkGreen2, fontWeight: 'bold' }} />
+                                <Chip label={`${bundle.items.length} Prod.`} size="small" variant="outlined" sx={{ color: colors.white2, borderColor: colors.white2 }} />
+                            </Box>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, justifyContent: isList ? 'flex-start' : 'center', maxHeight: '40px', overflow: 'hidden' }}>
+                            {bundle.items.slice(0, 3).map((item, idx) => (
+                                <Typography key={idx} variant="caption" sx={{ color: colors.white2, opacity: 0.7 }}>{item.name}{idx < Math.min(bundle.items.length, 3) - 1 ? ", " : ""}</Typography>
+                            ))}
+                            {bundle.items.length > 3 && <Typography variant="caption" sx={{ color: colors.white2, opacity: 0.5 }}>+{bundle.items.length - 3}...</Typography>}
+                        </Box>
+                    </CardContent>
+
+                    <Box sx={{ p: isList ? 0 : 1.5, pt: 0, display: 'flex', flexDirection: 'column', gap: 1, width: isList ? 'auto' : '100%', minWidth: isList ? '200px' : 'auto', justifyContent: 'center' }}>
+                        <Button fullWidth variant="outlined" size="small" onClick={() => handleEditBundle(bundle.id)} startIcon={<EditIcon fontSize="small" />} sx={{ color: colors.lightGreen1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem', '&:hover': { borderColor: colors.lightGreen1, bgcolor: 'rgba(255,255,255,0.05)' } }}>Editează</Button>
+                        <Button fullWidth variant="outlined" size="small" color="error" onClick={() => handleDeleteBundle(bundle.id)} startIcon={<DeleteOutlineIcon fontSize="small" />} sx={{ borderRadius: '0.6rem', borderColor: 'rgba(211, 47, 47, 0.5)', '&:hover': { borderColor: '#d32f2f', bgcolor: 'rgba(211, 47, 47, 0.1)' } }}>Șterge</Button>
                     </Box>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, justifyContent: isList ? 'flex-start' : 'center', maxHeight: '40px', overflow: 'hidden' }}>
-                        {bundle.items.slice(0, 3).map((item, idx) => (
-                            <Typography key={idx} variant="caption" sx={{ color: colors.white2, opacity: 0.7 }}>{item.name}{idx < Math.min(bundle.items.length, 3) - 1 ? ", " : ""}</Typography>
-                        ))}
-                        {bundle.items.length > 3 && <Typography variant="caption" sx={{ color: colors.white2, opacity: 0.5 }}>+{bundle.items.length - 3}...</Typography>}
-                    </Box>
-                </CardContent>
-                <Box sx={{ p: isList ? 0 : 1.5, pt: 0, display: 'flex', flexDirection: 'column', gap: 1, width: isList ? 'auto' : '100%', minWidth: isList ? '200px' : 'auto', justifyContent: 'center' }}>
-                    <Button fullWidth variant="outlined" size="small" onClick={() => handleEditBundle(bundle.id)} startIcon={<EditIcon fontSize="small" />} sx={{ color: colors.lightGreen1, borderColor: colors.lightGreen1Transparent, borderRadius: '0.6rem', '&:hover': { borderColor: colors.lightGreen1, bgcolor: 'rgba(255,255,255,0.05)' } }}>Editează</Button>
-                    <Button fullWidth variant="outlined" size="small" color="error" onClick={() => handleDeleteBundle(bundle.id)} startIcon={<DeleteOutlineIcon fontSize="small" />} sx={{ borderRadius: '0.6rem', borderColor: 'rgba(211, 47, 47, 0.5)', '&:hover': { borderColor: '#d32f2f', bgcolor: 'rgba(211, 47, 47, 0.1)' } }}>Șterge</Button>
                 </Box>
-            </Box>
-        </Card>
-    );
+            </Card>
+        );
+    };
 
     return (
         <Container maxWidth="xl" sx={{ py: 4, color: colors.white1, minHeight: '80vh' }}>
@@ -341,7 +386,7 @@ export default function ProducerBundlesPage() {
                         </Grid>
                     )}
 
-            {/* --- INTEGRARE MODAL EDITARE --- */}
+            {/* --- MODAL EDITARE --- */}
             <EditBundleModal
                 open={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
@@ -350,7 +395,15 @@ export default function ProducerBundlesPage() {
                 availableProducts={myProducts}
             />
 
-            {/* --- SNACKBAR PENTRU ERORI & SUCCES --- */}
+            {/* --- MODAL CREARE (NOU) --- */}
+            <CreateBundleModal
+                open={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSave={handleSaveNewBundle}
+                availableProducts={myProducts}
+            />
+
+            {/* --- SNACKBAR --- */}
             <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
                 <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
                     {errorMessage}
